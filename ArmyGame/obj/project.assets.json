@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Alex\\.vscode\\armyyy\\ArmyGame\\ArmyGame.csproj",
+      "projectUniqueName": "C:\\Users\\Alex\\.vscode\\Army\\ArmyGame\\ArmyGame.csproj",
       "projectName": "ArmyGame",
-      "projectPath": "C:\\Users\\Alex\\.vscode\\armyyy\\ArmyGame\\ArmyGame.csproj",
+      "projectPath": "C:\\Users\\Alex\\.vscode\\Army\\ArmyGame\\ArmyGame.csproj",
       "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Alex\\.vscode\\armyyy\\ArmyGame\\obj\\",
+      "outputPath": "C:\\Users\\Alex\\.vscode\\Army\\ArmyGame\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -2,6 +2,21 @@ using System;
 
 namespace ArmyBattle.Models
 {
+    // Класс для специального умения
+    public class SpecialAbility
+    {
+        public string Name { get; set; }
+        public int Range { get; set; }  // Дальность действия
+        public int Power { get; set; }  // Сила способности
+        
+        public SpecialAbility(string name, int range, int power)
+        {
+            Name = name;
+            Range = range;
+            Power = power;
+        }
+    }
+    
     // Основной класс для всех боевых единиц
     public abstract class Unit
     {
@@ -31,6 +46,9 @@ namespace ArmyBattle.Models
         
         // Порядковый номер бойца в армии
         public int FighterNumber { get; set; }
+        
+        // Специальная способность (например, для лучников)
+        public SpecialAbility SpecialAbility { get; set; }
 
         // Конструктор для инициализации характеристик
         protected Unit(string name, int attack, int defence, int health, 
@@ -45,6 +63,7 @@ namespace ArmyBattle.Models
             PowerLevel = powerLevel;
             DamageDealt = 0;
             FighterNumber = 0;
+            SpecialAbility = null;
         }
 
         // Проверка, жив ли юнит
@@ -66,6 +85,28 @@ namespace ArmyBattle.Models
         {
             target.TakeDamage(Attack, Name);
             DamageDealt += Math.Max(1, Attack - target.Defence);
+        }
+        
+        // Проверка наличия специального умения в пределах дальности
+        public bool CanUseSpecialAbility(Unit target)
+        {
+            if (SpecialAbility == null || !IsAlive)
+                return false;
+            
+            // Вычисляем дальность между юнитами (для упрощения - фиксированная дистанция 1)
+            // В реальной игре здесь может быть система координат
+            int distance = 1;
+            return distance <= SpecialAbility.Range;
+        }
+        
+        // Использование специального умения
+        public virtual void UseSpecialAbility(Unit target)
+        {
+            if (CanUseSpecialAbility(target))
+            {
+                target.TakeDamage(SpecialAbility.Power, Name);
+                DamageDealt += Math.Max(1, SpecialAbility.Power - target.Defence);
+            }
         }
         
         // Получение отображаемого имени бойца

@@ -43,7 +43,7 @@ namespace ArmyBattle.Game
                 Console.Clear();
             }
             catch { }
-            Console.WriteLine("           НАЧАЛО БИТВЫ");
+            Console.WriteLine("НАЧАЛО БИТВЫ");
             Console.WriteLine($"{army1.Name} против {army2.Name}");
             Console.WriteLine($"Бюджет каждой команды: {army1.TotalCost}");
             Console.WriteLine();
@@ -180,6 +180,13 @@ namespace ArmyBattle.Game
                 
                 // Пауза перед продолжением
                 Thread.Sleep(battleSpeed);
+                
+                // Проверка специальных способностей после второго удара (когда attackTurn возвращается на 0)
+                if (attackTurn == 0 && !needNewRoundHeader && currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
+                {
+                    CheckAndExecuteSpecialAbilities();
+                    Thread.Sleep(battleSpeed);
+                }
                 
                 // Увеличиваем номер раунда только при смене бойца
                 if (needNewRoundHeader && (currentFighter1 != null || currentFighter2 != null))
@@ -413,6 +420,12 @@ namespace ArmyBattle.Game
                 }
             }
             
+            // Проверка специальных способностей после второго удара (когда attackTurn возвращается на 0)
+            if (attackTurn == 0 && !needNewRoundHeader && currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
+            {
+                CheckAndExecuteSpecialAbilities();
+            }
+            
             // Увеличиваем номер раунда только при смене бойца
             if (needNewRoundHeader && (currentFighter1 != null || currentFighter2 != null))
             {
@@ -437,5 +450,104 @@ namespace ArmyBattle.Game
             }
             
             EndBattle();
+        }
+        
+        // Проверка и выполнение специальных способностей с обеих сторон
+        private void CheckAndExecuteSpecialAbilities()
+        {
+            if (!currentFighter1.IsAlive || !currentFighter2.IsAlive)
+                return;
+            
+            Console.WriteLine();
+            Console.WriteLine("ПРОВЕРКА СПЕЦИАЛЬНЫХ СПОСОБНОСТЕЙ");
+            
+            // Проверяем способности у первой армии
+            ExecuteSpecialAbilitiesForArmy(army1, army2);
+            
+            // Проверяем способности у второй армии (если оба живы)
+            if (currentFighter1.IsAlive && currentFighter2.IsAlive)
+            {
+                ExecuteSpecialAbilitiesForArmy(army2, army1);
+            }
+            
+            Console.WriteLine();
+        }
+        
+        // Выполнение специальных способностей для армии
+        private void ExecuteSpecialAbilitiesForArmy(Army attackingArmy, Army defendingArmy)
+        {
+            // Находим юнитов с особыми способностями в атакующей армии
+            foreach (var unit in attackingArmy.Units)
+            {
+                // Пропускаем мертвых
+                if (!unit.IsAlive)
+                    continue;
+                
+                // Пропускаем текущего活 бойца в бою (они выполнили свой удар)
+                if (unit == currentFighter1 || unit == currentFighter2)
+                    continue;
+                
+                // Проверяем, есть ли особая способность
+                if (unit.SpecialAbility == null)
+                    continue;
+                
+                // Определяем цель для стрельбы
+                Unit target = attackingArmy == army1 ? currentFighter2 : currentFighter1;
+                
+                if (target == null || !target.IsAlive)
+                    continue;
+                
+                // Проверяем, может ли выполнить способность
+                if (unit.CanUseSpecialAbility(target))
+                {
+                    Console.ForegroundColor = attackingArmy.Color;
+                    Console.Write(unit.GetDisplayName(attackingArmy.Prefix));
+                    Console.ResetColor();
+                    Console.Write($" использует {unit.SpecialAbility.Name} на ");
+                    Console.ForegroundColor = defendingArmy.Color;
+                    Console.Write(target.GetDisplayName(defendingArmy.Prefix));
+                    Console.ResetColor();
+                    Console.WriteLine();
+                    
+                    int healthBefore = target.Health;
+                    unit.UseSpecialAbility(target);
+                    int damage = healthBefore - target.Health;
+                    
+                    Console.WriteLine($"  Урон: -{damage}");
+                    Console.WriteLine($"  Здоровье {target.GetDisplayName(defendingArmy.Prefix)}: {Math.Max(0, target.Health)}/{target.MaxHealth}");
+                    
+                    // Если цель убита
+                    if (!target.IsAlive)
+                    {
+                        Console.WriteLine();
+                        Console.ForegroundColor = attackingArmy.Color;
+                        Console.Write(unit.GetDisplayName(attackingArmy.Prefix));
+                        Console.ResetColor();
+                        Console.Write($" убивает ");
+                        Console.ForegroundColor = defendingArmy.Color;
+                        Console.Write(target.GetDisplayName(defendingArmy.Prefix));
+                        Console.ResetColor();
+                        Console.WriteLine(" специальной способностью!");
+                        
+                        // Удаляем убитого бойца
+                        defendingArmy.RemoveDeadFighter(target);
+                        
+                        // Получаем следующего бойца для обороны
+                        if (defendingArmy == army1)
+                        {
+                            currentFighter1 = army1.GetNextFighterInBattleOrder();
+                        }
+                        else
+                        {
+                            currentFighter2 = army2.GetNextFighterInBattleOrder();
+                        }
+                        
+                        needNewRoundHeader = true;
+                        return; // Выходим, так как боец убит
+                    }
+                    
+                    Console.WriteLine();
+                }
+            }
         }    }
 }

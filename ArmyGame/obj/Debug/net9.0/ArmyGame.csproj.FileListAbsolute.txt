@@ -26,3 +26,4 @@ C:\Users\Alex\.vscode\armyyy\ArmyGame\obj\Debug\net9.0\refint\ArmyGame.dll
 C:\Users\Alex\.vscode\armyyy\ArmyGame\obj\Debug\net9.0\ArmyGame.pdb
 C:\Users\Alex\.vscode\armyyy\ArmyGame\obj\Debug\net9.0\ArmyGame.genruntimeconfig.cache
 C:\Users\Alex\.vscode\armyyy\ArmyGame\obj\Debug\net9.0\ref\ArmyGame.dll
+C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0\ArmyGame.sourcelink.json
