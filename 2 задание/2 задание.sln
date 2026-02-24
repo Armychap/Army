@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "new", "new\new.csproj", "{F7154053-EBB8-EE0A-AE25-BA0B5D5655BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "old", "old", "{48DCF74D-3AA9-37DE-8188-E18F574070E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordGame", "old\WordGame.csproj", "{784B1797-463E-682B-3F8D-8FE06D757EE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7154053-EBB8-EE0A-AE25-BA0B5D5655BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7154053-EBB8-EE0A-AE25-BA0B5D5655BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7154053-EBB8-EE0A-AE25-BA0B5D5655BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7154053-EBB8-EE0A-AE25-BA0B5D5655BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{784B1797-463E-682B-3F8D-8FE06D757EE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{784B1797-463E-682B-3F8D-8FE06D757EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{784B1797-463E-682B-3F8D-8FE06D757EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{784B1797-463E-682B-3F8D-8FE06D757EE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{784B1797-463E-682B-3F8D-8FE06D757EE3} = {48DCF74D-3AA9-37DE-8188-E18F574070E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0449DC85-A3AD-4002-B287-1194B4C7A9D8}
+	EndGlobalSection
+EndGlobal
