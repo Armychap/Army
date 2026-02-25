@@ -11,7 +11,7 @@ namespace ArmyBattle.Models
         public List<Unit> Units { get; set; }
         public ConsoleColor Color { get; set; }
         public int TotalCost { get; set; }
-        
+
         // Список живых бойцов в случайном порядке для боя
         public List<Unit> AliveFightersInBattleOrder { get; set; }
         public int CurrentFighterIndex { get; set; }
@@ -40,7 +40,7 @@ namespace ArmyBattle.Models
         public void ShuffleAliveFighters()
         {
             AliveFightersInBattleOrder.Clear();
-            
+
             // Собираем всех живых бойцов
             foreach (var unit in Units)
             {
@@ -49,7 +49,7 @@ namespace ArmyBattle.Models
                     AliveFightersInBattleOrder.Add(unit);
                 }
             }
-            
+
             // Перемешиваем список живых бойцов
             for (int i = AliveFightersInBattleOrder.Count - 1; i > 0; i--)
             {
@@ -58,7 +58,7 @@ namespace ArmyBattle.Models
                 AliveFightersInBattleOrder[i] = AliveFightersInBattleOrder[j];
                 AliveFightersInBattleOrder[j] = temp;
             }
-            
+
             CurrentFighterIndex = 0;
         }
 
@@ -71,7 +71,7 @@ namespace ArmyBattle.Models
                 CurrentFighterIndex++;
                 return nextFighter;
             }
-            
+
             return null;
         }
 
@@ -127,18 +127,18 @@ namespace ArmyBattle.Models
             Console.ForegroundColor = Color;
             Console.WriteLine($"\n{Name}:");
             Console.ResetColor();
-            
+
             Console.WriteLine($"Всего бойцов: {Units.Count}");
             Console.WriteLine($"Живых бойцов: {AliveCount()}");
             Console.WriteLine($"Общая стоимость: {TotalCost}");
-            
+
             if (showDetails)
             {
                 Console.WriteLine("\nСостав армии:");
                 foreach (var unit in Units)
                 {
-                    string status = unit.IsAlive ? 
-                        $"Здоровье: {unit.Health}/{unit.MaxHealth}" : 
+                    string status = unit.IsAlive ?
+                        $"Здоровье: {unit.Health}/{unit.MaxHealth}" :
                         "Убит";
                     Console.WriteLine($"  {unit.GetDisplayName(Prefix)} ({unit.PowerLevel}) - {status}");
                 }
@@ -151,10 +151,10 @@ namespace ArmyBattle.Models
             Units.Clear();
             AliveFightersInBattleOrder.Clear();
             TotalCost = 0;
-            
+
             int remainingBudget = budget;
             int fighterNumber = 1;
-            
+
             // Список доступных типов бойцов с их стоимостью
             var availableFighters = new List<Tuple<int, Func<int, Unit>>>
             {
@@ -162,7 +162,7 @@ namespace ArmyBattle.Models
                 new Tuple<int, Func<int, Unit>>(25, (num) => new Archer(num)),
                 new Tuple<int, Func<int, Unit>>(15, (num) => new WeakFighter(num))
             };
-            
+
             // Пока есть бюджет на любого бойца
             while (remainingBudget >= 15)
             {
@@ -175,19 +175,19 @@ namespace ArmyBattle.Models
                         affordableFighters.Add(fighter);
                     }
                 }
-                
+
                 if (affordableFighters.Count == 0)
                     break;
-                    
+
                 // Случайный выбор бойца из доступных
                 var selectedFighter = affordableFighters[random.Next(affordableFighters.Count)];
-                
+
                 Unit newUnit = selectedFighter.Item2(fighterNumber);
                 AddUnit(newUnit);
                 remainingBudget -= selectedFighter.Item1;
                 fighterNumber++;
             }
-            
+
             // Изначально все бойцы живые, добавляем их в список для боя
             foreach (var unit in Units)
             {
@@ -196,8 +196,21 @@ namespace ArmyBattle.Models
                     AliveFightersInBattleOrder.Add(unit);
                 }
             }
-            
+
             // Перемешиваем бойцов для случайного порядка в бою
+            ShuffleAliveFighters();
+        }
+
+        public void RefreshAliveFighters()
+        {
+            AliveFightersInBattleOrder.Clear();
+            foreach (var unit in Units)
+            {
+                if (unit.IsAlive)
+                {
+                    AliveFightersInBattleOrder.Add(unit);
+                }
+            }
             ShuffleAliveFighters();
         }
     }

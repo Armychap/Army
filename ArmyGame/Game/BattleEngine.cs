@@ -549,5 +549,6 @@ namespace ArmyBattle.Game
                     Console.WriteLine();
                 }
             }
-        }    }
+        } 
+    }
 }
