@@ -2,55 +2,101 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AudioSingletonDemo
+namespace NotificationSingletonDemo
 {
     class Program
     {
         static void Main(string[] args)
         {
-            // Получаем экземпляр AudioManager
-            AudioManager audio1 = AudioManager.Instance;
-            AudioManager audio2 = AudioManager.Instance;
+            NotificationSystem notifications = NotificationSystem.Instance;
             
-            // Проверяем, что это действительно один и тот же объект
-            Console.WriteLine($"audio1 и audio2 - это один объект? {ReferenceEquals(audio1, audio2)}\n");
+            notifications.Print("СИСТЕМА ОПОВЕЩЕНИЙ");
+            notifications.Print("");
             
-            // Меняем громкость через один экземпляр
-            audio1.Volume = 0.5;
-            Console.WriteLine($"Громкость через audio2: {audio2.Volume:P0}\n");
+            // Проверка Singleton
+            NotificationSystem sameNotifications = NotificationSystem.Instance;
+            notifications.Print($"Один экземпляр? {ReferenceEquals(notifications, sameNotifications)}");
+            notifications.Print("");
             
-            // Предзагружаем звуки для быстрого воспроизведения
-            audio1.PreloadAllSounds();
-            Console.WriteLine();
+            // Включаем звук
+            notifications.IsSoundEnabled = true;
             
-            // Демонстрация работы в разных потоках
-            Console.WriteLine("Начинаем воспроизведение звуков...\n");
+            // Предзагружаем звуки
+            notifications.PreloadSounds();
+            notifications.Print("");
             
-            // Поток 1 - пытается играть звуки
+            // ===== ОТПРАВКА ИЗ ГЛАВНОГО ПОТОКА =====
+            notifications.Print("Запуск программы");
+            notifications.SendInformation("Программа запущена");
+            notifications.SendSuccess("Загрузка завершена");
+            
+            notifications.Print("Нажмите Enter для запуска задач");
+            Console.ReadLine();
+            
+            // ===== РАБОТА В ДВУХ ПОТОКАХ =====
+            notifications.Print("");
+            notifications.Print("Все потоки");
+            
+            // ПОТОК 1: Загрузка данных
             Task.Run(() => {
-                for (int i = 0; i < 3; i++)
-                {
-                    AudioManager.Instance.PlayClick();
-                    Thread.Sleep(100);
-                }
+                notifications.Print("[Поток 1] Начинаю загрузку");
+                
+                NotificationSystem.Instance.SendInformation("Файл 1 - загрузка");
+                Thread.Sleep(400);
+                NotificationSystem.Instance.SendSuccess("Файл 1  - загружен");
+                
+                NotificationSystem.Instance.SendInformation("Файл 2 - загрузка");
+                Thread.Sleep(300);
+                NotificationSystem.Instance.SendSuccess("Файл 2 - загружен");
+                
+                // Предупреждение
+                NotificationSystem.Instance.SendWarning("Файл 3 - повреждён, пропускаю");
+                
+                notifications.Print("[Поток 1] Загрузка завершена");
             });
             
-            // Поток 2 - тоже пытается играть звуки
+            // ПОТОК 2: Обработка данных
             Task.Run(() => {
-                Thread.Sleep(150); // Небольшая задержка
-                AudioManager.Instance.PlaySuccess();
-                AudioManager.Instance.PlayError();
+                Thread.Sleep(200);
+                notifications.Print("[Поток 2] Начинаю обработку");
+                
+                NotificationSystem.Instance.SendInformation("Обработка - распаковка");
+                Thread.Sleep(500);
+                NotificationSystem.Instance.SendSuccess("Обработка - распаковано");
+                
+                // Ошибка
+                NotificationSystem.Instance.SendError("Обработка - ошибка в данных");
+                Thread.Sleep(300);
+                NotificationSystem.Instance.SendSuccess("Обработка - ошибка исправлена");
+                
+                // Критическая ошибка
+                NotificationSystem.Instance.SendCritical("Обработка - сбой системы");
+                Thread.Sleep(400);
+                NotificationSystem.Instance.SendSuccess("Обработка - восстановлено");
+                
+                notifications.Print("[Поток 2] Обработка завершена");
             });
             
-            // Главный поток
-            AudioManager.Instance.PlayClick();
-            AudioManager.Instance.PlaySuccess();
+            // ГЛАВНЫЙ ПОТОК: Мониторинг
+            Thread.Sleep(300);
+            NotificationSystem.Instance.SendInformation("Главный - проверка статуса");
+            Thread.Sleep(400);
+            NotificationSystem.Instance.SendInformation("Главный - всё работает");
+            Thread.Sleep(400);
+            NotificationSystem.Instance.SendSuccess("Главный - задача выполнена");
             
-            Console.WriteLine("\nНажмите любую клавишу для завершения...");
-            Console.ReadKey();
+            notifications.Print("");
+            notifications.Print("Нажмите Enter для просмотра истории");
+            Console.ReadLine();
             
-            // Очистка ресурсов
-            audio1.ClearCache();
+            // Показываем историю
+            notifications.ShowHistory();
+            
+            notifications.Print("");
+            notifications.Print("Нажмите Enter для выхода");
+            Console.ReadLine();
+            
+            notifications.Shutdown();
         }
     }
 }
