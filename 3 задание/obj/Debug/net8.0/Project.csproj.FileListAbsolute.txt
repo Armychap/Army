@@ -1,4 +1,3 @@
-C:\Users\Alex\.vscode\Army\3 задание\bin\Debug\net8.0\Sounds\click.wav
 C:\Users\Alex\.vscode\Army\3 задание\bin\Debug\net8.0\Sounds\desktop.ini
 C:\Users\Alex\.vscode\Army\3 задание\bin\Debug\net8.0\Sounds\error.wav
 C:\Users\Alex\.vscode\Army\3 задание\bin\Debug\net8.0\Sounds\success.wav
@@ -26,3 +25,6 @@ C:\Users\Alex\.vscode\Army\3 задание\obj\Debug\net8.0\refint\Project.dll
 C:\Users\Alex\.vscode\Army\3 задание\obj\Debug\net8.0\Project.pdb
 C:\Users\Alex\.vscode\Army\3 задание\obj\Debug\net8.0\Project.genruntimeconfig.cache
 C:\Users\Alex\.vscode\Army\3 задание\obj\Debug\net8.0\ref\Project.dll
+C:\Users\Alex\.vscode\Army\3 задание\bin\Debug\net8.0\Sounds\critical.wav
+C:\Users\Alex\.vscode\Army\3 задание\bin\Debug\net8.0\Sounds\info.wav
+C:\Users\Alex\.vscode\Army\3 задание\bin\Debug\net8.0\Sounds\warning.wav
