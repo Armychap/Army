@@ -4,37 +4,35 @@ using System.IO;
 using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 
 namespace NotificationSingletonDemo
 {
-    /// <summary>
-    /// Система оповещений, работает в одном экземпляре на всё приложение
-    /// </summary>
+
+    // Система оповещений, работает в одном экземпляре на всё приложение
     public sealed class NotificationSystem
     {
         // Ленивая загрузка - объект создастся только при первом обращении
         private static readonly Lazy<NotificationSystem> _lazyInstance =
             new Lazy<NotificationSystem>(() => new NotificationSystem());
 
-        // Семафор - гарантирует, что одновременно играет только один звук
+        // Семафор гарантирует, что одновременно играет только один звук
         private readonly SemaphoreSlim _soundSemaphore = new SemaphoreSlim(1, 1);
 
         // Блокировка для общих данных (очереди, кэш)
         private readonly object _syncRoot = new object();
 
         // Кэш загруженных звуков
-        private readonly Dictionary<NotificationType, SoundPlayer> _notificationSounds =
-            new Dictionary<NotificationType, SoundPlayer>();
+        private readonly Dictionary<NotificationType, SoundPlayer?> _notificationSounds = [];
 
         // Путь к папке со звуками
         private readonly string _soundsDirectory;
 
-        // История последних 20 сообщений
+        // История последних сообщений
         private readonly Queue<string> _notificationHistory = new Queue<string>();
 
-        /// <summary>
-        /// Типы оповещений
-        /// </summary>
+
+        // оповещения
         public enum NotificationType
         {
             Information,
@@ -44,10 +42,7 @@ namespace NotificationSingletonDemo
             Critical
         }
 
-        /// <summary>
-        /// Приватный конструктор - чтоб никто не создал второй экземпляр
-        /// </summary>
-        private NotificationSystem()
+        private NotificationSystem() //конструктор
         {
             // Ищем папку со звуками
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
@@ -63,14 +58,12 @@ namespace NotificationSingletonDemo
             Console.WriteLine("Система оповещений запущена");
         }
 
-        /// <summary>
-        /// Доступ к единственному экземпляру
-        /// </summary>
+
+        // Доступ к единственному экземпляру
         public static NotificationSystem Instance => _lazyInstance.Value;
 
-        /// <summary>
-        /// Вкл/Выкл звук
-        /// </summary>
+
+        // Вкючение - выключение звука
         public bool IsSoundEnabled { get; set; }
 
         public void SendInformation(string message) => SendNotification(NotificationType.Information, message);
@@ -79,9 +72,8 @@ namespace NotificationSingletonDemo
         public void SendError(string message) => SendNotification(NotificationType.Error, message);
         public void SendCritical(string message) => SendNotification(NotificationType.Critical, message);
 
-        /// <summary>
-        /// Отправка оповещения
-        /// </summary>
+
+        // Отправка оповещения
         private void SendNotification(NotificationType type, string message)
         {
             // Сохраняем в историю
@@ -97,18 +89,11 @@ namespace NotificationSingletonDemo
             // Показываем в консоли
             Console.WriteLine($"{type}: {message}");
 
-            // Если звук включён - запускаем воспроизведение в фоне
-            if (IsSoundEnabled)
-            {
-                // Асинхронно, чтоб не тормозить основную программу
-                Task.Run(() => PlaySound(type));
-            }
+            // запускаем воспроизведение в фоне асинхронно, чтоб не тормозить основную программу
+            Task.Run(() => PlaySound(type));
         }
 
 
-        /// <summary>
-        /// Воспроизвести звук (всегда только один за раз)
-        /// </summary>
         private async Task PlaySound(NotificationType type)
         {
             // Ждём, пока освободится канал для звука
@@ -125,15 +110,14 @@ namespace NotificationSingletonDemo
                 if (!File.Exists(fullPath))
                 {
                     Console.WriteLine($"файл {fileName} не найден");
-                    SimulateSound(type);
                     return;
                 }
 
                 // Берём из кэша или загружаем
-                SoundPlayer player;
+                SoundPlayer? player;
                 lock (_syncRoot)
                 {
-                    if (!_notificationSounds.TryGetValue(type, out player))
+                    if (!_notificationSounds.TryGetValue(type, out player) || player == null)
                     {
                         player = new SoundPlayer(fullPath);
                         player.LoadAsync();
@@ -145,14 +129,16 @@ namespace NotificationSingletonDemo
                 // Даем время на загрузку
                 await Task.Delay(100);
 
-                // Играем до конца
-                player.PlaySync();
-                Console.WriteLine($"звук {type} закончил играть");
+                // Играем до конца (проверка на null)
+                if (player != null)
+                {
+                    player.PlaySync();
+                    Console.WriteLine($"звук {type} закончил играть");
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"ошибка со звуком {type}: {ex.Message}");
-                SimulateSound(type);
             }
             finally
             {
@@ -161,9 +147,6 @@ namespace NotificationSingletonDemo
             }
         }
 
-        /// <summary>
-        /// Имя файла для типа оповещения
-        /// </summary>
         private string GetSoundFileName(NotificationType type)
         {
             switch (type)
@@ -177,44 +160,8 @@ namespace NotificationSingletonDemo
             }
         }
 
-        /// <summary>
-        /// Имитация звука через Beep
-        /// </summary>
-        private void SimulateSound(NotificationType type)
-        {
-            int duration = type switch
-            {
-                NotificationType.Information => 50,   
-                NotificationType.Success => 80,       
-                NotificationType.Warning => 100,      
-                NotificationType.Error => 150,        
-                NotificationType.Critical => 200,       
-                _ => 80
-            };
 
-            int frequency = type switch
-            {
-                NotificationType.Information => 1000,
-                NotificationType.Success => 1200,
-                NotificationType.Warning => 800,
-                NotificationType.Error => 600,
-                NotificationType.Critical => 400,
-                _ => 1000
-            };
-
-            try
-            {
-                Console.Beep(frequency, duration);
-            }
-            catch
-            {
-                // Если Beep не поддерживается
-                Console.WriteLine($"*звук {type}*");
-            }
-        }
-        /// <summary>
-        /// Показать историю
-        /// </summary>
+        // Показать историю
         public void ShowHistory()
         {
             Console.WriteLine("\nИстория оповещений");
@@ -229,17 +176,15 @@ namespace NotificationSingletonDemo
                 Console.WriteLine(entry);
         }
 
-        /// <summary>
-        /// Вывести текст
-        /// </summary>
+
+        // Вывести текст
         public void Print(string text) => Console.WriteLine(text);
 
-        /// <summary>
-        /// Предзагрузить звуки
-        /// </summary>
         public void PreloadSounds()
         {
             if (!IsSoundEnabled) return;
+
+
 
             Console.WriteLine("Предзагрузка звуков");
 
@@ -265,20 +210,25 @@ namespace NotificationSingletonDemo
                     catch
                     {
                         Console.WriteLine($"  - {type} не загрузился");
+                        lock (_syncRoot)
+                        {
+                            _notificationSounds[type] = null;
+                        }
                     }
                 }
                 else
                 {
                     Console.WriteLine($"  - {type} файл отсутствует");
+                    lock (_syncRoot)
+                    {
+                        _notificationSounds[type] = null;
+                    }
                 }
             }
 
             Console.WriteLine("Предзагрузка завершена");
         }
 
-        /// <summary>
-        /// Остановка системы
-        /// </summary>
         public void Shutdown()
         {
             Console.WriteLine("Остановка системы оповещений");
@@ -287,8 +237,18 @@ namespace NotificationSingletonDemo
             {
                 foreach (var player in _notificationSounds.Values)
                 {
-                    player.Stop();
-                    player.Dispose();
+                    if (player != null)
+                    {
+                        try
+                        {
+                            player.Stop();
+                            player.Dispose();
+                        }
+                        catch
+                        {
+                            // Игнорируем ошибки при остановке
+                        }
+                    }
                 }
 
                 _notificationSounds.Clear();
@@ -297,6 +257,95 @@ namespace NotificationSingletonDemo
 
             _soundSemaphore.Dispose();
             Console.WriteLine("Система остановлена");
+        }
+    
+
+        public void RunDemo()
+        {
+            // Проверка Singleton
+            NotificationSystem sameNotifications = NotificationSystem.Instance;
+            Print($"Один экземпляр? {ReferenceEquals(this, sameNotifications)}");
+            Print("");
+            
+            // Включаем звук
+            IsSoundEnabled = true;
+            
+            // Предзагружаем звуки
+            PreloadSounds();
+            Print("");
+            
+            //главный поток
+            Print("Запуск программы");
+            SendInformation("Программа запущена");
+            SendSuccess("Загрузка завершена");
+            
+            Print("Нажмите Enter для запуска задач");
+            Console.ReadLine();
+            
+            //два потока
+            Print("");
+            Print("Все потоки");
+            
+            // 1 поток 
+            Task.Run(() => {
+                Print("[Поток 1] Начинаю загрузку");
+                
+                NotificationSystem.Instance.SendInformation("Файл 1 - загрузка");
+                Thread.Sleep(400);
+                NotificationSystem.Instance.SendSuccess("Файл 1  - загружен");
+                
+                NotificationSystem.Instance.SendInformation("Файл 2 - загрузка");
+                Thread.Sleep(300);
+                NotificationSystem.Instance.SendSuccess("Файл 2 - загружен");
+                
+                // Предупреждение
+                NotificationSystem.Instance.SendWarning("Файл 3 - повреждён, пропускаю");
+                
+                Print("[Поток 1] Загрузка завершена");
+            });
+            
+            // 2 поток
+            Task.Run(() => {
+                Thread.Sleep(200);
+                Print("[Поток 2] Начинаю обработку");
+                
+                NotificationSystem.Instance.SendInformation("Обработка - распаковка");
+                Thread.Sleep(500);
+                NotificationSystem.Instance.SendSuccess("Обработка - распаковано");
+                
+                // Ошибка
+                NotificationSystem.Instance.SendError("Обработка - ошибка в данных");
+                Thread.Sleep(300);
+                NotificationSystem.Instance.SendSuccess("Обработка - ошибка исправлена");
+                
+                // Критическая ошибка
+                NotificationSystem.Instance.SendCritical("Обработка - сбой системы");
+                Thread.Sleep(400);
+                NotificationSystem.Instance.SendSuccess("Обработка - восстановлено");
+                
+                Print("[Поток 2] Обработка завершена");
+            });
+            
+            // главный поток
+            Thread.Sleep(300);
+            NotificationSystem.Instance.SendInformation("Главный - проверка статуса");
+            Thread.Sleep(400);
+            NotificationSystem.Instance.SendInformation("Главный - всё работает");
+            Thread.Sleep(400);
+            NotificationSystem.Instance.SendSuccess("Главный - задача выполнена");
+            
+            Print("");
+            Print("Нажмите Enter для просмотра истории");
+            Console.ReadLine();
+            
+            // Показываем историю
+            ShowHistory();
+            
+            Print("");
+            Print("Нажмите Enter для выхода");
+            Console.ReadLine();
+            
+            Shutdown();
         }
     }
 }
