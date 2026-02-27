@@ -121,6 +121,14 @@ namespace NotificationSingletonDemo
                 string fileName = GetSoundFileName(type);
                 string fullPath = Path.Combine(_soundsDirectory, fileName);
 
+                // Проверяем существование файла
+                if (!File.Exists(fullPath))
+                {
+                    Console.WriteLine($"файл {fileName} не найден");
+                    SimulateSound(type);
+                    return;
+                }
+
                 // Берём из кэша или загружаем
                 SoundPlayer player;
                 lock (_syncRoot)
@@ -128,11 +136,14 @@ namespace NotificationSingletonDemo
                     if (!_notificationSounds.TryGetValue(type, out player))
                     {
                         player = new SoundPlayer(fullPath);
-                        player.Load();
+                        player.LoadAsync();
                         _notificationSounds[type] = player;
-                        Console.WriteLine($"звук {type} загружен");
+                        Console.WriteLine($"звук {type} загружается");
                     }
                 }
+
+                // Даем время на загрузку
+                await Task.Delay(100);
 
                 // Играем до конца
                 player.PlaySync();
@@ -180,6 +191,26 @@ namespace NotificationSingletonDemo
                 NotificationType.Critical => 200,       
                 _ => 80
             };
+
+            int frequency = type switch
+            {
+                NotificationType.Information => 1000,
+                NotificationType.Success => 1200,
+                NotificationType.Warning => 800,
+                NotificationType.Error => 600,
+                NotificationType.Critical => 400,
+                _ => 1000
+            };
+
+            try
+            {
+                Console.Beep(frequency, duration);
+            }
+            catch
+            {
+                // Если Beep не поддерживается
+                Console.WriteLine($"*звук {type}*");
+            }
         }
         /// <summary>
         /// Показать историю
