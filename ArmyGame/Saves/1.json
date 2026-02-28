@@ -1,0 +1,71 @@
+{
+  "Army1Name": "\u0439\u0446\u0443\u043A\u0435",
+  "Army1Prefix": "A",
+  "Army1Color": 12,
+  "Army1Units": [
+    {
+      "Type": "Archer",
+      "FighterNumber": 1,
+      "Health": -3,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 2,
+      "Health": 0,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 3,
+      "Health": 0,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    }
+  ],
+  "Army2Name": "\u0444\u044B\u0432\u0430\u043F",
+  "Army2Prefix": "B",
+  "Army2Color": 9,
+  "Army2Units": [
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 1,
+      "Health": 5,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 2,
+      "Health": -4,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 3,
+      "Health": -8,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 4,
+      "Health": -11,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    }
+  ],
+  "SaveDate": "2026-02-28T14:49:39.2376008+03:00",
+  "TotalCost1": 90,
+  "TotalCost2": 95
+}

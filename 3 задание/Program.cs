@@ -7,6 +7,7 @@ namespace NotificationSingletonDemo
         static void Main(string[] args)
         {
             NotificationSystem.Instance.RunDemo();
+            
         }
     }
 }

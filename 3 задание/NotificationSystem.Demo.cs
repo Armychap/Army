@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,7 +29,7 @@ namespace NotificationSingletonDemo
             Print("Нажмите Enter для запуска задач");
             Console.ReadLine();
             
-            // Два потока
+            // Все потока
             Print("");
             Print("Все потоки");
             

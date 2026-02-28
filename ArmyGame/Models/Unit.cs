@@ -2,8 +2,10 @@ using System;
 
 namespace ArmyBattle.Models
 {
-    // Класс для специального умения
-    public class SpecialAbility
+    /// <summary>
+    /// Специальное умение, которым может обладать юнит.
+    /// </summary>
+    public class SpecialAbility : ISpecialAbility
     {
         public string Name { get; set; }
         public int Range { get; set; }  // Дальность действия
@@ -15,10 +17,23 @@ namespace ArmyBattle.Models
             Range = range;
             Power = power;
         }
+
+        // По умолчанию просто наносит урон; можно переопределять в наследниках.
+        public void Execute(IUnit user, IUnit target)
+        {
+            if (user == null || target == null) return;
+            target.TakeDamage(Power, user.Name);
+            user.DamageDealt += Math.Max(1, Power - target.Defence);
+        }
     }
     
-    // Основной класс для всех боевых единиц
-    public abstract class Unit
+    /// <summary>
+    /// Базовая реализация IUnit. Позволяет соблюдать Liskov Substitution:
+    /// любой подкласс может использоваться вместо IUnit.
+    /// можно наследоваться и расширять чужими классами.
+    /// SRP: отвечает исключительно за поведение отдельного юнита
+    /// </summary>
+    public abstract class Unit : IUnit
     {
         // Название юнита для отображения
         public string Name { get; set; }
@@ -48,7 +63,7 @@ namespace ArmyBattle.Models
         public int FighterNumber { get; set; }
         
         // Специальная способность (например, для лучников)
-        public SpecialAbility SpecialAbility { get; set; }
+        public ISpecialAbility SpecialAbility { get; set; }
 
         // Конструктор для инициализации характеристик
         protected Unit(string name, int attack, int defence, int health, 
@@ -80,39 +95,35 @@ namespace ArmyBattle.Models
             Health -= actualDamage;
         }
 
-        // Метод атаки другого юнита
-        public virtual void AttackUnit(Unit target)
+        // Атаковать цель через интерфейс
+        public virtual void AttackUnit(IUnit target)
         {
             target.TakeDamage(Attack, Name);
             DamageDealt += Math.Max(1, Attack - target.Defence);
         }
         
         // Проверка наличия специального умения в пределах дальности
-        public bool CanUseSpecialAbility(Unit target)
+        public bool CanUseSpecialAbility(IUnit target)
         {
             if (SpecialAbility == null || !IsAlive)
                 return false;
-            
-            // Вычисляем дальность между юнитами (для упрощения - фиксированная дистанция 1)
-            // В реальной игре здесь может быть система координат
             int distance = 1;
             return distance <= SpecialAbility.Range;
         }
         
-        // Использование специального умения
-        public virtual void UseSpecialAbility(Unit target)
+        // Использование специального умения через интерфейс
+        public virtual void UseSpecialAbility(IUnit target)
         {
             if (CanUseSpecialAbility(target))
             {
-                target.TakeDamage(SpecialAbility.Power, Name);
-                DamageDealt += Math.Max(1, SpecialAbility.Power - target.Defence);
+                SpecialAbility.Execute(this, target);
             }
         }
         
         // Получение отображаемого имени бойца
         public string GetDisplayName(string prefix)
         {
-            return $"{prefix} {FighterNumber}";
+            return $"{FighterNumber}";
         }
     }
 }

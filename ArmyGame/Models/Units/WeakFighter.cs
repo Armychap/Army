@@ -2,14 +2,16 @@ using System;
 
 namespace ArmyBattle.Models
 {
-    // Класс слабого бойца
+    /// <summary>
+    /// Слабый боец
+    /// </summary>
     public class WeakFighter : Unit
     {
         public WeakFighter(int fighterNumber) 
             : base(
                 "Слабый боец",
+                10,
                 8,
-                3,
                 25,
                 15,
                 "Слабый"
