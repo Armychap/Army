@@ -3,45 +3,47 @@ using System.Collections.Generic;
 
 namespace ArmyBattle.Models
 {
-    // Класс армии
-    public class Army
+    /// <summary>
+    /// Представляет армию и её поведение.
+    /// отвечает только за управление набором бойцов
+    /// новые типы юнитов добавляются за счёт интерфейса IUnit, не изменяя код класса
+    /// </summary>
+    public class Army : IArmy
     {
         public string Name { get; set; }
-        public string Prefix { get; set; }
-        public List<Unit> Units { get; set; }
+        // Применяем интерфейсы для юнитов
+        public List<IUnit> Units { get; set; }
         public ConsoleColor Color { get; set; }
         public int TotalCost { get; set; }
 
         // Список живых бойцов в случайном порядке для боя
-        public List<Unit> AliveFightersInBattleOrder { get; set; }
+        public List<IUnit> AliveFightersInBattleOrder { get; set; }
         public int CurrentFighterIndex { get; set; }
 
         private static Random random = new Random();
 
-        public Army(string name, string prefix, ConsoleColor color)
+        public Army(string name, ConsoleColor color)
         {
             Name = name;
-            Prefix = prefix;
             Color = color;
-            Units = new List<Unit>();
-            AliveFightersInBattleOrder = new List<Unit>();
+            Units = new List<IUnit>();
+            AliveFightersInBattleOrder = new List<IUnit>();
             TotalCost = 0;
             CurrentFighterIndex = 0;
         }
 
-        // Добавление юнита в армию
-        public void AddUnit(Unit unit)
+        // Добавление юнита в армию (работает с интерфейсом IUnit)
+        public void AddUnit(IUnit unit)
         {
             Units.Add(unit);
             TotalCost += unit.Cost;
         }
 
-        // Перемешивание живых бойцов в случайном порядке для боя
+        //Перемешивает список живых бойцов в случайном порядке
         public void ShuffleAliveFighters()
         {
             AliveFightersInBattleOrder.Clear();
 
-            // Собираем всех живых бойцов
             foreach (var unit in Units)
             {
                 if (unit.IsAlive)
@@ -50,11 +52,10 @@ namespace ArmyBattle.Models
                 }
             }
 
-            // Перемешиваем список живых бойцов
             for (int i = AliveFightersInBattleOrder.Count - 1; i > 0; i--)
             {
                 int j = random.Next(i + 1);
-                Unit temp = AliveFightersInBattleOrder[i];
+                var temp = AliveFightersInBattleOrder[i];
                 AliveFightersInBattleOrder[i] = AliveFightersInBattleOrder[j];
                 AliveFightersInBattleOrder[j] = temp;
             }
@@ -62,12 +63,12 @@ namespace ArmyBattle.Models
             CurrentFighterIndex = 0;
         }
 
-        // Получение следующего бойца в случайном порядке
-        public Unit? GetNextFighterInBattleOrder()
+        //Возвращает следующего бойца из перемешанного списка
+        public IUnit? GetNextFighterInBattleOrder()
         {
             if (CurrentFighterIndex < AliveFightersInBattleOrder.Count)
             {
-                Unit nextFighter = AliveFightersInBattleOrder[CurrentFighterIndex];
+                IUnit nextFighter = AliveFightersInBattleOrder[CurrentFighterIndex];
                 CurrentFighterIndex++;
                 return nextFighter;
             }
@@ -75,10 +76,9 @@ namespace ArmyBattle.Models
             return null;
         }
 
-        // Удаление убитого бойца из списка живых
-        public void RemoveDeadFighter(Unit deadFighter)
+        /// Удаляет мёртвого бойца из порядка боя, корректируя индекс
+        public void RemoveDeadFighter(IUnit deadFighter)
         {
-            // Найдём индекс удаляемого бойца в текущем порядке боя
             int removedIndex = AliveFightersInBattleOrder.IndexOf(deadFighter);
 
             if (removedIndex >= 0)
@@ -118,7 +118,12 @@ namespace ArmyBattle.Models
         // Количество живых юнитов
         public int AliveCount()
         {
-            return AliveFightersInBattleOrder.Count;
+            int count = 0;
+            foreach (var u in Units)
+            {
+                if (u.IsAlive) count++;
+            }
+            return count;
         }
 
         // Вывод информации об армии
@@ -140,7 +145,7 @@ namespace ArmyBattle.Models
                     string status = unit.IsAlive ?
                         $"Здоровье: {unit.Health}/{unit.MaxHealth}" :
                         "Убит";
-                    Console.WriteLine($"  {unit.GetDisplayName(Prefix)} ({unit.PowerLevel}) - {status}");
+                    Console.WriteLine($"  {Name} Боец {unit.FighterNumber} - {unit.PowerLevel} (Стоимость: {unit.Cost}) - {status}");
                 }
             }
         }
@@ -156,18 +161,18 @@ namespace ArmyBattle.Models
             int fighterNumber = 1;
 
             // Список доступных типов бойцов с их стоимостью
-            var availableFighters = new List<Tuple<int, Func<int, Unit>>>
+            var availableFighters = new List<Tuple<int, Func<int, IUnit>>>
             {
-                new Tuple<int, Func<int, Unit>>(40, (num) => new StrongFighter(num)),
-                new Tuple<int, Func<int, Unit>>(25, (num) => new Archer(num)),
-                new Tuple<int, Func<int, Unit>>(15, (num) => new WeakFighter(num))
+                new Tuple<int, Func<int, IUnit>>(40, (num) => new StrongFighter(num)),
+                new Tuple<int, Func<int, IUnit>>(25, (num) => new Archer(num)),
+                new Tuple<int, Func<int, IUnit>>(15, (num) => new WeakFighter(num))
             };
 
             // Пока есть бюджет на любого бойца
             while (remainingBudget >= 15)
             {
                 // Выбираем случайного бойца, которого можем себе позволить
-                var affordableFighters = new List<Tuple<int, Func<int, Unit>>>();
+                var affordableFighters = new List<Tuple<int, Func<int, IUnit>>>();
                 foreach (var fighter in availableFighters)
                 {
                     if (fighter.Item1 <= remainingBudget)
@@ -182,7 +187,7 @@ namespace ArmyBattle.Models
                 // Случайный выбор бойца из доступных
                 var selectedFighter = affordableFighters[random.Next(affordableFighters.Count)];
 
-                Unit newUnit = selectedFighter.Item2(fighterNumber);
+                IUnit newUnit = selectedFighter.Item2(fighterNumber);
                 AddUnit(newUnit);
                 remainingBudget -= selectedFighter.Item1;
                 fighterNumber++;
