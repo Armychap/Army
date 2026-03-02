@@ -11,10 +11,10 @@ namespace ArmyBattle.Services
     /// отвечает только за работу с файловой системой и сериализацией
     /// Зависит от интерфейса IArmy, а не от конкретной реализации (DIP)
     /// Основные обязанности:
-    /// - Сохранение состояния армий в JSON формат
-    /// - Загрузка армий из JSON файлов 
-    /// - Управление файловой структурой для сохранений
-    /// - Сериализация/десериализация юнитов
+    /// Сохранение состояния армий в JSON формат
+    /// Загрузка армий из JSON файлов 
+    /// Управление файловой структурой для сохранений
+    /// Сериализация/десериализация юнитов
     /// </summary>
     public class ArmyManager
     {
@@ -38,7 +38,7 @@ namespace ArmyBattle.Services
         {
             // Проверяем наличие директории Saves
             if (!Directory.Exists(savesDirectory))
-                // Если директория не существует - создаем её
+                // Если директория не существует создаем её
                 Directory.CreateDirectory(savesDirectory);
         }
 
@@ -46,13 +46,13 @@ namespace ArmyBattle.Services
         /// Сохраняет две армии в JSON файл с опциональным названием.
         /// Если название не указано, использует текущую дату и время.
         /// Параметры:
-        /// - army1: первая армия для сохранения
-        /// - army2: вторая армия для сохранения
-        /// - saveName: опциональное название файла без расширения
+        /// army1: первая армия для сохранения
+        /// army2: вторая армия для сохранения
+        /// saveName: опциональное название файла без расширения
         /// </summary>
         public void SaveArmies(IArmy army1, IArmy army2, string saveName = null)
         {
-            // Если название не указано или пусто - используем автогенерируемое имя с временем
+            // Если название не указано или пусто используем автогенерируемое имя с временем
             if (string.IsNullOrWhiteSpace(saveName))
             {
                 saveName = $"Armies_{DateTime.Now:yyyyMMdd_HHmmss}";
@@ -75,9 +75,9 @@ namespace ArmyBattle.Services
         /// Загружает две армии из JSON файла.
         /// Восстанавливает все параметры армий и их юнитов.
         /// Параметры:
-        /// - filePath: полный путь к файлу JSON
-        /// - army1: первая восстановленная армия (out параметр)
-        /// - army2: вторая восстановленная армия (out параметр)
+        /// filePath: полный путь к файлу JSON
+        /// army1: первая восстановленная армия (out параметр)
+        /// army2: вторая восстановленная армия (out параметр)
         /// Возвращает: true если загрузка успешна, false при ошибке
         /// </summary>
         public bool LoadArmies(string filePath, out IArmy army1, out IArmy army2)
@@ -148,7 +148,7 @@ namespace ArmyBattle.Services
         /// <summary>
         /// Формирует полный путь к файлу сохранения по его названию.
         /// Параметры:
-        /// - saveName: название сохранения без расширения
+        /// saveName: название сохранения без расширения
         /// Возвращает: полный путь типа Saves/[name].json
         /// </summary>
         public string GetSavePath(string saveName)
@@ -161,8 +161,8 @@ namespace ArmyBattle.Services
         /// Преобразует две армии в сериализуемый формат ArmySaveData.
         /// Экстрактирует все необходимые данные для сохранения в JSON.
         /// Параметры:
-        /// - army1: первая армия
-        /// - army2: вторая армия
+        /// army1: первая армия
+        /// army2: вторая армия
         /// Возвращает: объект ArmySaveData готовый к JSON сериализации
         /// </summary>
         public ArmySaveData SerializeArmies(IArmy army1, IArmy army2)
@@ -206,7 +206,7 @@ namespace ArmyBattle.Services
         /// Преобразует список юнитов в список сериализуемых объектов UnitSaveData.
         /// Экстрактирует основные характеристики каждого юнита для сохранения.
         /// Параметры:
-        /// - units: список юнитов для сериализации (List&lt;IUnit&gt;)
+        /// units: список юнитов для сериализации (List&lt;IUnit&gt;)
         /// Возвращает: список сериализуемых данных юнитов
         /// </summary>
         private List<UnitSaveData> SerializeUnits(List<IUnit> units)
@@ -248,8 +248,8 @@ namespace ArmyBattle.Services
         /// Восстанавливает юнитов из сохраненных данных и добавляет их в армию.
         /// Создает нужные типы юнитов и восстанавливает их характеристики.
         /// Параметры:
-        /// - unitsData: список сохраненных данных юнитов
-        /// - army: армия, в которую нужно добавить восстановленные юниты
+        /// unitsData: список сохраненных данных юнитов
+        /// army: армия, в которую нужно добавить восстановленные юниты
         /// </summary>
         private void DeserializeUnits(List<UnitSaveData> unitsData, IArmy army)
         {
@@ -259,16 +259,16 @@ namespace ArmyBattle.Services
                 // Используем switch выражение для создания правильного типа юнита
                 Unit unit = unitData.Type switch
                 {
-                    // Если тип был "WeakFighter" - создаем слабого бойца
+                    // Если тип был "WeakFighter" создаем слабого бойца
                     nameof(WeakFighter) => new WeakFighter(unitData.FighterNumber),
                     
-                    // Если тип был "Archer" - создаем лучника
+                    // Если тип был "Archer" создаем лучника
                     nameof(Archer) => new Archer(unitData.FighterNumber),
                     
-                    // Если тип был "StrongFighter" - создаем сильного бойца
+                    // Если тип был "StrongFighter" создаем сильного бойца
                     nameof(StrongFighter) => new StrongFighter(unitData.FighterNumber),
                     
-                    // Если тип неизвестен - выбрасываем исключение с описанием ошибки
+                    // Если тип неизвестен выбрасываем исключение с описанием ошибки
                     _ => throw new Exception($"Неизвестный тип юнита: {unitData.Type}")
                 };
 
