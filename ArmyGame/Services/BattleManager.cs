@@ -146,6 +146,39 @@ namespace ArmyBattle.Services
             // Возвращаем массив имен логов
             return result;
         }
+        
+        public string GetBattleDisplayName(string fileName)
+        {
+            // Находим последний подчеркивание (это время HHMMSS)
+            int lastUnderscoreIndex = fileName.LastIndexOf('_');
+            
+            if (lastUnderscoreIndex > 0)
+            {
+                // Проверяем что это 6 цифр (время)
+                string timeStr = fileName.Substring(lastUnderscoreIndex + 1);
+                if (timeStr.Length == 6 && int.TryParse(timeStr, out _))
+                {
+                    // Ищем второй последний подчеркивание (дата YYYYMMDD)
+                    int prevUnderscoreIndex = fileName.LastIndexOf('_', lastUnderscoreIndex - 1);
+                    
+                    if (prevUnderscoreIndex > 0)
+                    {
+                        // Проверяем что это 8 цифр (дата)
+                        string dateStr = fileName.Substring(prevUnderscoreIndex + 1, lastUnderscoreIndex - prevUnderscoreIndex - 1);
+                        if (dateStr.Length == 8 && int.TryParse(dateStr, out _))
+                        {
+                            // Берем только часть до даты и временной метки
+                            fileName = fileName.Substring(0, prevUnderscoreIndex);
+                        }
+                    }
+                }
+            }
+            
+            // Заменяем _vs_ на " vs "
+            fileName = fileName.Replace("_vs_", " vs ");
+            
+            return fileName;
+        }
 
         /// <summary>
         /// Формирует полный путь к файлу лога битвы по названию

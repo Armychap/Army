@@ -153,7 +153,6 @@ namespace ArmyBattle.Game
         private void DisplayBattleStats()
         {
             Console.WriteLine("\nСТАТИСТИКА БИТВЫ:");
-            Console.WriteLine(new string('-', 40));
             
             Console.WriteLine($"Всего раундов: {round - 1}");
             
@@ -183,7 +182,33 @@ namespace ArmyBattle.Game
             battleInitialized = true;
         }
 
-        // Выполнить один ход в битве
+        // Выполнить один полный раунд (оба удара + проверка специальных способностей)
+        public bool DoSingleRound()
+        {
+            if (!battleInitialized)
+            {
+                InitializeBattle();
+            }
+            
+            if (!(army1.HasAliveUnits() && army2.HasAliveUnits()))
+            {
+                return false; // Битва закончена
+            }
+
+            // Запоминаем текущий номер раунда
+            int startRound = round;
+            
+            // Выполняем ходы пока раунд не изменится (или битва не закончится)
+            while (round == startRound)
+            {
+                if (!DoSingleMove())
+                    return false;
+            }
+            
+            return true;
+        }
+
+        // Выполнить один ход (один удар) в битве
         public bool DoSingleMove()
         {
             if (!battleInitialized)
