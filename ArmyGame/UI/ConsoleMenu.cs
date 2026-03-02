@@ -35,12 +35,8 @@ namespace ArmyBattle.UI
 
         public static void PrintHeader(string title)
         {
-            Console.WriteLine("-------------------------------------");
-            
             // Выводим текст заголовка в центре внимания
             Console.WriteLine(title);
-            
-            Console.WriteLine("-------------------------------------");
         }
 
         /// <summary>
@@ -152,7 +148,7 @@ namespace ArmyBattle.UI
         /// Ждет нажатия любой клавиши и выводит сообщение об этом.
         /// Используется для паузы перед переходом на следующий экран.
         /// </summary>
-        public static void WaitForKey(string message = "\nНажмите любую клавишу...")
+        public static void WaitForKey(string message = "\nНажмите любую клавишу")
         {
             // Выводим сообщение об ожидании
             Console.WriteLine(message);

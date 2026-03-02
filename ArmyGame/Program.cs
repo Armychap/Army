@@ -20,18 +20,18 @@ namespace ArmyBattle
     {
         // ПОЛЯ КЛАССА
         // Сервис для управления сохранением и загрузкой армий в JSON
-        private static ArmyManager armyManager;
+        private static ArmyManager armyManager = null!;
         
         // Сервис для проведения битв и сохранения их логов
-        private static BattleManager battleManager;
+        private static BattleManager battleManager = null!;
 
         // Первая армия, загруженная или созданная в текущей сессии
         // Используется для повторного проведения боя без пересоздания
-        private static IArmy _lastArmy1 = null;
+        private static IArmy? _lastArmy1 = null;
         
         // Вторая армия, загруженная или созданная в текущей сессии
         // Используется для повторного проведения боя без пересоздания
-        private static IArmy _lastArmy2 = null;
+        private static IArmy? _lastArmy2 = null;
 
         static void Main(string[] args)
         {
@@ -57,55 +57,36 @@ namespace ArmyBattle
                 // Очищаем консоль и выводим главное меню
                 ConsoleMenu.ClearConsole();
                 Console.WriteLine("          ГЛАВНОЕ МЕНЮ");
-                Console.WriteLine("-------------------------------------");
-                Console.WriteLine("1 - Автоматическая генерация армий");
-                Console.WriteLine("2 - Ручное создание армий");
-                Console.WriteLine("3 - Загрузить армии с диска");
-                Console.WriteLine("4 - Сохранить армии на диск");
-                Console.WriteLine("5 - Информация о составе армий");
-                Console.WriteLine("6 - Просмотреть историю битв");
-                Console.WriteLine("0 - Выход");
-                Console.WriteLine("-------------------------------------");
-                Console.Write("Выбор: ");
+                Console.WriteLine();
+                Console.WriteLine("1. Новая игра");
+                Console.WriteLine("2. Загрузить игру (продолжить)");
+                Console.WriteLine("3. История");
+                Console.WriteLine("4. Выйти");
+                Console.Write("\nВыбор: ");
 
                 // Читаем выбор пользователя
-                string choice = Console.ReadLine();
+                string? choice = Console.ReadLine();
 
                 // Обрабатываем выбор пользователя
                 switch (choice)
                 {
-                    // Автоматическая генерация двух армий и битва
+                    // Новая игра с выбором способа создания армий
                     case "1":
-                        CreateRandomBattle();
-                        break;
-
-                    // Ручное создание армий через интерактивное меню
-                    case "2":
-                        CreateManualArmies();
+                        StartNewGame();
                         break;
 
                     // Загрузка ранее сохраненных армий
-                    case "3":
+                    case "2":
                         LoadArmiesFromDisk();
                         break;
 
-                    // Сохранение текущих армий в JSON файл
-                    case "4":
-                        SaveCurrentArmies();
-                        break;
-
-                    // Просмотр состава армий
-                    case "5":
-                        ShowStoredArmiesInfo();
-                        break;
-
                     // Просмотр истории
-                    case "6":
+                    case "3":
                         ShowBattleLogs();
                         break;
 
                     // Выход из программы
-                    case "0":
+                    case "4":
                         exit = true;
                         break;
 
@@ -114,6 +95,128 @@ namespace ArmyBattle
                         Console.WriteLine("Неверный выбор!");
                         Console.ReadKey();
                         break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Управляет процессом начала новой игры.
+        /// Запрашивает названия армий, бюджет и способ создания для каждой армии.
+        /// </summary>
+        static void StartNewGame()
+        {
+            // Очищаем экран перед началом
+            ConsoleMenu.ClearConsole();
+
+            // Получаем названия обеих армий от пользователя
+            var (name1, name2) = GetArmyNames();
+            
+            // Получаем общий бюджет для обеих армий
+            int budget = GetCommonBudget(200);
+
+            // Создаем первую армию с красным цветом
+            _lastArmy1 = new Army(name1, ConsoleColor.Red);
+            
+            // Создаем вторую армию с синим цветом
+            _lastArmy2 = new Army(name2, ConsoleColor.Blue);
+
+            // Спрашиваем способ создания первой армии
+            ConsoleMenu.ClearConsole();
+            ConsoleMenu.PrintHeader($"СОЗДАНИЕ АРМИИ: {name1}");
+
+            bool useAutoForArmy1 = AskCreationMethod();
+
+            if (useAutoForArmy1)
+            {
+                // Автоматическое создание первой армии
+                _lastArmy1.GenerateArmyWithBudget(budget);
+                
+                // Очищаем экран и показываем информацию об созданной армии
+                ConsoleMenu.ClearConsole();
+                ConsoleMenu.PrintHeader($"СОЗДАНА АРМИЯ: {name1}");
+                _lastArmy1.DisplayArmyInfo(true);
+                ConsoleMenu.WaitForKey("\nНажмите любую клавишу для продолжения...");
+            }
+            else
+            {
+                // Ручное создание первой армии
+                ConsoleMenu.PrintHeader("НАСТРОЙКА ПЕРВОЙ АРМИИ");
+                SetupArmyManually(_lastArmy1, budget);
+            }
+
+            // Спрашиваем способ создания второй армии
+            ConsoleMenu.ClearConsole();
+            ConsoleMenu.PrintHeader($"СОЗДАНИЕ АРМИИ: {name2}");
+
+            bool useAutoForArmy2 = AskCreationMethod();
+
+            if (useAutoForArmy2)
+            {
+                // Автоматическое создание второй армии
+                _lastArmy2.GenerateArmyWithBudget(budget);
+                
+                // Очищаем экран и показываем информацию об созданной армии
+                ConsoleMenu.ClearConsole();
+                ConsoleMenu.PrintHeader($"СОЗДАНА АРМИЯ: {name2}");
+                _lastArmy2.DisplayArmyInfo(true);
+                ConsoleMenu.WaitForKey("\nНажмите любую клавишу для продолжения...");
+            }
+            else
+            {
+                // Ручное создание второй армии
+                ConsoleMenu.PrintHeader("НАСТРОЙКА ВТОРОЙ АРМИИ");
+                SetupArmyManually(_lastArmy2, budget);
+            }
+
+            // Очищаем экран перед окончательным отображением
+            ConsoleMenu.ClearConsole();
+            
+            // Выводим финальный состав обеих армий
+            ConsoleMenu.PrintHeader("ИТОГОВЫЙ СОСТАВ АРМИЙ");
+            _lastArmy1.DisplayArmyInfo(true);
+            Console.WriteLine();
+            
+            _lastArmy2.DisplayArmyInfo(true);
+
+            Console.WriteLine("\nНажмите Enter для начала битвы");
+            
+            // Читаем нажатую клавишу
+            var key = Console.ReadKey();
+
+            // Если нажата клавиша Enter - начинаем битву
+            if (key.Key == ConsoleKey.Enter)
+            {
+                // Запускаем битву между созданными армиями
+                StartBattle(_lastArmy1, _lastArmy2);
+            }
+        }
+
+        /// <summary>
+        /// Спрашивает у пользователя способ создания армии: автоматический или ручной.
+        /// Возвращает true для автоматического создания, false для ручного.
+        /// </summary>
+        static bool AskCreationMethod()
+        {
+            while (true)
+            {
+                Console.WriteLine("\nВыберите способ создания армии:");
+                Console.WriteLine("1. Создать автоматически");
+                Console.WriteLine("2. Создать вручную");
+                Console.Write("Выбор (1 или 2): ");
+
+                string? choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    return true;
+                }
+                else if (choice == "2")
+                {
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("Неверный выбор! Введите 1 или 2.");
                 }
             }
         }
@@ -225,7 +328,7 @@ namespace ArmyBattle
                 Console.WriteLine($"Текущий состав {army.Name}:");
                 Console.WriteLine($"Всего бойцов: {army.Units.Count}");
                 Console.WriteLine($"Потрачено: {totalCost}/{maxBudget}");
-                Console.WriteLine("-------------------------------------");
+                Console.WriteLine();
 
                 // Если в армии уже есть юниты - выводим их список
                 if (army.Units.Count > 0)
@@ -247,7 +350,7 @@ namespace ArmyBattle
                 Console.Write("Выбор: ");
 
                 // Читаем выбор пользователя
-                string choice = Console.ReadLine();
+                string? choice = Console.ReadLine();
 
                 // Обрабатываем выбор
                 switch (choice)
@@ -358,7 +461,7 @@ namespace ArmyBattle
         static void LoadArmiesFromDisk()
         {
             ConsoleMenu.ClearConsole();
-            ConsoleMenu.PrintHeader("ЗАГРУЗКА АРМИЙ");
+            ConsoleMenu.PrintHeader("ЗАГРУЗКА И ПРОДОЛЖЕНИЕ ИГРЫ");
 
             string[] savedFiles = armyManager.GetSavedArmies();
 
@@ -369,7 +472,7 @@ namespace ArmyBattle
                 return;
             }
 
-            int choice = ConsoleMenu.ShowFileMenu(savedFiles, "ЗАГРУЗКА АРМИЙ");
+            int choice = ConsoleMenu.ShowFileMenu(savedFiles, "ЗАГРУЗКА И ПРОДОЛЖЕНИЕ ИГРЫ");
 
             if (choice >= 1 && choice <= savedFiles.Length)
             {
@@ -381,43 +484,212 @@ namespace ArmyBattle
                     _lastArmy2 = army2;
 
                     ConsoleMenu.ClearConsole();
-                    ConsoleMenu.ShowSuccess("Армии успешно загружены!");
-                    Console.WriteLine($"Первая армия: {_lastArmy1.Name} - {_lastArmy1.Units.Count} бойцов");
-                    Console.WriteLine($"Вторая армия: {_lastArmy2.Name} - {_lastArmy2.Units.Count} бойцов");
+                    ConsoleMenu.ShowSuccess("Игра загружена! Восстанавливаю боевое состояние...");
+                    Console.WriteLine($"\n{_lastArmy1.Name}: {_lastArmy1.Units.Count} всего бойцов, живых: {_lastArmy1.AliveCount()}");
+                    Console.WriteLine($"{_lastArmy2.Name}: {_lastArmy2.Units.Count} всего бойцов, живых: {_lastArmy2.AliveCount()}");
 
-                    Console.WriteLine("\nНажмите Enter для начала битвы или другую клавишу для возврата...");
+                    Console.WriteLine("\nНажмите Enter для продолжения боя или другую клавишу для возврата...");
                     var key = Console.ReadKey();
 
                     if (key.Key == ConsoleKey.Enter)
                     {
-                        StartBattle(_lastArmy1, _lastArmy2);
+                        // Продолжаем боевой цикл с загруженным состоянием
+                        ContinueBattle(_lastArmy1, _lastArmy2);
                     }
                 }
             }
         }
 
-        // Запускает боевой симулятор между двумя армиями
+        /// <summary>
+        /// Продолжает боевой цикл со стороны загруженной игры.
+        /// Восстанавливает боевое состояние на основе текущего состояния юнитов (их здоровья и статуса).
+        /// </summary>
+        static void ContinueBattle(IArmy army1, IArmy army2)
+        {
+            // Запускаем боевой цикл - система автоматически восстановит боевое состояние
+            StartBattle(army1, army2);
+        }
+
+        // Запускает боевой симулятор между двумя армиями с интерактивным меню
         static void StartBattle(IArmy army1, IArmy army2)
         {
-            ConsoleMenu.ClearConsole();
-            ConsoleMenu.PrintHeader("НАЧАЛО БИТВЫ");
+            // Создаем боевой движок для пошагового управления битвой
+            BattleEngine battle = new BattleEngine(army1, army2, 400);
+            
+            // Инициализируем битву (готовим армии)
+            battle.InitializeBattle();
 
-            army1.DisplayArmyInfo(false);
+            // Показываем заголовок битвы
+            try { Console.Clear(); } catch { }
+            Console.WriteLine("НАЧАЛО БИТВЫ");
+            Console.WriteLine($"{army1.Name} против {army2.Name}");
+            Console.WriteLine($"Бюджет каждой команды: {army1.TotalCost}");
             Console.WriteLine();
-            army2.DisplayArmyInfo(false);
 
-            ConsoleMenu.WaitForKey("\nНажмите Enter для начала битвы...");
-
-            battleManager.StartBattle(army1, army2);
-
-            Console.WriteLine("\nСохранить историю битвы? (д/н): ");
-            if (Console.ReadLine()?.ToLower() == "д")
+            // Меню управления боем
+            bool battleActive = true;
+            while (battleActive && (army1.HasAliveUnits() && army2.HasAliveUnits()))
             {
-                battleManager.SaveBattleLog("", $"{army1.Name}_vs_{army2.Name}", army1, army2);
-                ConsoleMenu.ShowSuccess("История сохранена!");
+                // Выводим меню управления боем
+                Console.WriteLine("\nМеню действий");
+                Console.WriteLine("1. Сделать ход");
+                Console.WriteLine("2. Автоматически пройти до конца");
+                Console.WriteLine("3. Сохранить игру");
+                Console.WriteLine("4. Выйти (назад в меню)");
+                Console.Write("Выбор: ");
+
+                string? choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        // Выполняем один раунд (оба удара + проверка способностей)
+                        if (!battle.DoSingleRound())
+                        {
+                            // Битва закончилась
+                            battleActive = false;
+                        }
+                        break;
+
+                    case "2":
+                        // Выполняем все раунды до конца без меню
+                        Console.WriteLine("\nАвтоматическое проведение боя...\n");
+                        while (battle.DoSingleRound())
+                        {
+                            System.Threading.Thread.Sleep(400);
+                        }
+                        battleActive = false;
+                        break;
+
+                    case "3":
+                        // Сохраняем текущое состояние игры и выходим в главное меню
+                        SaveGameDuringBattle(army1, army2);
+                        return;
+
+                    case "4":
+                        // Выход без завершения битвы
+                        Console.WriteLine("\nВы уверены? Битва будет потеряна (д/н): ");
+                        if (Console.ReadLine()?.ToLower() == "д")
+                        {
+                            battleActive = false;
+                            ConsoleMenu.WaitForKey("\nНажмите любую клавишу для возврата в меню...");
+                            return;
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверный выбор!");
+                        break;
+                }
             }
 
-            ConsoleMenu.WaitForKey("\nНажмите любую клавишу для возврата в меню...");
+            // После завершения битвы - показываем меню
+            ConsoleMenu.ClearConsole();
+            Console.WriteLine("     БИТВА ЗАВЕРШЕНА");
+            Console.WriteLine(new string('=', 40));
+            
+            // Определяем победителя
+            if (army1.HasAliveUnits())
+            {
+                Console.ForegroundColor = army1.Color;
+                Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = army2.Color;
+                Console.WriteLine($"ПОБЕДИТЕЛЬ: {army2.Name}!");
+                Console.ResetColor();
+            }
+
+            // Автоматически сохраняем историю битвы
+            Console.WriteLine("\nСохраняю историю битвы...");
+            battleManager.SaveBattleLog("", $"{army1.Name}_vs_{army2.Name}", army1, army2);
+            ConsoleMenu.ShowSuccess("История битвы сохранена!");
+
+            // Меню после завершения битвы
+            bool exitBattle = false;
+            while (!exitBattle)
+            {
+                Console.WriteLine("\nМеню действий");
+                Console.WriteLine("1. Сохранить состояние игры");
+                Console.WriteLine("2. Выйти (назад в меню)");
+                Console.Write("Выбор: ");
+
+                string? choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        // Сохраняем состояние игры (завершенной) и возвращаемся в главное меню
+                        SaveGameState(army1, army2, true);
+                        exitBattle = true;
+                        break;
+
+                    case "2":
+                        // Выход в главное меню
+                        exitBattle = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверный выбор!");
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Сохраняет состояние текущей игры (армий) для возможности продолжения позже.
+        /// Возвращает true если успешно сохранилось, иначе false.
+        /// </summary>
+        /// <summary>
+        /// Сохраняет состояние игры автоматически во время боя (без запроса названия).
+        /// Использует названия армий для создания названия сохранения.
+        /// </summary>
+        static void SaveGameDuringBattle(IArmy army1, IArmy army2)
+        {
+            // Автоматически генерируем имя сохранения на основе названия армий
+            string saveName = $"{army1.Name}_vs_{army2.Name}";
+            
+            ConsoleMenu.ClearConsole();
+            ConsoleMenu.PrintHeader("СОХРАНЕНИЕ СОСТОЯНИЯ ИГРЫ");
+            
+            // Сохраняем состояние армий для продолжения игры
+            armyManager.SaveArmies(army1, army2, saveName);
+            
+            // Сохраняем историю битвы с меткой что это незавершенная игра
+            string gameStatus = "[Игра сохранена в процессе - может быть продолжена]\n\n";
+            battleManager.SaveBattleLog(gameStatus, saveName, army1, army2);
+            
+            ConsoleMenu.ShowSuccess($"Игра сохранена как '{saveName}'!");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Сохраняет состояние завершенной игры с возможностью задать название.
+        /// Возвращает true если успешно сохранилось, иначе false.
+        /// </summary>
+        static bool SaveGameState(IArmy army1, IArmy army2, bool isGameComplete = false)
+        {
+            ConsoleMenu.ClearConsole();
+            ConsoleMenu.PrintHeader("СОХРАНЕНИЕ СОСТОЯНИЯ ИГРЫ");
+            string saveName = ConsoleMenu.GetInput("Введите название для сохранения (без пробелов): ");
+            
+            if (!string.IsNullOrWhiteSpace(saveName))
+            {
+                // Сохраняем состояние армий для продолжения игры
+                armyManager.SaveArmies(army1, army2, saveName);
+                
+                // Сохраняем историю битвы (стадия игры)
+                string gameStatus = isGameComplete ? "" : "[Игра сохранена в процессе - может быть продолжена]\n\n";
+                battleManager.SaveBattleLog(gameStatus, $"{army1.Name}_vs_{army2.Name}", army1, army2);
+                
+                ConsoleMenu.ShowSuccess($"Игра сохранена как '{saveName}'!");
+                Console.ReadKey();
+                return true;
+            }
+            
+            return false;
         }
 
         // Показывает интерактивное меню для просмотра историй битв
@@ -436,22 +708,48 @@ namespace ArmyBattle
             bool exitMenu = false;
             while (!exitMenu)
             {
-                int choice = ConsoleMenu.ShowFileMenu(battles, "ИСТОРИИ БИТВ");
-
-                if (choice >= 1 && choice <= battles.Length)
+                // Очищаем экран и выводим меню
+                ConsoleMenu.ClearConsole();
+                ConsoleMenu.PrintHeader("ИСТОРИИ БИТВ");
+                Console.WriteLine("Доступные варианты:");
+                
+                // Выводим красивые имена битв
+                for (int i = 0; i < battles.Length; i++)
                 {
-                    string filePath = battleManager.GetLogPath(battles[choice - 1]);
-                    string content = File.ReadAllText(filePath);
-
-                    ConsoleMenu.ClearConsole();
-                    Console.WriteLine($"История битвы: {battles[choice - 1]}");
-                    Console.WriteLine("-------------------------------------");
-                    Console.WriteLine(content);
-                    ConsoleMenu.WaitForKey("\nНажмите любую клавишу для возврата к списку...");
+                    string displayName = battleManager.GetBattleDisplayName(battles[i]);
+                    Console.WriteLine($"{i + 1}. {displayName}");
                 }
-                else if (choice == 0)
+                
+                Console.Write("\nВыберите номер (0 - выход): ");
+                
+                if (int.TryParse(Console.ReadLine(), out int choice))
                 {
-                    exitMenu = true;
+                    if (choice >= 1 && choice <= battles.Length)
+                    {
+                        string filePath = battleManager.GetLogPath(battles[choice - 1]);
+                        string content = File.ReadAllText(filePath);
+
+                        ConsoleMenu.ClearConsole();
+                        string displayName = battleManager.GetBattleDisplayName(battles[choice - 1]);
+                        Console.WriteLine($"История битвы: {displayName}");
+                        Console.WriteLine();
+                        Console.WriteLine(content);
+                        ConsoleMenu.WaitForKey("\nНажмите любую клавишу для возврата к списку...");
+                    }
+                    else if (choice == 0)
+                    {
+                        exitMenu = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Неверный выбор!");
+                        Console.ReadKey();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Неверный ввод!");
+                    Console.ReadKey();
                 }
             }
         }
@@ -525,9 +823,9 @@ namespace ArmyBattle
         }
 
         // Получает единый бюджет для обеих армий от пользователя
-        static int GetCommonBudget(int defaultBudget = 200)
+        static int GetCommonBudget(int defaultBudget)
         {
-            int budget = ConsoleMenu.GetIntInput($"\nВведите бюджет для обеих армий (стандарт {defaultBudget}): ");
+            int budget = ConsoleMenu.GetIntInput($"\nВведите бюджет для обеих армий: ");
             if (budget <= 0)
                 budget = defaultBudget;
             return budget;
