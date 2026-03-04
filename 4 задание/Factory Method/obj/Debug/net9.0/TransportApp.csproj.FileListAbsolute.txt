@@ -1,0 +1,15 @@
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\bin\Debug\net9.0\TransportApp.exe
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\bin\Debug\net9.0\TransportApp.deps.json
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\bin\Debug\net9.0\TransportApp.runtimeconfig.json
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\bin\Debug\net9.0\TransportApp.dll
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\bin\Debug\net9.0\TransportApp.pdb
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\TransportApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\TransportApp.AssemblyInfoInputs.cache
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\TransportApp.AssemblyInfo.cs
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\TransportApp.csproj.CoreCompileInputs.cache
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\TransportApp.sourcelink.json
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\TransportApp.dll
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\refint\TransportApp.dll
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\TransportApp.pdb
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\TransportApp.genruntimeconfig.cache
+C:\Users\Alex\.vscode\Army\4 задание\Factory Method\obj\Debug\net9.0\ref\TransportApp.dll
