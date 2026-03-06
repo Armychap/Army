@@ -8,6 +8,8 @@ namespace NotificationSystem
         {
             Console.WriteLine("СИСТЕМА ОПОВЕЩЕНИЙ\n");
 
+            SingletonDemo.ShowDemonstration();
+
             Menu menu = new Menu();
             menu.Run();
         }
