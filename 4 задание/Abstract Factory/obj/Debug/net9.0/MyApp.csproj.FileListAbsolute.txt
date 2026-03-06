@@ -1,0 +1,15 @@
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\bin\Debug\net9.0\MyApp.exe
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\bin\Debug\net9.0\MyApp.deps.json
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\bin\Debug\net9.0\MyApp.runtimeconfig.json
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\bin\Debug\net9.0\MyApp.dll
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\bin\Debug\net9.0\MyApp.pdb
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\MyApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\MyApp.AssemblyInfoInputs.cache
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\MyApp.AssemblyInfo.cs
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\MyApp.csproj.CoreCompileInputs.cache
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\MyApp.sourcelink.json
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\MyApp.dll
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\refint\MyApp.dll
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\MyApp.pdb
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\MyApp.genruntimeconfig.cache
+C:\Users\Alex\.vscode\Army\4 задание\Abstract Factory\obj\Debug\net9.0\ref\MyApp.dll
