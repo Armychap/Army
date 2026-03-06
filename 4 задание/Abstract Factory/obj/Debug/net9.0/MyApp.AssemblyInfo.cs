@@ -10,12 +10,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("TransportApp")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("MyApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b062cba420854524244c5d67b1ef21ced68713cf")]
-[assembly: System.Reflection.AssemblyProductAttribute("TransportApp")]
-[assembly: System.Reflection.AssemblyTitleAttribute("TransportApp")]
+[assembly: System.Reflection.AssemblyProductAttribute("MyApp")]
+[assembly: System.Reflection.AssemblyTitleAttribute("MyApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // Создано классом WriteCodeFragment MSBuild.
