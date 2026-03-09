@@ -1,8 +1,6 @@
 using System;
 
 // Интерфейсы семейства продуктов
-// Это то, что делает Abstract Factory — создаёт семейство связанных объектов
-
 public interface IHotelBooking
 {
     string GetHotelName();
@@ -28,7 +26,6 @@ public class CheapFlight : IFlightBooking
     public decimal GetPrice() => 3000;
 }
 
-
 public class LuxuryHotel : IHotelBooking
 {
     public string GetHotelName() => "Пятизвёздочный отель";
@@ -41,14 +38,14 @@ public class LuxuryFlight : IFlightBooking
     public decimal GetPrice() => 15000;
 }
 
-// Абстрактная фабрика (интерфейс для создания семейства)
+// Абстрактная фабрика
 public interface ITravelBookingFactory
 {
-    IHotelBooking CreateHotelBooking();   // метод для создания отеля
-    IFlightBooking CreateFlightBooking(); // метод для создания авиабилета
+    IHotelBooking CreateHotelBooking();
+    IFlightBooking CreateFlightBooking();
 }
 
-// Конкретные фабрики (реализуют создание семейства)
+// Конкретные фабрики
 public class CheapTravelFactory : ITravelBookingFactory
 {
     public IHotelBooking CreateHotelBooking() => new CheapHotel();
@@ -61,30 +58,68 @@ public class LuxuryTravelFactory : ITravelBookingFactory
     public IFlightBooking CreateFlightBooking() => new LuxuryFlight();
 }
 
-class Program
+// ввод пользователя
+public class TravelConsoleUI
 {
-    static void Main()
+    public void ShowHeader()
     {
         Console.WriteLine("Абстрактная фабрика: Система бронирования\n");
-        
-        // Выбор фабрики в зависимости от бюджета
+    }
+    
+    public int GetUserChoice()
+    {
         Console.WriteLine("Выберите тип путешествия: 1 - Эконом, 2 - Вип");
-        var choice = Console.ReadLine();
-        
-        // Создаём нужную конкретную фабрику (это единственное место, где знаем о конкретном классе)
-        ITravelBookingFactory factory = choice == "1" 
-            ? new CheapTravelFactory() 
-            : new LuxuryTravelFactory();
-
-        // Формирование бронирования через фабрику (не знаем, какие конкретно объекты создаются)
-        var hotel = factory.CreateHotelBooking();
-        var flight = factory.CreateFlightBooking();
-
+        return Console.ReadLine() == "1" ? 1 : 2;
+    }
+    
+    public void ShowBooking(IHotelBooking hotel, IFlightBooking flight)
+    {
         Console.WriteLine($"\nЗабронировано:");
         Console.WriteLine($"Отель: {hotel.GetHotelName()} - {hotel.GetPrice()} руб.");
         Console.WriteLine($"Авиабилет: {flight.GetAirline()} - {flight.GetPrice()} руб.");
         Console.WriteLine($"Итого: {hotel.GetPrice() + flight.GetPrice()} руб.");
-        
+    }
+    
+    public void WaitForKey()
+    {
         Console.ReadKey();
+    }
+}
+
+// создание 
+public class TravelFactoryCreator
+{
+    public ITravelBookingFactory CreateFactory(int choice)
+    {
+        return choice == 1 
+            ? new CheapTravelFactory() 
+            : new LuxuryTravelFactory();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Создаём вспомогательные классы
+        var ui = new TravelConsoleUI();
+        var factoryCreator = new TravelFactoryCreator();
+        
+        // заголовок
+        ui.ShowHeader();
+        
+        // выбор пользователя
+        int choice = ui.GetUserChoice();
+        
+        // Создаём нужную фабрику
+        ITravelBookingFactory factory = factoryCreator.CreateFactory(choice);
+        
+        // Создаём бронирование
+        var hotel = factory.CreateHotelBooking();
+        var flight = factory.CreateFlightBooking();
+        
+        // Показываем результат
+        ui.ShowBooking(hotel, flight);
+        ui.WaitForKey();
     }
 }

@@ -161,7 +161,6 @@ public class Ship : ITransport
     }
 }
 
-// Создатель с фабричным методом
 //CreateTransport() — фабричный метод
 //Он абстрактный — потомки обязаны его реализовать
 //Код в PlanDelivery не знает, какой конкретно транспорт будет создан
@@ -176,7 +175,7 @@ public abstract class Logistics
     }
 }
 
-// Каждый потомок переопределяет фабричный метод и создаёт конкретный тип транспорта
+// переопределяем фабричный метод и создаём конкретный тип транспорта
 
 public class RoadLogistics : Logistics
 {
@@ -201,6 +200,13 @@ public class SeaLogistics : Logistics
 
 class Program
 {
+    // получает Logistics и вызывает PlanDelivery
+    // внутри автоматически срабатывает нужный фабричный метод
+    static void TestDelivery(Logistics logistics, string cargo, decimal distance)
+    {
+        logistics.PlanDelivery(cargo, distance);
+    }
+    
     static void Main()
     {
         Console.WriteLine("Транспортная логистика\n");
@@ -213,10 +219,5 @@ class Program
         Console.ReadKey();
     }
 
-    // получает Logistics и вызывает PlanDelivery
-    // внутри автоматически срабатывает нужный фабричный метод
-    static void TestDelivery(Logistics logistics, string cargo, decimal distance)
-    {
-        logistics.PlanDelivery(cargo, distance);
-    }
+    
 }
