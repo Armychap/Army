@@ -1,0 +1,15 @@
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\bin\Debug\net8.0\ObjectPool.exe
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\bin\Debug\net8.0\ObjectPool.deps.json
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\bin\Debug\net8.0\ObjectPool.runtimeconfig.json
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\bin\Debug\net8.0\ObjectPool.dll
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\bin\Debug\net8.0\ObjectPool.pdb
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ObjectPool.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ObjectPool.AssemblyInfoInputs.cache
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ObjectPool.AssemblyInfo.cs
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ObjectPool.csproj.CoreCompileInputs.cache
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ObjectPool.sourcelink.json
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ObjectPool.dll
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\refint\ObjectPool.dll
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ObjectPool.pdb
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ObjectPool.genruntimeconfig.cache
+C:\Users\Alex\.vscode\Army\5 задание\Object pool\obj\Debug\net8.0\ref\ObjectPool.dll
