@@ -1,0 +1,15 @@
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\bin\Debug\net8.0\LazyInitialization.exe
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\bin\Debug\net8.0\LazyInitialization.deps.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\bin\Debug\net8.0\LazyInitialization.runtimeconfig.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\bin\Debug\net8.0\LazyInitialization.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\bin\Debug\net8.0\LazyInitialization.pdb
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\LazyInitialization.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\LazyInitialization.AssemblyInfoInputs.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\LazyInitialization.AssemblyInfo.cs
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\LazyInitialization.csproj.CoreCompileInputs.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\LazyInitialization.sourcelink.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\LazyInitialization.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\refint\LazyInitialization.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\LazyInitialization.pdb
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\LazyInitialization.genruntimeconfig.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\5 задание\Lazy Initialization\obj\Debug\net8.0\ref\LazyInitialization.dll
