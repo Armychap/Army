@@ -39,6 +39,9 @@ namespace ArmyBattle.Models
         //Специальная способность бойца
         ISpecialAbility SpecialAbility { get; set; }
 
+        //Армия, к которой принадлежит боец
+        IArmy Army { get; set; }
+
         /// Проверить живой ли боец
         bool IsAlive { get; }
 
