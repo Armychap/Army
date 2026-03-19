@@ -39,6 +39,9 @@ namespace ArmyBattle.Models
         //Специальная способность бойца
         ISpecialAbility SpecialAbility { get; set; }
 
+        //Армия, к которой принадлежит боец
+        IArmy Army { get; set; }
+
         /// Проверить живой ли боец
         bool IsAlive { get; }
 
@@ -49,7 +52,7 @@ namespace ArmyBattle.Models
         void AttackUnit(IUnit target);
         
         /// Проверить может ли боец использовать специальную способность против цели
-        bool CanUseSpecialAbility(IUnit target);
+        bool CanUseSpecialAbility(IUnit? target);
         
         /// Использовать специальную способность против цели
         void UseSpecialAbility(IUnit target);

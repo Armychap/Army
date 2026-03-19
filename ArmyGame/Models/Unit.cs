@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace ArmyBattle.Models
 {
@@ -11,6 +12,10 @@ namespace ArmyBattle.Models
         public int Range { get; set; }  // Дальность действия
         public int Power { get; set; }  // Сила способности
         
+        public IUnit LastHealed { get; private set; }  // Для лечения
+        
+        private Random random = new Random();
+        
         public SpecialAbility(string name, int range, int power)
         {
             Name = name;
@@ -18,12 +23,32 @@ namespace ArmyBattle.Models
             Power = power;
         }
 
-        // По умолчанию просто наносит урон; можно переопределять в наследниках.
+        // Выполняет способность: урон или лечение в зависимости от типа юнита
         public void Execute(IUnit user, IUnit target)
         {
-            if (user == null || target == null) return;
-            target.TakeDamage(Power, user.Name);
-            user.DamageDealt += Math.Max(1, Power - target.Defence);
+            if (user is Healer)
+            {
+                // Лечение: выбрать случайного союзника
+                var allies = user.Army.Units.Where(u => u.IsAlive && u != user && u is ICanBeHealed).ToList();
+                if (allies.Count == 0) 
+                {
+                    LastHealed = null;
+                    return;
+                }
+                
+                var chosen = allies[random.Next(allies.Count)];
+                LastHealed = chosen;
+                
+                // Восстанавливаем здоровье до первоначального состояния
+                chosen.Health = chosen.MaxHealth;
+            }
+            else
+            {
+                // Урон по умолчанию
+                if (user == null || target == null) return;
+                target.TakeDamage(Power, user.Name);
+                user.DamageDealt += Math.Max(1, Power - target.Defence);
+            }
         }
     }
     
@@ -64,6 +89,9 @@ namespace ArmyBattle.Models
         
         // Специальная способность (например, для лучников)
         public ISpecialAbility SpecialAbility { get; set; }
+
+        // Армия, к которой принадлежит юнит
+        public IArmy Army { get; set; }
 
         // Конструктор для инициализации характеристик
         protected Unit(string name, int attack, int defence, int health, 
@@ -112,7 +140,7 @@ namespace ArmyBattle.Models
         }
         
         // Использование специального умения через интерфейс
-        public virtual void UseSpecialAbility(IUnit target)
+        public virtual void UseSpecialAbility(IUnit? target)
         {
             if (CanUseSpecialAbility(target))
             {
@@ -123,7 +151,7 @@ namespace ArmyBattle.Models
         // Получение отображаемого имени бойца
         public string GetDisplayName(string prefix)
         {
-            return $"{FighterNumber}";
+            return $"{prefix} {FighterNumber}";
         }
     }
 }

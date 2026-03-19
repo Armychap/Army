@@ -146,6 +146,23 @@ namespace ArmyBattle.Services
             // Возвращаем массив имен логов
             return result;
         }
+
+        /// <summary>
+        /// Получает содержимое лога битвы по имени файла (без расширения)
+        /// </summary>
+        public string GetBattleLog(string battleName)
+        {
+            // Ищем файлы с данным именем
+            var files = Directory.GetFiles(logsDirectory, $"{battleName}*.txt");
+            
+            if (files.Length > 0)
+            {
+                // Берем первый найденный файл (самый свежий)
+                return File.ReadAllText(files[0]);
+            }
+            
+            return "";
+        }
         
         public string GetBattleDisplayName(string fileName)
         {

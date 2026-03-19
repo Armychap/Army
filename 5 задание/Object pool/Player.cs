@@ -4,16 +4,14 @@ using System.Threading.Tasks;
 
 namespace ObjectPoolBulletExample
 {
-    // Игрок/боец, умеющий стрелять в другого.
-    // Сам по себе он простой — состояние, позиция и тип снаряда.
-    // В пул передается только в момент выстрела, чтобы снизить связность.
-    // Класс бойца (игрок, который может стрелять)
+    // Игрок
+    // В пул передается только в момент выстрела
     public class Player
     {
         public string Name { get; private set; }
         public Vector3 Position { get; set; }
-        public int Damage { get; set; }
-        public string AmmoType { get; set; }
+        public int Damage { get; set; } 
+        public string AmmoType { get; set; } //тип снаряда
 
         private readonly Random _random = new Random();
 
@@ -31,7 +29,7 @@ namespace ObjectPoolBulletExample
             // вычисляем расстояние до цели по оси X
             float distance = Math.Abs(enemy.Position.x - Position.x);
 
-            Console.WriteLine($"\n{Name} -> {enemy.Name} ({distance}м)"); // выводим действие
+            Console.WriteLine($"\n{Name} -> {enemy.Name} ({distance}м)");
 
             var bullet = pool.Get(); // берём пулю из пула
             int bonusDamage = _random.Next(0, 3); // рандомный бонус

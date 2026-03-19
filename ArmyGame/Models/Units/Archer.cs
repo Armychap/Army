@@ -5,7 +5,7 @@ namespace ArmyBattle.Models
     /// <summary>
     /// Лучник
     /// </summary>
-    public class Archer : Unit
+    public class Archer : Unit, ICanBeHealed
     {
         public Archer(int fighterNumber) 
             : base(

@@ -5,7 +5,7 @@ namespace ArmyBattle.Models
     /// <summary>
     /// Слабый боец
     /// </summary>
-    public class WeakFighter : Unit
+    public class WeakFighter : Unit, ICanBeHealed
     {
         public WeakFighter(int fighterNumber) 
             : base(
