@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ObjectPool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e26fd4fb2f9e8d1c916e4e0c8ee37dcc2689caf9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+696f23df902ce613a5168abd89291d2d5c65f531")]
 [assembly: System.Reflection.AssemblyProductAttribute("ObjectPool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ObjectPool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

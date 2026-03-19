@@ -165,6 +165,7 @@ namespace ArmyBattle.Models
             var availableFighters = new List<Tuple<int, Func<int, IUnit>>>
             {
                 new Tuple<int, Func<int, IUnit>>(40, (num) => new StrongFighter(num)),
+                new Tuple<int, Func<int, IUnit>>(30, (num) => new Wizard(num)),
                 new Tuple<int, Func<int, IUnit>>(25, (num) => new Archer(num)),
                 new Tuple<int, Func<int, IUnit>>(20, (num) => new Healer(num)),
                 new Tuple<int, Func<int, IUnit>>(15, (num) => new WeakFighter(num))

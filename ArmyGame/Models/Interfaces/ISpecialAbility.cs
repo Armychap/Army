@@ -17,6 +17,6 @@ namespace ArmyBattle.Models
 
         /// Выполнить специальную способность
         /// Предоставляет место для расширения (например, проверка условий)
-        void Execute(IUnit user, IUnit target);
+        void Execute(IUnit user, IUnit? target);
     }
 }

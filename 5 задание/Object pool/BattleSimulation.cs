@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace ObjectPoolBulletExample
 {
-    // основная логика команд и учёта статистики
     // Класс, инкапсулирующий логику симуляции боя и работы пула
     public class BattleSimulation
     {
@@ -13,30 +12,31 @@ namespace ObjectPoolBulletExample
         private readonly int _playersPerTeam; // размер команды
         private readonly int _roundsCount; // раундов в матче
 
-        public BattleSimulation(int poolSize = 10, int playersPerTeam = 4, int roundsCount = 3)
+        public BattleSimulation(int poolSize = 10, int playersPerTeam = 4, int roundsCount = 1)
         {
-            _poolSize = poolSize; // записываем конфиг
+            _poolSize = poolSize;
             _playersPerTeam = playersPerTeam;
             _roundsCount = roundsCount;
         }
 
+        // Метод для запуска симуляции боя
         public async Task RunAsync()
         {
             var bulletPool = new BulletPool(_poolSize); // готовая коллекция пуль
 
-            var teamFirst = CreateTeam(1, "Бронебойная", "Разрывная", "Обычная", "Трассирующая"); // создаём 1ю команду
-            var teamSecond = CreateTeam(5, "Разрывная", "Бронебойная", "Трассирующая", "Обычная"); // 2ю
+            var teamFirst = CreateTeam(1, "Бронебойная", "Разрывная", "Обычная", "Трассирующая"); // первая команда
+            var teamSecond = CreateTeam(5, "Разрывная", "Бронебойная", "Трассирующая", "Обычная"); // вторая команда
 
-            Console.WriteLine("Бой"); // стартовый текст
+            Console.WriteLine("Бой");
             var stopwatch = Stopwatch.StartNew(); // время
             int totalShots = 0; // счетчик выстрелов
             var random = new Random(); // выбор случайного врага
 
             for (int round = 0; round < _roundsCount; round++)
             {
-                Console.WriteLine($"\nРаунд {round + 1}"); // номер раунда
+                Console.WriteLine($"\nРаунд {round + 1}");
 
-                var tasks = new List<Task>(); // список задач
+                var tasks = new List<Task>(); // список задач 
 
                 foreach (var attacker in teamFirst)
                 {
@@ -45,7 +45,7 @@ namespace ObjectPoolBulletExample
                     totalShots++; // увеличиваем счетчик
                 }
 
-                foreach (var attacker in teamSecond)
+                foreach (var attacker in teamSecond) // повторяем для второй команды
                 {
                     var target = teamFirst[random.Next(teamFirst.Count)];
                     tasks.Add(attacker.ShootAt(target, bulletPool));
@@ -53,14 +53,15 @@ namespace ObjectPoolBulletExample
                 }
 
                 await Task.WhenAll(tasks); // дождаться всех выстрелов
-                Console.WriteLine($"\nРаунд {round + 1} окончен"); // раунд завершён
-                await Task.Delay(1000); // небольшая пауза
+                Console.WriteLine($"\nРаунд {round + 1} окончен"); 
+                await Task.Delay(1000); //  пауза
             }
 
             stopwatch.Stop(); // остановить таймер
             PrintStats(stopwatch.ElapsedMilliseconds, totalShots, bulletPool); // выводим статистику
         }
 
+        // Метод для создания команды с заданными типами снарядов
         private List<Player> CreateTeam(int startIndex, params string[] ammoTypes)
         {
             var team = new List<Player>(); // новый список
@@ -80,14 +81,14 @@ namespace ObjectPoolBulletExample
 
         private void PrintStats(long elapsedMs, int totalShots, BulletPool pool)
         {
-            Console.WriteLine("\nИтоги"); // заголовок
-            Console.WriteLine($"Время: {elapsedMs} мс"); // время работы
-            Console.WriteLine($"Выстрелов: {totalShots}"); // количество выстрелов
+            Console.WriteLine("\nИтоги"); 
+            Console.WriteLine($"Время: {elapsedMs} мс"); 
+            Console.WriteLine($"Выстрелов: {totalShots}"); 
             Console.WriteLine($"Пул: {_poolSize} пуль"); // размер пула
-            Console.WriteLine($"Создано пуль: {pool.TotalCreated}"); // статистика пула
+            Console.WriteLine($"Создано пуль: {pool.TotalCreated}"); 
             Console.WriteLine($"Использовано: {pool.TotalBulletsUsed}");
             Console.WriteLine($"Осталось: {pool.AvailableCount}");
-            Console.ReadKey(); // ждем нажатия
+            Console.ReadKey(); 
         }
     }
 }

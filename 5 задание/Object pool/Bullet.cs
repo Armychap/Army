@@ -6,7 +6,7 @@ namespace ObjectPoolBulletExample
 {
     public class Bullet
     {
-        public int Id { get; private set; } // уникальный идентификатор
+        public int Id { get; private set; }
         public string BulletType { get; set; } = "Обычная"; // тип пули
         public int Damage { get; set; } // урон
         public bool IsActive { get; private set; } // находится ли в использовании
@@ -35,14 +35,14 @@ namespace ObjectPoolBulletExample
             IsActive = true; // активируем пуля
 
             Console.WriteLine($"Пуля #{Id} [{BulletType}] Урон: {Damage}. " +
-                            $"{Position.x} -> {TargetPosition.x}"); // вывод данных
+                            $"{Position.x} -> {TargetPosition.x}");
         }
 
         public async Task FlyAsync(float distance)
         {
             if (!IsActive) return; // только если активна
 
-            Console.WriteLine($"Пуля #{Id} летит..."); // старт полета
+            Console.WriteLine($"Пуля #{Id} летит");
 
             float flightTime = distance / Speed; // сколько займет путь
             float elapsed = 0; // сколько прошли
@@ -56,10 +56,10 @@ namespace ObjectPoolBulletExample
 
                 if (Math.Abs(t - 0.3) < 0.01 || Math.Abs(t - 0.7) < 0.01)
                 {
-                    Console.WriteLine($"Пуля #{Id} пролетает ({Position.x:F1})"); // промежуточный вывод
+                    Console.WriteLine($"Пуля #{Id} пролетает ({Position.x:F1})");
                 }
 
-                await Task.Delay(30); // имитация времени
+                await Task.Delay(30); 
                 elapsed += 0.03f; // увеличиваем прошедшее
             }
 
@@ -76,9 +76,9 @@ namespace ObjectPoolBulletExample
                 "Бронебойная" => "пробитие",
                 "Трассирующая" => "светится",
                 _ => "попадание"
-            }; // эффект в зависимости от типа
+            };
 
-            Console.WriteLine($"Пуля #{Id} попала! {hitEffect}"); // сообщаем о попадании
+            Console.WriteLine($"Пуля #{Id} попала! {hitEffect}"); 
             IsActive = false; // сбрасываем флаг
         }
 

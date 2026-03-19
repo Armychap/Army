@@ -5,14 +5,15 @@ using System.Threading;
 
 namespace LazyInitializationReports
 {
-    /// <summary>
-    /// Склад данных — тяжёлый объект
-    /// </summary>
+    
+    // Склад данных — тяжёлый объект
     public sealed class DataWarehouse
     {
         public Guid ConnectionId { get; } = Guid.NewGuid();
         public DateTime ConnectedAt { get; } = DateTime.Now;
 
+        
+        // Симулирует подключение к удалённому хранилищу
         public DataWarehouse()
         {
             Console.WriteLine("[DataWarehouse] Подключение к хранилищу данных...");
@@ -22,11 +23,14 @@ namespace LazyInitializationReports
             Console.WriteLine("[DataWarehouse] Готово.");
         }
 
+        
+        // Возвращает набор строк отчёта, имитируя выполнение запроса к реальной БД
+        // Метод вызывается через ленивый объект
         public IReadOnlyList<ReportRow> QueryMetrics(ReportType type, DateOnly date)
         {
             var sw = Stopwatch.StartNew();
 
-            // Имитируем запрос 
+            // Имитируем сетевой/базовый запрос разной длительности
             Thread.Sleep(type switch
             {
                 ReportType.Daily => 250,
@@ -35,7 +39,7 @@ namespace LazyInitializationReports
                 _ => 300
             });
 
-            // Чуть разнообразия, чтобы видно было, что значения "живые"
+            // Чуть разнообразия, чтобы было видно, что объекты действительно разными
             var seed = HashCode.Combine((int)type, date.DayNumber, ConnectionId);
             var rnd = new Random(seed);
 
