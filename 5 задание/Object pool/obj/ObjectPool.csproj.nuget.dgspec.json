@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\ObjectPool.csproj": {}
+    "C:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\ObjectPool.csproj": {}
   },
   "projects": {
-    "c:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\ObjectPool.csproj": {
+    "C:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\ObjectPool.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\ObjectPool.csproj",
+        "projectUniqueName": "C:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\ObjectPool.csproj",
         "projectName": "ObjectPool",
-        "projectPath": "c:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\ObjectPool.csproj",
+        "projectPath": "C:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\ObjectPool.csproj",
         "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\obj\\",
+        "outputPath": "C:\\Users\\Alex\\.vscode\\Army\\5 задание\\Object pool\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

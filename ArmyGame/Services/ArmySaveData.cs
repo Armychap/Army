@@ -54,6 +54,26 @@ namespace ArmyBattle.Services
         /// Используется для отслеживания истории боев.
         /// </summary>
         public DateTime SaveDate { get; set; }
+        
+        /// <summary>
+        /// Текущий раунд битвы.
+        /// </summary>
+        public int CurrentRound { get; set; }
+        
+        /// <summary>
+        /// Текущий ход атаки (0 или 1).
+        /// </summary>
+        public int AttackTurn { get; set; }
+        
+        /// <summary>
+        /// Флаг, кто первый атакующий (true - армия 1, false - армия 2).
+        /// </summary>
+        public bool FirstAttackerIsArmy1 { get; set; }
+        
+        /// <summary>
+        /// Флаг, нужно ли новый заголовок раунда.
+        /// </summary>
+        public bool NeedNewRoundHeader { get; set; }
     }
 
     /// <summary>

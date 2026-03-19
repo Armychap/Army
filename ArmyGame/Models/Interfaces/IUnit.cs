@@ -52,7 +52,7 @@ namespace ArmyBattle.Models
         void AttackUnit(IUnit target);
         
         /// Проверить может ли боец использовать специальную способность против цели
-        bool CanUseSpecialAbility(IUnit target);
+        bool CanUseSpecialAbility(IUnit? target);
         
         /// Использовать специальную способность против цели
         void UseSpecialAbility(IUnit target);

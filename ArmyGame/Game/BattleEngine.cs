@@ -17,8 +17,8 @@ namespace ArmyBattle.Game
         private int round;
         private readonly Random random;
         private int battleSpeed;
-        private IUnit currentFighter1;
-        private IUnit currentFighter2;
+        private IUnit? currentFighter1;
+        private IUnit? currentFighter2;
         private bool needNewRoundHeader;
         private bool firstAttackerIsArmy1;
         private int attackTurn; // 0 = первый атакующий, 1 = второй атакующий
@@ -39,6 +39,12 @@ namespace ArmyBattle.Game
             attackTurn = 0;
             battleInitialized = false;
         }
+
+        // Публичные свойства для доступа к состоянию битвы
+        public int Round => round;
+        public int AttackTurn => attackTurn;
+        public bool FirstAttackerIsArmy1 => firstAttackerIsArmy1;
+        public bool NeedNewRoundHeader => needNewRoundHeader;
 
         // Запуск битвы с выводом заголовка и полной симуляцией ходов
         public void StartBattle()
@@ -77,8 +83,8 @@ namespace ArmyBattle.Game
 
         private void DisplayHealthInfo()
         {
-            Console.WriteLine($"  Здоровье {currentFighter1.FighterNumber}: {Math.Max(0, currentFighter1.Health)}/{currentFighter1.MaxHealth}");
-            Console.WriteLine($"  Здоровье {currentFighter2.FighterNumber}: {Math.Max(0, currentFighter2.Health)}/{currentFighter2.MaxHealth}");
+            Console.WriteLine($"Здоровье {currentFighter1.FighterNumber}: {Math.Max(0, currentFighter1.Health)}/{currentFighter1.MaxHealth}");
+            Console.WriteLine($"Здоровье {currentFighter2.FighterNumber}: {Math.Max(0, currentFighter2.Health)}/{currentFighter2.MaxHealth}");
             Console.WriteLine();
         }
 
@@ -127,7 +133,7 @@ namespace ArmyBattle.Game
         private void EndBattle()
         {
             Console.WriteLine();
-            Console.WriteLine("     БИТВА ЗАВЕРШЕНА");
+            Console.WriteLine("БИТВА ЗАВЕРШЕНА");
             Console.WriteLine(new string('=', 40));
             
             bool army1Wins = army1.HasAliveUnits();
@@ -159,10 +165,10 @@ namespace ArmyBattle.Game
             
             // Статистика по армиям
             Console.WriteLine($"\n{army1.Name}:");
-            Console.WriteLine($"  Выжило бойцов: {army1.AliveCount()}/{army1.Units.Count}");
+            Console.WriteLine($"Выжило бойцов: {army1.AliveCount()}/{army1.Units.Count}");
             
             Console.WriteLine($"\n{army2.Name}:");
-            Console.WriteLine($"  Выжило бойцов: {army2.AliveCount()}/{army2.Units.Count}");
+            Console.WriteLine($"Выжило бойцов: {army2.AliveCount()}/{army2.Units.Count}");
         }
 
         // Инициализация без вывода текста
@@ -180,6 +186,16 @@ namespace ArmyBattle.Game
             round = 1;
             needNewRoundHeader = true;
             attackTurn = 0;
+            battleInitialized = true;
+        }
+
+        // Установить состояние битвы для продолжения
+        public void SetBattleState(int currentRound, int attackTurn, bool firstAttackerIsArmy1, bool needNewRoundHeader)
+        {
+            this.round = currentRound;
+            this.attackTurn = attackTurn;
+            this.firstAttackerIsArmy1 = firstAttackerIsArmy1;
+            this.needNewRoundHeader = needNewRoundHeader;
             battleInitialized = true;
         }
 
@@ -278,10 +294,10 @@ namespace ArmyBattle.Game
                 return;
 
             Console.WriteLine();
-            Console.WriteLine("  ПРОВЕРКА СПЕЦИАЛЬНЫХ СПОСОБНОСТЕЙ");
+            Console.WriteLine("ПРОВЕРКА СПЕЦИАЛЬНЫХ СПОСОБНОСТЕЙ");
 
             // Сначала лучники
-            Console.WriteLine("  Лучники");
+            Console.WriteLine("Лучники");
             ExecuteSpecialAbilitiesForArmy(army1, army2, typeof(Archer));
             if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
                 ExecuteSpecialAbilitiesForArmy(army2, army1, typeof(Archer));
@@ -289,16 +305,25 @@ namespace ArmyBattle.Game
             // Потом лекари
             if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
             {
-                Console.WriteLine("  Лекари");
+                Console.WriteLine("Лекари");
                 ExecuteSpecialAbilitiesForArmy(army1, army2, typeof(Healer));
                 if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
                     ExecuteSpecialAbilitiesForArmy(army2, army1, typeof(Healer));
             }
 
+            // Затем маги
+            if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
+            {
+                Console.WriteLine("Маги");
+                ExecuteSpecialAbilitiesForArmy(army1, army2, typeof(Wizard));
+                if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
+                    ExecuteSpecialAbilitiesForArmy(army2, army1, typeof(Wizard));
+            }
+
             Console.WriteLine();
         }
         
-        private void ExecuteSpecialAbilitiesForArmy(IArmy attackingArmy, IArmy defendingArmy, Type unitType = null)
+        private void ExecuteSpecialAbilitiesForArmy(IArmy attackingArmy, IArmy defendingArmy, Type? unitType = null)
         {
             foreach (var unit in attackingArmy.Units)
             {
@@ -312,7 +337,7 @@ namespace ArmyBattle.Game
                     continue;
 
                 bool isHealing = unit is Healer;
-                IUnit target;
+                IUnit? target;
                 if (unit is Archer)
                 {
                     // Лучник может стрелять в любого противника в пределах дальности
@@ -361,12 +386,12 @@ namespace ArmyBattle.Game
                     if (!isHealing)
                     {
                         int damage = healthBefore - target.Health;
-                        Console.WriteLine($"  Урон: {damage}");
-                        Console.WriteLine($"  Здоровье {target.GetDisplayName(defendingArmy.Name)}: {Math.Max(0, target.Health)}/{target.MaxHealth}");
+                        Console.WriteLine($"Урон: {damage}");
+                        Console.WriteLine($"Здоровье {target.GetDisplayName(defendingArmy.Name)}: {Math.Max(0, target.Health)}/{target.MaxHealth}");
 
                         if (!target.IsAlive)
                         {
-                            Console.WriteLine($"  {unit.GetDisplayName(attackingArmy.Name)} убивает {target.GetDisplayName(defendingArmy.Name)} специальной способностью!");
+                            Console.WriteLine($"{unit.GetDisplayName(attackingArmy.Name)} убивает {target.GetDisplayName(defendingArmy.Name)} специальной способностью!");
                             defendingArmy.RemoveDeadFighter(target);
                             if (defendingArmy == army1)
                                 currentFighter1 = army1.GetNextFighterInBattleOrder();
@@ -380,7 +405,7 @@ namespace ArmyBattle.Game
                     {
                         if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
                         {
-                            Console.WriteLine($"  Здоровье {sa.LastHealed.GetDisplayName(attackingArmy.Name)}: {sa.LastHealed.Health}/{sa.LastHealed.MaxHealth}");
+                            Console.WriteLine($"Здоровье {sa.LastHealed.GetDisplayName(attackingArmy.Name)}: {sa.LastHealed.Health}/{sa.LastHealed.MaxHealth}");
                         }
                     }
 

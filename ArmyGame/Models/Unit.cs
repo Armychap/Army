@@ -140,7 +140,7 @@ namespace ArmyBattle.Models
         }
         
         // Использование специального умения через интерфейс
-        public virtual void UseSpecialAbility(IUnit target)
+        public virtual void UseSpecialAbility(IUnit? target)
         {
             if (CanUseSpecialAbility(target))
             {
