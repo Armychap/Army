@@ -1,0 +1,15 @@
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\bin\Debug\net9.0\Prototype.exe
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\bin\Debug\net9.0\Prototype.deps.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\bin\Debug\net9.0\Prototype.runtimeconfig.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\bin\Debug\net9.0\Prototype.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\bin\Debug\net9.0\Prototype.pdb
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\Prototype.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\Prototype.AssemblyInfoInputs.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\Prototype.AssemblyInfo.cs
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\Prototype.csproj.CoreCompileInputs.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\Prototype.sourcelink.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\Prototype.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\refint\Prototype.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\Prototype.pdb
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\Prototype.genruntimeconfig.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\6 задание\Prototype\obj\Debug\net9.0\ref\Prototype.dll
