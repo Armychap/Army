@@ -33,10 +33,4 @@ public class Robot
         }
         Console.WriteLine("");
     }
-
-    public void Clear()
-    {
-        _components.Clear();
-        _name = "Безымянный";
-    }
 }

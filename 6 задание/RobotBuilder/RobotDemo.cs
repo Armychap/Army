@@ -88,13 +88,15 @@ public class RobotDemo
     private void BuildCustomRobot()
     {
         Robot robot = new Robot();
-        robot.SetName("Кастомный робот");
+        string currentRobotName = "Кастомный робот";
+        robot.SetName(currentRobotName);
 
         Console.Write("Введите имя робота (Enter - имя по умолчанию): ");
-        string robotName = Console.ReadLine();
-        if (!string.IsNullOrWhiteSpace(robotName))
+        string userInput = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(userInput))
         {
-            robot.SetName(robotName);
+            currentRobotName = userInput;
+            robot.SetName(currentRobotName);
         }
 
         // пошаговая сборка
@@ -102,7 +104,7 @@ public class RobotDemo
         while (assembling)
         {
             Console.Clear();
-            Console.WriteLine($"\n   СБОРКА: {robotName ?? "Кастомный робот"} ");
+            Console.WriteLine($"\n   СБОРКА: {currentRobotName ?? "Кастомный робот"} ");
             Console.WriteLine("Текущие компоненты:");
             robot.ShowComponents();
 
@@ -276,11 +278,11 @@ public class RobotDemo
         string finalChoice = Console.ReadLine();
         if (finalChoice == "1")
         {
-            Console.WriteLine("\nРобот сохранён в базу данных!");
+            Console.WriteLine($"\nРобот \"{currentRobotName}\" сохранён в базу данных!");
         }
         else if (finalChoice == "2")
         {
-            Console.WriteLine($"\nРобот \"{robotName}\" отправлен на задание!");
+            Console.WriteLine($"\nРобот \"{currentRobotName}\" отправлен на задание!");
         }
     }
 }
