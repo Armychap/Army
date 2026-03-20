@@ -1,6 +1,6 @@
 ﻿namespace RobotBuilder;
 
-// Класс продукта - Робот
+// класс продукта - робот
 public class Robot
 {
     private readonly List<string> _components = new();
@@ -22,13 +22,13 @@ public class Robot
         Console.WriteLine($"\nРобот \"{_name}\" собран. Компоненты:");
         if (_components.Count == 0)
         {
-            Console.WriteLine("  - Робот пуст! Не добавлено ни одной детали.");
+            Console.WriteLine(" Не добавлено ни одной детали!! ");
         }
         else
         {
             foreach (var component in _components)
             {
-                Console.WriteLine($"  • {component}");
+                Console.WriteLine($" - {component}");
             }
         }
         Console.WriteLine("");
