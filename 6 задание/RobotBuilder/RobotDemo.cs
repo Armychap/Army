@@ -24,7 +24,7 @@ public class RobotDemo
                     BuildWorkerRobot();
                     break;
                 case "3":
-                    BuildAndroidRobot();
+                    BuildCarrierRobot();
                     break;
                 case "4":
                     BuildCustomRobot();
@@ -76,7 +76,7 @@ public class RobotDemo
         robot.ShowComponents();
     }
 
-    private void BuildAndroidRobot()
+    private void BuildCarrierRobot()
     {
         Console.WriteLine("\n   СБОРКА РОБОТА-ПЕРЕВОЗЧИКА ");
         RobotDirector director = new(_carrierBuilder);
