@@ -227,7 +227,7 @@ namespace ArmyBattle
                         var save = unfinished[idx - 1];
                         string path = armyManager.GetSavePath(save);
 
-                        if (armyManager.LoadArmies(path, out IArmy army1, out IArmy army2, out int round, out int attackTurn, out bool firstAtt, out bool needHeader))
+                        if (armyManager.LoadArmies(path, out IArmy army1, out IArmy army2, out int round, out int attackTurn, out bool firstAtt, out bool needHeader, out string battleLogName))
                         {
                             // Выводим лог предыдущих ходов битвы
                             string logPath = Path.Combine("Logs", save + ".txt");
@@ -240,7 +240,7 @@ namespace ArmyBattle
                                 ConsoleMenu.WaitForKey("\nНажмите любую клавишу для продолжения битвы...");
                             }
 
-                            BattleMenu.ContinueBattle(army1, army2, round, attackTurn, firstAtt, needHeader, save);
+                            BattleMenu.ContinueBattle(army1, army2, round, attackTurn, firstAtt, needHeader, save, battleLogName);
                             return;
                         }
                         else

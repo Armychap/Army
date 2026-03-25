@@ -53,8 +53,9 @@ namespace ArmyBattle.Services
         /// attackTurn: текущий ход атаки
         /// firstAttackerIsArmy1: кто первый атакующий
         /// needNewRoundHeader: нужен ли новый заголовок раунда
+        /// battleLogName: имя файла лога битвы
         /// </summary>
-        public void SaveArmies(IArmy army1, IArmy army2, string saveName = null, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true)
+        public void SaveArmies(IArmy army1, IArmy army2, string saveName = null, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true, string battleLogName = null)
         {
             // Если название не указано или пусто используем автогенерируемое имя с временем
             if (string.IsNullOrWhiteSpace(saveName))
@@ -63,7 +64,7 @@ namespace ArmyBattle.Services
             }
 
             // Конвертируем армии в сериализуемый формат
-            var saveData = SerializeArmies(army1, army2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader);
+            var saveData = SerializeArmies(army1, army2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader, battleLogName);
             
             // Преобразуем объект в JSON строку с отступами для читаемости
             string json = JsonSerializer.Serialize(saveData, new JsonSerializerOptions { WriteIndented = true });
@@ -88,7 +89,7 @@ namespace ArmyBattle.Services
         /// needNewRoundHeader: заголовок раунда (out)
         /// Возвращает: true если загрузка успешна, false при ошибке
         /// </summary>
-        public bool LoadArmies(string filePath, out IArmy army1, out IArmy army2, out int currentRound, out int attackTurn, out bool firstAttackerIsArmy1, out bool needNewRoundHeader)
+        public bool LoadArmies(string filePath, out IArmy army1, out IArmy army2, out int currentRound, out int attackTurn, out bool firstAttackerIsArmy1, out bool needNewRoundHeader, out string battleLogName)
         {
             // Инициализируем выходные параметры нулевыми значениями
             army1 = null;
@@ -97,6 +98,7 @@ namespace ArmyBattle.Services
             attackTurn = 0;
             firstAttackerIsArmy1 = false;
             needNewRoundHeader = true;
+            battleLogName = null;
 
             try
             {
@@ -127,6 +129,7 @@ namespace ArmyBattle.Services
                 attackTurn = saveData.AttackTurn;
                 firstAttackerIsArmy1 = saveData.FirstAttackerIsArmy1;
                 needNewRoundHeader = saveData.NeedNewRoundHeader;
+                battleLogName = saveData.BattleLogName;
 
                 // Успешная загрузка
                 return true;
@@ -224,7 +227,7 @@ namespace ArmyBattle.Services
         /// army2: вторая армия
         /// Возвращает: объект ArmySaveData готовый к JSON сериализации
         /// </summary>
-        public ArmySaveData SerializeArmies(IArmy army1, IArmy army2, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true)
+        public ArmySaveData SerializeArmies(IArmy army1, IArmy army2, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true, string battleLogName = null)
         {
             // Создаем новый объект для сохранения данных армий
             return new ArmySaveData
@@ -263,7 +266,8 @@ namespace ArmyBattle.Services
                 CurrentRound = currentRound,
                 AttackTurn = attackTurn,
                 FirstAttackerIsArmy1 = firstAttackerIsArmy1,
-                NeedNewRoundHeader = needNewRoundHeader
+                NeedNewRoundHeader = needNewRoundHeader,
+                BattleLogName = battleLogName
             };
         }
 

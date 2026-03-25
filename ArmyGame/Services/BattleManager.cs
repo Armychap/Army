@@ -186,7 +186,12 @@ namespace ArmyBattle.Services
                         if (dateStr.Length == 8 && int.TryParse(dateStr, out _))
                         {
                             // Берем только часть до даты и временной метки
-                            fileName = fileName.Substring(0, prevUnderscoreIndex);
+                            string namePart = fileName.Substring(0, prevUnderscoreIndex);
+                            if (!string.IsNullOrEmpty(namePart) && namePart != "_")
+                            {
+                                fileName = namePart;
+                            }
+                            // Иначе оставляем как есть (файл с только timestamp)
                         }
                     }
                 }

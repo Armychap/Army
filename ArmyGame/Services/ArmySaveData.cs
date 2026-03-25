@@ -74,6 +74,11 @@ namespace ArmyBattle.Services
         /// Флаг, нужно ли новый заголовок раунда.
         /// </summary>
         public bool NeedNewRoundHeader { get; set; }
+        
+        /// <summary>
+        /// Имя файла лога битвы для продолжения.
+        /// </summary>
+        public string BattleLogName { get; set; }
     }
 
     /// <summary>
