@@ -14,6 +14,9 @@ namespace ArmyBattle.Models
         public int Range { get; set; }
         public int Power { get; set; } // Шанс в процентах
 
+        // Добавлено для отображения выбранного бойца
+        public IUnit? ChosenToClone { get; private set; }
+
         public CloneAbility(string name, int range, int power)
         {
             Name = name;
@@ -41,6 +44,7 @@ namespace ArmyBattle.Models
                 return;
 
             var chosen = candidates[random.Next(candidates.Count)];
+            ChosenToClone = chosen;
 
             // Создаем клон
             IUnit clone;

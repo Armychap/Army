@@ -24,6 +24,9 @@ namespace ArmyBattle.Models
         //Список живых бойцов в порядке боя
         List<IUnit> AliveFightersInBattleOrder { get; }
 
+        //Индекс текущего бойца в порядке боя
+        int CurrentFighterIndex { get; set; }
+
         /// Добавить нового бойца в армию
         void AddUnit(IUnit unit);
         

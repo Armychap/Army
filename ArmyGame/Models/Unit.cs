@@ -24,7 +24,7 @@ namespace ArmyBattle.Models
         }
 
         // Выполняет способность: урон или лечение в зависимости от типа юнита
-        public void Execute(IUnit user, IUnit target)
+        public void Execute(IUnit? user, IUnit? target)
         {
             if (user is Healer)
             {
@@ -131,7 +131,7 @@ namespace ArmyBattle.Models
         }
         
         // Проверка наличия специального умения в пределах дальности
-        public bool CanUseSpecialAbility(IUnit target)
+        public bool CanUseSpecialAbility(IUnit? target)
         {
             if (SpecialAbility == null || !IsAlive)
                 return false;

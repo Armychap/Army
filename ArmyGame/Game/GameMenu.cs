@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using ArmyBattle.Models;
 using ArmyBattle.Services;
 using ArmyBattle.UI;
@@ -119,75 +120,6 @@ namespace ArmyBattle
             }
         }
 
-        // Загружает армии из сохраненного JSON файла
-        public static void LoadArmiesFromDisk()
-        {
-            ConsoleMenu.ClearConsole();
-            ConsoleMenu.PrintHeader("ЗАГРУЗКА НЕЗАКОНЧЕННЫХ ИГР");
-
-            string[] savedFiles = armyManager.GetUnfinishedGames();
-
-            if (savedFiles.Length == 0)
-            {
-                ConsoleMenu.ShowMessage("Нет незаконченных игр для продолжения!");
-                Console.ReadKey();
-                return;
-            }
-
-            int choice = ConsoleMenu.ShowFileMenu(savedFiles, "Незаконченные игры");
-
-            if (choice >= 1 && choice <= savedFiles.Length)
-            {
-                string filePath = armyManager.GetSavePath(savedFiles[choice - 1]);
-                
-                if (armyManager.LoadArmies(filePath, out IArmy army1, out IArmy army2, out int currentRound, out int attackTurn, out bool firstAttackerIsArmy1, out bool needNewRoundHeader))
-                {
-                    _lastArmy1 = army1;
-                    _lastArmy2 = army2;
-
-                    ConsoleMenu.ClearConsole();
-                    ConsoleMenu.ShowSuccess("Игра загружена! Восстанавливаю боевое состояние...");
-                    Console.WriteLine($"\n{_lastArmy1.Name}: {_lastArmy1.Units.Count} всего бойцов, живых: {_lastArmy1.AliveCount()}");
-                    Console.WriteLine($"{_lastArmy2.Name}: {_lastArmy2.Units.Count} всего бойцов, живых: {_lastArmy2.AliveCount()}");
-
-                    // Проверяем, есть ли возможность продолжить бой
-                    if (_lastArmy1.HasAliveUnits() && _lastArmy2.HasAliveUnits())
-                    {
-                        Console.WriteLine("\nНажмите Enter для продолжения боя или другую клавишу для возврата...");
-                        var key = Console.ReadKey();
-
-                        if (key.Key == ConsoleKey.Enter)
-                        {
-                            // Продолжаем боевой цикл с загруженным состоянием
-                            BattleMenu.ContinueBattle(_lastArmy1, _lastArmy2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader);
-                        }
-                    }
-                    else
-                    {
-                        // Битва уже завершена - показываем результаты
-                        Console.WriteLine("\nБитва уже завершена!");
-                        if (_lastArmy1.HasAliveUnits())
-                        {
-                            Console.ForegroundColor = _lastArmy1.Color;
-                            Console.WriteLine($"Победитель: {_lastArmy1.Name}!");
-                            Console.ResetColor();
-                        }
-                        else if (_lastArmy2.HasAliveUnits())
-                        {
-                            Console.ForegroundColor = _lastArmy2.Color;
-                            Console.WriteLine($"Победитель: {_lastArmy2.Name}!");
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            Console.WriteLine("Ничья - обе армии уничтожены!");
-                        }
-                        Console.ReadKey();
-                    }
-                }
-            }
-        }
-
         // Показывает интерактивное меню для просмотра историй битв
         public static void ShowBattleLogs()
         {
@@ -201,106 +133,174 @@ namespace ArmyBattle
                 return;
             }
 
-            bool exitMenu = false;
-            while (!exitMenu)
+            bool backToMain = false;
+
+            while (!backToMain)
             {
-                // Очищаем экран и выводим меню
                 ConsoleMenu.ClearConsole();
-                ConsoleMenu.PrintHeader("ИСТОРИИ БИТВ");
-                Console.WriteLine("Доступные варианты:");
-                
-                // Выводим красивые имена битв
+                ConsoleMenu.PrintHeader("ИСТОРИЯ БИТВ");
+
+                // Показываем список битв с номерами
                 for (int i = 0; i < battles.Length; i++)
                 {
                     string displayName = battleManager.GetBattleDisplayName(battles[i]);
                     Console.WriteLine($"{i + 1}. {displayName}");
                 }
-                
-                Console.Write("\nВыберите номер (0 - выход): ");
-                
-                if (int.TryParse(Console.ReadLine(), out int choice))
-                {
-                    if (choice >= 1 && choice <= battles.Length)
-                    {
-                        string filePath = battleManager.GetLogPath(battles[choice - 1]);
-                        string content = File.ReadAllText(filePath);
 
-                        ConsoleMenu.ClearConsole();
-                        string displayName = battleManager.GetBattleDisplayName(battles[choice - 1]);
-                        Console.WriteLine($"История битвы: {displayName}");
-                        Console.WriteLine();
-                        Console.WriteLine(content);
-                        ConsoleMenu.WaitForKey("\nНажмите любую клавишу для возврата к списку...");
-                    }
-                    else if (choice == 0)
+                Console.WriteLine("\n0. Назад в главное меню");
+                Console.Write("\nВыберите битву для просмотра: ");
+
+                string? choice = Console.ReadLine();
+                if (int.TryParse(choice, out int index) && index >= 1 && index <= battles.Length)
+                {
+                    string selectedBattle = battles[index - 1];
+                    string logContent = battleManager.GetBattleLog(selectedBattle);
+
+                    if (!string.IsNullOrEmpty(logContent))
                     {
-                        exitMenu = true;
+                        // Очищаем экран и показываем заголовок
+                        ConsoleMenu.ClearConsole();
+                        ConsoleMenu.PrintHeader($"БИТВА: {battleManager.GetBattleDisplayName(selectedBattle)}");
+
+                        // Выводим полный лог битвы
+                        Console.WriteLine(logContent);
+
+                        Console.WriteLine("\n" + new string('=', 50));
+                        Console.WriteLine("Нажмите любую клавишу для возврата в список игр...");
+                        Console.ReadKey();
+                        // После просмотра возвращаемся в список (цикл продолжается)
                     }
                     else
                     {
-                        Console.WriteLine("Неверный выбор!");
+                        ConsoleMenu.ShowMessage("История битвы еще не записана (битва не завершена или не начата)!");
                         Console.ReadKey();
                     }
                 }
+                else if (choice == "0")
+                {
+                    backToMain = true;
+                }
                 else
                 {
-                    Console.WriteLine("Неверный ввод!");
+                    ConsoleMenu.ShowMessage("Неверный выбор!");
                     Console.ReadKey();
                 }
             }
         }
 
-        // Удаляет всю историю битв и сохранений
-        public static void DeleteAllHistory()
+        // Продолжает незавершенную игру из сохранений
+        public static void ContinueSavedGame()
         {
-            ConsoleMenu.ClearConsole();
-            ConsoleMenu.PrintHeader("Удаление всей истории");
+            string[] unfinished = armyManager.GetUnfinishedGames();
 
-            Console.WriteLine("Это действие удалит все сохраненные игры и истории битв!");
-            Console.Write("Вы уверены? (д/н): ");
-            
-            string? choice = Console.ReadLine();
-            if (choice?.ToLower() != "д")
+            if (unfinished.Length == 0)
             {
-                Console.WriteLine("Удаление отменено.");
+                ConsoleMenu.ClearConsole();
+                ConsoleMenu.ShowMessage("Нет незавершенных игр для продолжения.");
                 Console.ReadKey();
                 return;
             }
 
-            try
+            bool backToMenu = false;
+            while (!backToMenu)
             {
-                // Удаляем все файлы из папки Saves
-                string savesPath = Path.Combine(Directory.GetCurrentDirectory(), "Saves");
-                if (Directory.Exists(savesPath))
-                {
-                    string[] saveFiles = Directory.GetFiles(savesPath);
-                    foreach (string file in saveFiles)
-                    {
-                        File.Delete(file);
-                    }
-                    Console.WriteLine($"Удалено {saveFiles.Length} сохранений.");
-                }
+                ConsoleMenu.ClearConsole();
+                ConsoleMenu.PrintHeader("ПРОДОЛЖЕНИЕ ИГРЫ");
 
-                // Удаляем все файлы из папки Logs
-                string logsPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
-                if (Directory.Exists(logsPath))
-                {
-                    string[] logFiles = Directory.GetFiles(logsPath);
-                    foreach (string file in logFiles)
-                    {
-                        File.Delete(file);
-                    }
-                    Console.WriteLine($"Удалено {logFiles.Length} историй битв.");
-                }
+                for (int i = 0; i < unfinished.Length; i++)
+                    Console.WriteLine($"{i + 1}. {unfinished[i]}");
 
-                ConsoleMenu.ShowSuccess("Вся история успешно удалена!");
+                Console.WriteLine("\n0. Назад в главное меню");
+                Console.Write("Выберите сохранение: ");
+
+                string? input = Console.ReadLine();
+                if (int.TryParse(input, out int idx))
+                {
+                    if (idx == 0)
+                    {
+                        backToMenu = true;
+                        continue;
+                    }
+
+                    if (idx >= 1 && idx <= unfinished.Length)
+                    {
+                        var save = unfinished[idx - 1];
+                        string path = armyManager.GetSavePath(save);
+
+                        if (armyManager.LoadArmies(path, out IArmy army1, out IArmy army2, out int round, out int attackTurn, out bool firstAtt, out bool needHeader))
+                        {
+                            // Выводим лог предыдущих ходов битвы
+                            string logPath = Path.Combine("Logs", save + ".txt");
+                            if (File.Exists(logPath))
+                            {
+                                string logContent = File.ReadAllText(logPath);
+                                ConsoleMenu.ClearConsole();
+                                ConsoleMenu.PrintHeader("ИСТОРИЯ БИТВЫ");
+                                Console.WriteLine(logContent);
+                                ConsoleMenu.WaitForKey("\nНажмите любую клавишу для продолжения битвы...");
+                            }
+
+                            BattleMenu.ContinueBattle(army1, army2, round, attackTurn, firstAtt, needHeader, save);
+                            return;
+                        }
+                        else
+                        {
+                            ConsoleMenu.ShowMessage("Не удалось загрузить сохранение.");
+                            Console.ReadKey();
+                        }
+                    }
+                    else
+                    {
+                        ConsoleMenu.ShowMessage("Неверный выбор.");
+                        Console.ReadKey();
+                    }
+                }
+                else
+                {
+                    ConsoleMenu.ShowMessage("Неверный ввод.");
+                    Console.ReadKey();
+                }
             }
-            catch (Exception ex)
+        }
+
+        // Удаляет всю историю битв с подтверждением
+        public static void DeleteAllHistory()
+        {
+            ConsoleMenu.ClearConsole();
+            ConsoleMenu.PrintHeader("УДАЛЕНИЕ ИСТОРИИ БИТВ");
+
+            Console.WriteLine("Вы уверены, что хотите удалить ВСЮ историю битв?");
+            Console.WriteLine("Это действие невозможно отменить!");
+            Console.WriteLine("\n1. Да, удалить все");
+            Console.WriteLine("2. Отменить");
+            Console.Write("\nВыбор: ");
+
+            string? choice = Console.ReadLine();
+
+            if (choice == "1")
             {
-                ConsoleMenu.ShowError($"Ошибка при удалении: {ex.Message}");
+                if (battleManager.DeleteAllBattleLogs())
+                {
+                    ConsoleMenu.ClearConsole();
+                    ConsoleMenu.ShowSuccess("Вся история битв успешно удалена!");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    ConsoleMenu.ClearConsole();
+                    ConsoleMenu.ShowMessage("Ошибка при удалении истории!");
+                    Console.ReadKey();
+                }
             }
-
-            Console.ReadKey();
+            else if (choice == "2")
+            {
+                // Отмена - просто возвращаемся
+            }
+            else
+            {
+                ConsoleMenu.ShowMessage("Неверный выбор!");
+                Console.ReadKey();
+            }
         }
     }
 }

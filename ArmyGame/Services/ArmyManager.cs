@@ -335,6 +335,9 @@ namespace ArmyBattle.Services
                     
                     // Если тип был "Healer" создаем лекаря
                     nameof(Healer) => new Healer(unitData.FighterNumber),
+
+                    // Если тип был "Wizard" создаем мага
+                    nameof(Wizard) => new Wizard(unitData.FighterNumber),
                     
                     // Если тип неизвестен выбрасываем исключение с описанием ошибки
                     _ => throw new Exception($"Неизвестный тип юнита: {unitData.Type}")

@@ -259,20 +259,37 @@ namespace ArmyBattle
                     break;
 
                 case "6":
-                Console.WriteLine($"Использовано название по умолчанию: {name1}");
+                    Console.WriteLine("Настройка завершена!");
+                    Console.WriteLine("Нажмите любую клавишу, чтобы продолжить...");
+                    Console.ReadKey(true);
+                    return;
             }
+        }
+    }
 
-            string name2 = ConsoleMenu.GetInput("Введите название второй армии: ");
-            if (string.IsNullOrWhiteSpace(name2))
-            {
-                name2 = "Синяя Армия";
-                Console.WriteLine($"Использовано название по умолчанию: {name2}");
-            }
-
-            return (name1, name2);
+    /// <summary>
+    /// Получает названия двух армий от пользователя.
+    /// </summary>
+    public static (string name1, string name2) GetArmyNames()
+    {
+        string name1 = ConsoleMenu.GetInput("Введите название первой армии: ");
+        if (string.IsNullOrWhiteSpace(name1))
+        {
+            name1 = "Красная Армия";
+            Console.WriteLine($"Использовано название по умолчанию: {name1}");
         }
 
-        // Получает единый бюджет для обеих армий от пользователя
+        string name2 = ConsoleMenu.GetInput("Введите название второй армии: ");
+        if (string.IsNullOrWhiteSpace(name2))
+        {
+            name2 = "Синяя Армия";
+            Console.WriteLine($"Использовано название по умолчанию: {name2}");
+        }
+
+        return (name1, name2);
+    }
+
+    // Получает единый бюджет для обеих армий от пользователя
         public static int GetCommonBudget(int defaultBudget)
         {
             int budget = ConsoleMenu.GetIntInput($"\nВведите бюджет для обеих армий: ");

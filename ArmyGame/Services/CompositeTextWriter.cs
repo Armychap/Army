@@ -59,7 +59,7 @@ namespace ArmyBattle.Services
         /// <summary>
         /// Пишет строку текста во все целевые писатели одновременно.
         /// </summary>
-        public override void Write(string value)
+        public override void Write(string? value)
         {
             // Итерируемся по каждому писателю
             foreach (var writer in _writers)
@@ -81,7 +81,7 @@ namespace ArmyBattle.Services
         /// <summary>
         /// Пишет строку с переводом строки во все целевые писатели одновременно.
         /// </summary>
-        public override void WriteLine(string value)
+        public override void WriteLine(string? value)
         {
             // Итерируемся по каждому писателю
             foreach (var writer in _writers)

@@ -199,6 +199,19 @@ namespace ArmyBattle.Game
             battleInitialized = true;
         }
 
+        // Установить текущих бойцов
+        public void SetCurrentFighters(IUnit? fighter1, IUnit? fighter2)
+        {
+            currentFighter1 = fighter1;
+            currentFighter2 = fighter2;
+        }
+
+        // Установить флаг инициализации битвы
+        public void SetBattleInitialized(bool initialized)
+        {
+            battleInitialized = initialized;
+        }
+
         // Выполнить один полный раунд (оба удара + проверка специальных способностей)
         public bool DoSingleRound()
         {
@@ -262,8 +275,8 @@ namespace ArmyBattle.Game
                 CheckAndExecuteSpecialAbilities();
             }
             
-            // Увеличиваем номер раунда только при смене бойца
-            if (needNewRoundHeader && (currentFighter1 != null || currentFighter2 != null))
+            // Если после специальных способностей нужно начать новый раунд, увеличиваем номер раунда
+            if (needNewRoundHeader)
             {
                 round++;
             }
@@ -288,36 +301,40 @@ namespace ArmyBattle.Game
             EndBattle();
         }
 
+        private ConsoleColor GetAbilityColor(Type unitType)
+        {
+            if (unitType == typeof(Archer)) return ConsoleColor.Yellow;
+            if (unitType == typeof(Wizard)) return ConsoleColor.Magenta;
+            if (unitType == typeof(Healer)) return ConsoleColor.Green;
+            return ConsoleColor.White;
+        }
+
         private void CheckAndExecuteSpecialAbilities()
         {
             if (currentFighter1 == null || currentFighter2 == null || !currentFighter1.IsAlive || !currentFighter2.IsAlive)
                 return;
 
             Console.WriteLine();
-            Console.WriteLine("ПРОВЕРКА СПЕЦИАЛЬНЫХ СПОСОБНОСТЕЙ");
 
             // Сначала лучники
-            Console.WriteLine("Лучники");
             ExecuteSpecialAbilitiesForArmy(army1, army2, typeof(Archer));
             if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
                 ExecuteSpecialAbilitiesForArmy(army2, army1, typeof(Archer));
 
-            // Потом лекари
+            // Потом маги (раньше лекарей)
             if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
             {
-                Console.WriteLine("Лекари");
-                ExecuteSpecialAbilitiesForArmy(army1, army2, typeof(Healer));
-                if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
-                    ExecuteSpecialAbilitiesForArmy(army2, army1, typeof(Healer));
-            }
-
-            // Затем маги
-            if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
-            {
-                Console.WriteLine("Маги");
                 ExecuteSpecialAbilitiesForArmy(army1, army2, typeof(Wizard));
                 if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
                     ExecuteSpecialAbilitiesForArmy(army2, army1, typeof(Wizard));
+            }
+
+            // Затем лекари
+            if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
+            {
+                ExecuteSpecialAbilitiesForArmy(army1, army2, typeof(Healer));
+                if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
+                    ExecuteSpecialAbilitiesForArmy(army2, army1, typeof(Healer));
             }
 
             Console.WriteLine();
@@ -325,7 +342,9 @@ namespace ArmyBattle.Game
         
         private void ExecuteSpecialAbilitiesForArmy(IArmy attackingArmy, IArmy defendingArmy, Type? unitType = null)
         {
-            foreach (var unit in attackingArmy.Units)
+            // Создаём копию списка, чтобы избежать ошибки при изменении коллекции во время итерации
+            var unitsCopy = attackingArmy.Units.ToList();
+            foreach (var unit in unitsCopy)
             {
                 if (!unit.IsAlive)
                     continue;
@@ -333,10 +352,15 @@ namespace ArmyBattle.Game
                 if (unitType != null && unit.GetType() != unitType)
                     continue;
 
+                // Бойцы, которые участвовали в раунде, не могут использовать специальные способности
+                if (unit == currentFighter1 || unit == currentFighter2)
+                    continue;
+
                 if (unit.SpecialAbility == null)
                     continue;
 
                 bool isHealing = unit is Healer;
+                bool isCloning = unit is Wizard;
                 IUnit? target;
                 if (unit is Archer)
                 {
@@ -345,6 +369,11 @@ namespace ArmyBattle.Game
                     var possibleTargets = defendingArmy.AliveFightersInBattleOrder.Where((u, index) => index < range && u.IsAlive).ToList();
                     if (possibleTargets.Count == 0) continue;
                     target = possibleTargets[random.Next(possibleTargets.Count)];
+                }
+                else if (isCloning)
+                {
+                    // Маг клонирует случайного союзника (способность сама выбирает)
+                    target = null;
                 }
                 else if (isHealing)
                 {
@@ -359,53 +388,127 @@ namespace ArmyBattle.Game
 
                 if (unit.CanUseSpecialAbility(target))
                 {
-                    int healthBefore = isHealing ? 0 : target.Health;
-                    unit.UseSpecialAbility(target);
+                    int healthBefore = (isHealing || isCloning) ? 0 : (target?.Health ?? 0);
+                    
+                    // Для мага сначала выполняем способность, чтобы узнать, кого он клонирует
+                    if (isCloning)
+                    {
+                        unit.UseSpecialAbility(target);
+                    }
 
-                    Console.ForegroundColor = attackingArmy.Color;
-                    Console.Write(unit.GetDisplayName(attackingArmy.Name));
-                    Console.ResetColor();
+                    ConsoleColor abilityColor = GetAbilityColor(unit.GetType());
+
                     if (isHealing)
                     {
-                        Console.Write(" лечит ");
+                        // Показываем лечение только если есть исцеленный юнит
                         if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
                         {
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write("лекарь ");
+                            Console.ForegroundColor = attackingArmy.Color;
+                            Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(" лечит ");
                             Console.ForegroundColor = attackingArmy.Color;
                             Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));
+                            Console.ForegroundColor = abilityColor;
                             Console.ResetColor();
+                            Console.WriteLine();
                         }
                     }
                     else
                     {
-                        Console.Write($" использует стрелу против ");
-                        Console.ForegroundColor = defendingArmy.Color;
-                        Console.Write(target.GetDisplayName(defendingArmy.Name));
-                        Console.ResetColor();
-                    }
-                    Console.WriteLine();
-                    if (!isHealing)
-                    {
-                        int damage = healthBefore - target.Health;
-                        Console.WriteLine($"Урон: {damage}");
-                        Console.WriteLine($"Здоровье {target.GetDisplayName(defendingArmy.Name)}: {Math.Max(0, target.Health)}/{target.MaxHealth}");
-
-                        if (!target.IsAlive)
+                        string unitTypeName = unit is Archer ? "лучник" : "маг";
+                        
+                        if (unit is Wizard)
                         {
-                            Console.WriteLine($"{unit.GetDisplayName(attackingArmy.Name)} убивает {target.GetDisplayName(defendingArmy.Name)} специальной способностью!");
+                            // Для мага показываем, кого он клонирует
+                            if (unit.SpecialAbility is CloneAbility ca && ca.ChosenToClone != null)
+                            {
+                                Console.ForegroundColor = abilityColor;
+                                Console.Write(unitTypeName + " ");
+                                Console.ForegroundColor = attackingArmy.Color;
+                                Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                                Console.ForegroundColor = abilityColor;
+                                Console.Write(" клонирует ");
+                                Console.ForegroundColor = abilityColor;
+                                Console.Write($"({ca.ChosenToClone.PowerLevel}) ");
+                                Console.ForegroundColor = attackingArmy.Color;
+                                Console.Write(ca.ChosenToClone.GetDisplayName(attackingArmy.Name));
+                                Console.ResetColor();
+                                Console.WriteLine();
+                            }
+                            else
+                            {
+                                // Если нет доступных кандидатов для клонирования, не выводим строку вообще.
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(unitTypeName + " ");
+                            Console.ForegroundColor = attackingArmy.Color;
+                            Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(" стреляет в ");
+                            Console.ForegroundColor = defendingArmy.Color;
+                            Console.Write(target.GetDisplayName(defendingArmy.Name));
+                            Console.ResetColor();
+                            Console.WriteLine();
+                        }
+
+                        if (!(unit is Wizard))
+                        {
+                            int damage = healthBefore - target.Health;
+                            Console.WriteLine($"Урон: {damage}");
+                            Console.Write($"Здоровье ");
+                            Console.ForegroundColor = defendingArmy.Color;
+                            Console.Write(target.GetDisplayName(defendingArmy.Name));
+                            Console.ResetColor();
+                            Console.WriteLine($": {Math.Max(0, target.Health)}/{target.MaxHealth}");
+                        }
+
+                        if (!target?.IsAlive ?? false)
+                        {
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(unitTypeName + " ");
+                            Console.ForegroundColor = attackingArmy.Color;
+                            Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(" убивает ");
+                            Console.ForegroundColor = defendingArmy.Color;
+                            Console.Write(target.GetDisplayName(defendingArmy.Name));
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(" специальной способностью!");
+                            Console.ResetColor();
+                            Console.WriteLine();
+
                             defendingArmy.RemoveDeadFighter(target);
                             if (defendingArmy == army1)
                                 currentFighter1 = army1.GetNextFighterInBattleOrder();
                             else
                                 currentFighter2 = army2.GetNextFighterInBattleOrder();
                             needNewRoundHeader = true;
-                            return;
+                            // Убираем return, чтобы продолжить выполнение других способностей
                         }
                     }
-                    else
+
+                    // Выполняем способность после вывода сообщения (для лучников и лекарей)
+                    if (!isCloning)
+                    {
+                        unit.UseSpecialAbility(target);
+                    }
+
+                    if (isHealing)
                     {
                         if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
                         {
-                            Console.WriteLine($"Здоровье {sa.LastHealed.GetDisplayName(attackingArmy.Name)}: {sa.LastHealed.Health}/{sa.LastHealed.MaxHealth}");
+                            Console.Write($"Здоровье ");
+                            Console.ForegroundColor = attackingArmy.Color;
+                            Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));
+                            Console.ResetColor();
+                            Console.WriteLine($": {sa.LastHealed.Health}/{sa.LastHealed.MaxHealth}");
                         }
                     }
 
