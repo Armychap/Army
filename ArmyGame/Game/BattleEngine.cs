@@ -200,10 +200,10 @@ namespace ArmyBattle.Game
         }
 
         // Установить текущих бойцов
-        public void SetCurrentFighters(IUnit? fighter1, IUnit? fighter2)
+        public void SetCurrentFightersForContinuation()
         {
-            currentFighter1 = fighter1;
-            currentFighter2 = fighter2;
+            currentFighter1 = SelectFighterForArmy(army1);
+            currentFighter2 = SelectFighterForArmy(army2);
         }
 
         // Установить флаг инициализации битвы
@@ -222,9 +222,12 @@ namespace ArmyBattle.Game
             
             if (!(army1.HasAliveUnits() && army2.HasAliveUnits()))
             {
+                Console.WriteLine("Битва завершена: одна из армий не имеет живых юнитов");
                 return false; // Битва закончена
             }
 
+            Console.WriteLine($"Начинаем раунд {round}");
+            
             // Запоминаем текущий номер раунда
             int startRound = round;
             
@@ -359,10 +362,11 @@ namespace ArmyBattle.Game
                 if (unit.SpecialAbility == null)
                     continue;
 
-                bool isHealing = unit is Healer;
-                bool isCloning = unit is Wizard;
+                var realUnit = unit.GetRootUnit();
+                bool isHealing = realUnit is Healer;
+                bool isCloning = realUnit is Wizard;
                 IUnit? target;
-                if (unit is Archer)
+                if (realUnit is Archer)
                 {
                     // Лучник может стрелять в любого противника в пределах дальности
                     int range = random.Next(1, defendingArmy.AliveCount() + 1);
@@ -396,31 +400,17 @@ namespace ArmyBattle.Game
                         unit.UseSpecialAbility(target);
                     }
 
-                    ConsoleColor abilityColor = GetAbilityColor(unit.GetType());
+                    ConsoleColor abilityColor = GetAbilityColor(realUnit.GetType());
 
                     if (isHealing)
                     {
-                        // Показываем лечение только если есть исцеленный юнит
-                        if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
-                        {
-                            Console.ForegroundColor = abilityColor;
-                            Console.Write("лекарь ");
-                            Console.ForegroundColor = attackingArmy.Color;
-                            Console.Write(unit.GetDisplayName(attackingArmy.Name));
-                            Console.ForegroundColor = abilityColor;
-                            Console.Write(" лечит ");
-                            Console.ForegroundColor = attackingArmy.Color;
-                            Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));
-                            Console.ForegroundColor = abilityColor;
-                            Console.ResetColor();
-                            Console.WriteLine();
-                        }
+                        // Вывод лечения будет после выполнения способности
                     }
                     else
                     {
-                        string unitTypeName = unit is Archer ? "лучник" : "маг";
+                        string unitTypeName = realUnit is Archer ? "лучник" : "маг";
                         
-                        if (unit is Wizard)
+                        if (realUnit is Wizard)
                         {
                             // Для мага показываем, кого он клонирует
                             if (unit.SpecialAbility is CloneAbility ca && ca.ChosenToClone != null)
@@ -458,7 +448,7 @@ namespace ArmyBattle.Game
                             Console.WriteLine();
                         }
 
-                        if (!(unit is Wizard))
+                        if (!(realUnit is Wizard))
                         {
                             int damage = healthBefore - target.Health;
                             Console.WriteLine($"Урон: {damage}");
@@ -504,6 +494,18 @@ namespace ArmyBattle.Game
                     {
                         if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
                         {
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write("лекарь ");
+                            Console.ForegroundColor = attackingArmy.Color;
+                            Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(" лечит ");
+                            Console.ForegroundColor = attackingArmy.Color;
+                            Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));
+                            Console.ForegroundColor = abilityColor;
+                            Console.ResetColor();
+                            Console.WriteLine();
+
                             Console.Write($"Здоровье ");
                             Console.ForegroundColor = attackingArmy.Color;
                             Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));

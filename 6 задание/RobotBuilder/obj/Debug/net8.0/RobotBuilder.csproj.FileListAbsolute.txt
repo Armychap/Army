@@ -1,0 +1,15 @@
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\bin\Debug\net8.0\RobotBuilder.exe
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\bin\Debug\net8.0\RobotBuilder.deps.json
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\bin\Debug\net8.0\RobotBuilder.runtimeconfig.json
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\bin\Debug\net8.0\RobotBuilder.dll
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\bin\Debug\net8.0\RobotBuilder.pdb
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\RobotBuilder.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\RobotBuilder.AssemblyInfoInputs.cache
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\RobotBuilder.AssemblyInfo.cs
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\RobotBuilder.csproj.CoreCompileInputs.cache
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\RobotBuilder.sourcelink.json
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\RobotBuilder.dll
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\refint\RobotBuilder.dll
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\RobotBuilder.pdb
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\RobotBuilder.genruntimeconfig.cache
+C:\Users\Alex\.vscode\Army\6 задание\RobotBuilder\obj\Debug\net8.0\ref\RobotBuilder.dll
