@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using ArmyBattle.Models;
 using ArmyBattle.Game;
 using ArmyBattle.Services;
@@ -41,7 +42,7 @@ namespace ArmyBattle
             Console.WriteLine();
 
             // Запускаем меню битвы
-            RunBattleMenu(battle, army1, army2);
+            RunBattleMenu(battle, army1, army2, "");
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace ArmyBattle
         /// <summary>
         /// Восстанавливает боевое состояние на основе текущего состояния юнитов (их здоровья и статуса).
         /// </summary>
-        public static void ContinueBattle(IArmy army1, IArmy army2, int currentRound, int attackTurn, bool firstAttackerIsArmy1, bool needNewRoundHeader)
+        public static void ContinueBattle(IArmy army1, IArmy army2, int currentRound, int attackTurn, bool firstAttackerIsArmy1, bool needNewRoundHeader, string saveName)
         {
             // Создаем боевой движок для пошагового управления битвой
             BattleEngine battle = new BattleEngine(army1, army2, 400);
@@ -59,8 +60,11 @@ namespace ArmyBattle
             // Устанавливаем сохраненное состояние битвы
             battle.SetBattleState(currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader);
             
-            // Инициализируем битву (готовим армии)
-            battle.InitializeBattle();
+            // Инициализируем армии для продолжения (shuffle и установка текущих бойцов)
+            army1.ShuffleAliveFighters();
+            army2.ShuffleAliveFighters();
+            battle.SetCurrentFighters(army1.GetNextFighterInBattleOrder(), army2.GetNextFighterInBattleOrder());
+            battle.SetBattleInitialized(true);
 
             // Показываем заголовок битвы
             try { Console.Clear(); } catch { }
@@ -70,13 +74,13 @@ namespace ArmyBattle
             Console.WriteLine();
 
             // Запускаем меню битвы
-            RunBattleMenu(battle, army1, army2);
+            RunBattleMenu(battle, army1, army2, saveName);
         }
 
         /// <summary>
         /// Запускает меню управления битвой
         /// </summary>
-        private static void RunBattleMenu(BattleEngine battle, IArmy army1, IArmy army2)
+        private static void RunBattleMenu(BattleEngine battle, IArmy army1, IArmy army2, string saveName)
         {
             // Меню управления боем
             bool battleActive = true;
@@ -115,7 +119,7 @@ namespace ArmyBattle
 
                     case "3":
                         // Сохраняем текущое состояние игры и выходим в главное меню
-                        SaveGameDuringBattle(army1, army2, battle);
+                        SaveGameDuringBattle(army1, army2, battle, saveName);
                         return;
 
                     case "4":
@@ -124,11 +128,11 @@ namespace ArmyBattle
                         if (Console.ReadLine()?.ToLower() == "д")
                         {
                             // Автоматически сохранить игру перед выходом
-                            string saveName = $"{army1.Name}_vs_{army2.Name}";
-                            armyManager.SaveArmies(army1, army2, saveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader);
-                            string gameStatus = "";
-                            battleManager.SaveBattleLog(gameStatus, saveName, army1, army2);
-                            ConsoleMenu.ShowSuccess($"Игра сохранена как '{saveName}'!");
+                            string exitSaveName = $"{army1.Name}_vs_{army2.Name}";
+                            armyManager.SaveArmies(army1, army2, exitSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader);
+                            string gameStatus = "ИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
+                            battleManager.SaveBattleLog(gameStatus, exitSaveName, army1, army2);
+                            ConsoleMenu.ShowSuccess($"Игра сохранена как '{exitSaveName}'!");
                             Console.ReadKey();
                             
                             battleActive = false;
@@ -164,38 +168,36 @@ namespace ArmyBattle
 
             // Автоматически сохраняем историю битвы
             Console.WriteLine("\nСохраняю историю битвы");
-            battleManager.SaveBattleLog("", $"{army1.Name} vs {army2.Name}", army1, army2);
-            ConsoleMenu.ShowSuccess("История битвы сохранена!");
+            // Если это продолжение игры, перезаписываем логи без timestamp
+            bool isGameContinuation = !string.IsNullOrWhiteSpace(saveName);
+            battleManager.SaveBattleLog("", saveName ?? $"{army1.Name} vs {army2.Name}", army1, army2, useTimestamp: !isGameContinuation);
+            ConsoleMenu.ShowSuccess("История игры сохранена!");
 
-            // Меню после завершения битвы
-            bool exitBattle = false;
-            while (!exitBattle)
+            // Если это было продолжением сохраненной игры, удаляем файл сохранения
+            if (!string.IsNullOrWhiteSpace(saveName))
             {
-                Console.WriteLine("\nМеню действий");
-                Console.WriteLine("1. Сохранить состояние игры");
-                Console.WriteLine("2. Выйти (назад в меню)");
-                Console.Write("Выбор: ");
-
-                string? choice = Console.ReadLine();
-
-                switch (choice)
+                string savePath = armyManager.GetSavePath(saveName);
+                if (File.Exists(savePath))
                 {
-                    case "1":
-                        // Сохраняем состояние игры (завершенной) и возвращаемся в главное меню
-                        SaveGameState(army1, army2, true);
-                        exitBattle = true;
-                        break;
-
-                    case "2":
-                        // Выход в главное меню
-                        exitBattle = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("Неверный выбор!");
-                        break;
+                    try
+                    {
+                        File.Delete(savePath);
+                        Console.WriteLine($"Сохраненная игра '{saveName}' удалена (игра завершена).");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Не удалось удалить файл сохранения: {ex.Message}");
+                    }
                 }
             }
+
+            // Меню после завершения битвы
+            Console.WriteLine("\nМеню действий");
+            Console.WriteLine("1. Выйти в главное меню");
+            Console.Write("Выбор: ");
+
+            // Ждем любого ввода для выхода
+            Console.ReadLine();
         }
 
         /// <summary>
@@ -204,17 +206,17 @@ namespace ArmyBattle
         /// </summary>
         public static void SaveGameDuringBattle(IArmy army1, IArmy army2)
         {
-            SaveGameDuringBattle(army1, army2, null);
+            SaveGameDuringBattle(army1, army2, null, "");
         }
 
         /// <summary>
         /// Сохраняет состояние игры автоматически во время боя (без запроса названия).
         /// Использует названия армий для создания названия сохранения.
         /// </summary>
-        public static void SaveGameDuringBattle(IArmy army1, IArmy army2, BattleEngine? battle)
+        public static void SaveGameDuringBattle(IArmy army1, IArmy army2, BattleEngine? battle, string saveName)
         {
-            // Автоматически генерируем имя сохранения на основе названия армий
-            string saveName = $"{army1.Name} vs {army2.Name}";
+            // Используем переданное имя сохранения или генерируем новое
+            string actualSaveName = string.IsNullOrWhiteSpace(saveName) ? $"{army1.Name} vs {army2.Name}" : saveName;
             
             ConsoleMenu.ClearConsole();
             ConsoleMenu.PrintHeader("СОХРАНЕНИЕ СОСТОЯНИЯ ИГРЫ");
@@ -222,18 +224,28 @@ namespace ArmyBattle
             // Сохраняем состояние армий для продолжения игры
             if (battle != null)
             {
-                armyManager.SaveArmies(army1, army2, saveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader);
+                armyManager.SaveArmies(army1, army2, actualSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader);
             }
             else
             {
-                armyManager.SaveArmies(army1, army2, saveName);
+                armyManager.SaveArmies(army1, army2, actualSaveName);
             }
             
-            // Сохраняем историю битвы с меткой что это незавершенная игра
-            string gameStatus = "";
-            battleManager.SaveBattleLog(gameStatus, saveName, army1, army2);
+            // Сохраняем историю битвы с информацией о незавершенной игре
+            string gameStatus = "ИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
+            string logFilePath = Path.Combine("Logs", actualSaveName + ".txt");
+            if (File.Exists(logFilePath))
+            {
+                // Дописываем к существующему логу
+                File.AppendAllText(logFilePath, "\n" + gameStatus);
+            }
+            else
+            {
+                // Создаем новый лог
+                battleManager.SaveBattleLog(gameStatus, actualSaveName, army1, army2);
+            }
             
-            ConsoleMenu.ShowSuccess($"Игра сохранена как '{saveName}'!");
+            ConsoleMenu.ShowSuccess($"Игра сохранена как '{actualSaveName}'!");
             Console.ReadKey();
         }
 
@@ -256,7 +268,7 @@ namespace ArmyBattle
                 }
                 
                 // Сохраняем историю битвы (стадия игры)
-                string gameStatus = "";
+                string gameStatus = isGameComplete ? "" : "ИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
                 battleManager.SaveBattleLog(gameStatus, $"{army1.Name} vs {army2.Name}", army1, army2);
                 
                 ConsoleMenu.ShowSuccess($"Игра сохранена как '{saveName}'!");

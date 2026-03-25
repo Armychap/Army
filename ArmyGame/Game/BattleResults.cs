@@ -11,8 +11,8 @@ namespace ArmyBattle
     static class BattleResults
     {
         // Ссылки на сервисы
-        private static ArmyManager armyManager;
-        private static BattleManager battleManager;
+        private static ArmyManager? armyManager;
+        private static BattleManager? battleManager;
         private static IArmy? _lastArmy1;
         private static IArmy? _lastArmy2;
 

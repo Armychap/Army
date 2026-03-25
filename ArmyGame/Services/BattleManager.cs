@@ -93,35 +93,37 @@ namespace ArmyBattle.Services
         /// Сохраняет полный лог битвы в TXT файл и состояние армий в JSON
         /// Создает две строки файлов для каждой битвы - текстовый и данные армий
         /// </summary>
-        public void SaveBattleLog(string log, string battleName, IArmy army1, IArmy army2)
+        /// <summary>
+        /// Сохраняет лог битвы. Если useTimestamp=true, добавляет временную метку (для новых битв).
+        /// Если useTimestamp=false, перезаписывает файл без метки (для продолжений игр).
+        /// </summary>
+        public void SaveBattleLog(string log, string battleName, IArmy army1, IArmy army2, bool useTimestamp = true)
         {
-            // Получаем текущее время для уникального идентификатора
-            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            string logFileName;
+            string jsonFileName;
+            
+            if (useTimestamp)
+            {
+                // Для новых битв - добавляем временную метку
+                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                logFileName = $"{battleName}_{timestamp}.txt";
+                jsonFileName = $"{battleName}_{timestamp}.json";
+            }
+            else
+            {
+                // Для продолжаемых игр - перезаписываем без метки
+                logFileName = $"{battleName}.txt";
+                jsonFileName = $"{battleName}.json";
+            }
 
             // СОХРАНЕНИЕ ТЕКСТОВОГО ЛОГА
-            // Формируем имя файла лога с названием битвы и временем
-            string logFileName = $"{battleName}_{timestamp}.txt";
-            
-            // Объединяем путь: папка логов + имя файла
             string logFilePath = Path.Combine(logsDirectory, logFileName);
-            
-            // Записываем текстовый лог в файл
             File.WriteAllText(logFilePath, log);
 
             // СОХРАНЕНИЕ ДАННЫХ АРМИЙ В JSON
-            // Сериализуем состояние обеих армий для сохранения
             var armyData = armyManager.SerializeArmies(army1, army2);
-            
-            // Формируем имя файла JSON с данными армий
-            string jsonFileName = $"{battleName}_{timestamp}.json";
-            
-            // Объединяем путь к JSON файлу в папке логов
             string jsonFilePath = Path.Combine(logsDirectory, jsonFileName);
-            
-            // Преобразуем данные армий в JSON строку с переносами для читаемости
             string jsonContent = JsonSerializer.Serialize(armyData, new JsonSerializerOptions { WriteIndented = true });
-            
-            // Записываем JSON с данными армий в файл
             File.WriteAllText(jsonFilePath, jsonContent);
         }
 
@@ -152,13 +154,12 @@ namespace ArmyBattle.Services
         /// </summary>
         public string GetBattleLog(string battleName)
         {
-            // Ищем файлы с данным именем
-            var files = Directory.GetFiles(logsDirectory, $"{battleName}*.txt");
+            // Ищем файл с точным именем
+            string filePath = Path.Combine(logsDirectory, $"{battleName}.txt");
             
-            if (files.Length > 0)
+            if (File.Exists(filePath))
             {
-                // Берем первый найденный файл (самый свежий)
-                return File.ReadAllText(files[0]);
+                return File.ReadAllText(filePath);
             }
             
             return "";
@@ -253,6 +254,49 @@ namespace ArmyBattle.Services
             {
                 // При любой ошибке десериализации возвращаем null
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Удаляет все логи битв и сохраненные данные армий
+        /// </summary>
+        public bool DeleteAllBattleLogs()
+        {
+            try
+            {
+                // Удаляем все файлы из папки логов
+                if (Directory.Exists(logsDirectory))
+                {
+                    var txtFiles = Directory.GetFiles(logsDirectory, "*.txt");
+                    foreach (var file in txtFiles)
+                    {
+                        File.Delete(file);
+                    }
+
+                    var jsonFiles = Directory.GetFiles(logsDirectory, "*.json");
+                    foreach (var file in jsonFiles)
+                    {
+                        File.Delete(file);
+                    }
+                }
+
+                // Удаляем все файлы из папки сохранений игр (незавершённые игры)
+                string savesDirectory = "Saves";
+                if (Directory.Exists(savesDirectory))
+                {
+                    var saveFiles = Directory.GetFiles(savesDirectory, "*.json");
+                    foreach (var file in saveFiles)
+                    {
+                        File.Delete(file);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при удалении логов: {ex.Message}");
+                return false;
             }
         }
     }
