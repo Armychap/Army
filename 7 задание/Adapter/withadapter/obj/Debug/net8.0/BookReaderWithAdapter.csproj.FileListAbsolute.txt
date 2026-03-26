@@ -1,0 +1,15 @@
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\bin\Debug\net8.0\BookReaderWithAdapter.exe
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\bin\Debug\net8.0\BookReaderWithAdapter.deps.json
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\bin\Debug\net8.0\BookReaderWithAdapter.runtimeconfig.json
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\bin\Debug\net8.0\BookReaderWithAdapter.dll
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\bin\Debug\net8.0\BookReaderWithAdapter.pdb
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\BookReaderWithAdapter.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\BookReaderWithAdapter.AssemblyInfoInputs.cache
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\BookReaderWithAdapter.AssemblyInfo.cs
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\BookReaderWithAdapter.csproj.CoreCompileInputs.cache
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\BookReaderWithAdapter.sourcelink.json
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\BookReaderWithAdapter.dll
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\refint\BookReaderWithAdapter.dll
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\BookReaderWithAdapter.pdb
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\BookReaderWithAdapter.genruntimeconfig.cache
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\withadapter\obj\Debug\net8.0\ref\BookReaderWithAdapter.dll
