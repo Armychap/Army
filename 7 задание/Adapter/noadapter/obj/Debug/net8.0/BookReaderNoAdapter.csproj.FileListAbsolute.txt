@@ -1,0 +1,15 @@
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\bin\Debug\net8.0\BookReaderNoAdapter.exe
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\bin\Debug\net8.0\BookReaderNoAdapter.deps.json
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\bin\Debug\net8.0\BookReaderNoAdapter.runtimeconfig.json
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\bin\Debug\net8.0\BookReaderNoAdapter.dll
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\bin\Debug\net8.0\BookReaderNoAdapter.pdb
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\BookReaderNoAdapter.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\BookReaderNoAdapter.AssemblyInfoInputs.cache
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\BookReaderNoAdapter.AssemblyInfo.cs
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\BookReaderNoAdapter.csproj.CoreCompileInputs.cache
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\BookReaderNoAdapter.sourcelink.json
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\BookReaderNoAdapter.dll
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\refint\BookReaderNoAdapter.dll
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\BookReaderNoAdapter.pdb
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\BookReaderNoAdapter.genruntimeconfig.cache
+C:\Users\Alex\.vscode\Army\7 задание\Adapter\noadapter\obj\Debug\net8.0\ref\BookReaderNoAdapter.dll
