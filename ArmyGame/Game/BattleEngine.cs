@@ -363,7 +363,7 @@ namespace ArmyBattle.Game
                 if (!unit.IsAlive)
                     continue;
 
-                if (unitType != null && unit.GetType() != unitType)
+                if (unitType != null && unit.GetRootType() != unitType)
                     continue;
 
                 // Бойцы, которые участвовали в раунде, не могут использовать специальные способности
