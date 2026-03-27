@@ -13,7 +13,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ArmyGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< Updated upstream
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ee837d2a27e99bd1086ff3b9cc08e63ca5fb622")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3a24bd6467e719903803cd42c3c1d50a2027c69a")]
+>>>>>>> Stashed changes
 [assembly: System.Reflection.AssemblyProductAttribute("ArmyGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ArmyGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
