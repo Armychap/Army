@@ -19,7 +19,7 @@ namespace ArmyBattle.Services
     {
         // Папка для хранения текстовых логов битв
         private string logsDirectory = "Logs";
-        
+
         // Сервис для управления сохранением/загрузкой данных армий
         private ArmyManager armyManager;
 
@@ -30,7 +30,7 @@ namespace ArmyBattle.Services
         {
             // Создаем новый экземпляр сервиса для управления армиями
             armyManager = new ArmyManager();
-            
+
             // Инициализируем директорию для логов
             CreateDirectoriesIfNeeded();
         }
@@ -50,13 +50,13 @@ namespace ArmyBattle.Services
         {
             // Сохраняем оригинальный вывод консоли для восстановления позже
             var originalOutput = Console.Out;
-            
+
             // Создаем StringWriter для захвата всего вывода в памяти
             var logCapture = new StringWriter();
-            
+
             // Создаем составной писатель, который пишет одновременно в консоль и в буфер
             var compositeWriter = new CompositeTextWriter(originalOutput, logCapture);
-            
+
             // Перенаправляем консоль на наш составной писатель
             Console.SetOut(compositeWriter);
 
@@ -65,7 +65,7 @@ namespace ArmyBattle.Services
                 // Создаем боевой симулятор между двумя армиями
                 // Параметр 400 - это максимальное количество раундов боя
                 BattleEngine battle = new BattleEngine(army1, army2, 400);
-                
+
                 // Запускаем боевой симулятор
                 // Все вывод будет захвачен в logCapture благодаря CompositeTextWriter
                 battle.StartBattle();
@@ -83,7 +83,7 @@ namespace ArmyBattle.Services
             {
                 // Восстанавливаем оригинальный вывод даже при ошибке
                 Console.SetOut(originalOutput);
-                
+
                 // Выводим сообщение об ошибке
                 Console.WriteLine($"Ошибка во время битвы: {ex.Message}");
             }
@@ -101,7 +101,7 @@ namespace ArmyBattle.Services
         {
             string logFileName;
             string jsonFileName;
-            
+
             if (useTimestamp)
             {
                 // Для новых битв - добавляем временную метку
@@ -128,25 +128,74 @@ namespace ArmyBattle.Services
         }
 
         /// <summary>
+        /// Дописывает лог в существующий файл битвы или создаёт новый.
+        /// Используется для продолжения сохранённых игр.
+        /// </summary>
+        public void AppendToBattleLog(string log, string battleName, IArmy army1, IArmy army2)
+        {
+            string logFilePath = Path.Combine(logsDirectory, $"{battleName}.txt");
+
+            // Если файл существует, дописываем, иначе создаём новый
+            if (File.Exists(logFilePath))
+            {
+                File.AppendAllText(logFilePath, log + Environment.NewLine);
+            }
+            else
+            {
+                SaveBattleLog(log, battleName, army1, army2, useTimestamp: false);
+            }
+        }
+        /// <summary>
         /// Получает список имен всех сохраненных логов битв
         /// </summary>
         public string[] GetSavedBattles()
         {
             // Получаем все TXT файлы из директории логов
             var files = Directory.GetFiles(logsDirectory, "*.txt");
-            
+
             // Создаем массив результатов нужного размера
             var result = new string[files.Length];
-            
+
             // Итерируемся по каждому найденному файлу
             for (int i = 0; i < files.Length; i++)
             {
                 // Извлекаем имя файла без расширения .txt
                 result[i] = Path.GetFileNameWithoutExtension(files[i]);
             }
-            
+
             // Возвращаем массив имен логов
             return result;
+        }
+
+        /// <summary>
+        /// Получает список только завершенных битв (исключая незавершенные игры).
+        /// Возвращает: массив имен завершенных логов
+        /// </summary>
+        public string[] GetFinishedBattles()
+        {
+            // Получаем все TXT файлы из директории логов
+            var files = Directory.GetFiles(logsDirectory, "*.txt");
+            var finished = new List<string>();
+
+            // Проверяем каждый файл
+            foreach (var file in files)
+            {
+                try
+                {
+                    string content = File.ReadAllText(file);
+                    // Исключаем незавершенные игры
+                    if (!content.Contains("ИГРА НЕ ЗАВЕРШЕНА"))
+                    {
+                        finished.Add(Path.GetFileNameWithoutExtension(file));
+                    }
+                }
+                catch
+                {
+                    // Пропускаем поврежденные файлы
+                }
+            }
+
+            return finished.ToArray();
         }
 
         /// <summary>
@@ -156,20 +205,20 @@ namespace ArmyBattle.Services
         {
             // Ищем файл с точным именем
             string filePath = Path.Combine(logsDirectory, $"{battleName}.txt");
-            
+
             if (File.Exists(filePath))
             {
                 return File.ReadAllText(filePath);
             }
-            
+
             return "";
         }
-        
+
         public string GetBattleDisplayName(string fileName)
         {
             // Находим последний подчеркивание (это время HHMMSS)
             int lastUnderscoreIndex = fileName.LastIndexOf('_');
-            
+
             if (lastUnderscoreIndex > 0)
             {
                 // Проверяем что это 6 цифр (время)
@@ -178,7 +227,7 @@ namespace ArmyBattle.Services
                 {
                     // Ищем второй последний подчеркивание (дата YYYYMMDD)
                     int prevUnderscoreIndex = fileName.LastIndexOf('_', lastUnderscoreIndex - 1);
-                    
+
                     if (prevUnderscoreIndex > 0)
                     {
                         // Проверяем что это 8 цифр (дата)
@@ -196,10 +245,10 @@ namespace ArmyBattle.Services
                     }
                 }
             }
-            
+
             // Заменяем _vs_ на " vs "
             fileName = fileName.Replace("_vs_", " vs ");
-            
+
             return fileName;
         }
 
@@ -219,17 +268,17 @@ namespace ArmyBattle.Services
         {
             // Получаем все JSON файлы из директории логов
             var files = Directory.GetFiles(logsDirectory, "*.json");
-            
+
             // Создаем массив результатов нужного размера
             var result = new string[files.Length];
-            
+
             // Итерируемся по каждому найденному JSON файлу
             for (int i = 0; i < files.Length; i++)
             {
                 // Извлекаем имя файла без расширения .json
                 result[i] = Path.GetFileNameWithoutExtension(files[i]);
             }
-            
+
             // Возвращаем массив всех доступных боев
             return result;
         }
@@ -241,7 +290,7 @@ namespace ArmyBattle.Services
         {
             // Объединяем путь к JSON файлу в папке логов
             string jsonPath = Path.Combine(logsDirectory, $"{battleName}.json");
-            
+
             // Проверяем существование файла
             if (!File.Exists(jsonPath))
                 // Если файла нет - возвращаем null
@@ -251,7 +300,7 @@ namespace ArmyBattle.Services
             {
                 // Читаем содержимое JSON файла
                 string jsonContent = File.ReadAllText(jsonPath);
-                
+
                 // Десериализуем JSON в объект ArmySaveData
                 return JsonSerializer.Deserialize<ArmySaveData>(jsonContent);
             }

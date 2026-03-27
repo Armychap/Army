@@ -71,20 +71,20 @@ namespace ArmyBattle.Game
             Console.WriteLine();
             Console.Write($"РАУНД {round}: ");
             Console.ForegroundColor = army1.Color;
-            Console.Write($"{army1.Name} {currentFighter1.FighterNumber}");
+            Console.Write($"{army1.Name} {currentFighter1?.FighterNumber}");
             Console.ResetColor();
-            Console.Write($" ({currentFighter1.PowerLevel}) vs ");
+            Console.Write($" ({currentFighter1?.PowerLevel}) vs ");
             Console.ForegroundColor = army2.Color;
-            Console.Write($"{army2.Name} {currentFighter2.FighterNumber}");
+            Console.Write($"{army2.Name} {currentFighter2?.FighterNumber}");
             Console.ResetColor();
-            Console.WriteLine($" ({currentFighter2.PowerLevel})");
+            Console.WriteLine($" ({currentFighter2?.PowerLevel})");
             Console.WriteLine(new string('=', 40));
         }
 
         private void DisplayHealthInfo()
         {
-            Console.WriteLine($"Здоровье {currentFighter1.FighterNumber}: {Math.Max(0, currentFighter1.Health)}/{currentFighter1.MaxHealth}");
-            Console.WriteLine($"Здоровье {currentFighter2.FighterNumber}: {Math.Max(0, currentFighter2.Health)}/{currentFighter2.MaxHealth}");
+            Console.WriteLine($"Здоровье {currentFighter1?.FighterNumber}: {Math.Max(0, currentFighter1?.Health ?? 0)}/{currentFighter1?.MaxHealth ?? 0}");
+            Console.WriteLine($"Здоровье {currentFighter2?.FighterNumber}: {Math.Max(0, currentFighter2?.Health ?? 0)}/{currentFighter2?.MaxHealth ?? 0}");
             Console.WriteLine();
         }
 
@@ -96,7 +96,7 @@ namespace ArmyBattle.Game
             Console.ResetColor();
             Console.Write(" бьет ");
             Console.ForegroundColor = defendingArmy.Color;
-            Console.Write(defender.GetDisplayName(defendingArmy.Name));
+            Console.Write($"{defender.GetDisplayName(defendingArmy.Name)}");
             Console.ResetColor();
             Console.WriteLine();
 
@@ -104,6 +104,7 @@ namespace ArmyBattle.Game
             attacker.AttackUnit(defender);
             int damage = healthBefore - defender.Health;
 
+            Console.WriteLine($"Урон: {damage}");
             DisplayHealthInfo();
 
             if (!defender.IsAlive)
@@ -118,9 +119,9 @@ namespace ArmyBattle.Game
                 Console.ResetColor();
                 Console.WriteLine();
 
-                defendingArmy.RemoveDeadFighter(defender);
+                defendingArmy?.RemoveDeadFighter(defender);
                 needNewRoundHeader = true;
-                defender = defendingArmy.GetNextFighterInBattleOrder();
+                defender = defendingArmy?.GetNextFighterInBattleOrder();
             }
             else
             {
@@ -199,6 +200,16 @@ namespace ArmyBattle.Game
             battleInitialized = true;
         }
 
+        // Выбрать текущего бойца для армии (без продвижения индекса)
+        private IUnit? SelectFighterForArmy(IArmy army)
+        {
+            if (army.CurrentFighterIndex < army.AliveFightersInBattleOrder.Count)
+            {
+                return army.AliveFightersInBattleOrder[army.CurrentFighterIndex];
+            }
+            return null;
+        }
+
         // Установить текущих бойцов
         public void SetCurrentFightersForContinuation()
         {
@@ -272,8 +283,8 @@ namespace ArmyBattle.Game
             else
                 PerformAttack(army2, army1, ref currentFighter2, ref currentFighter1);
             
-            // Проверка специальных способностей после второго удара (когда attackTurn возвращается на 0)
-            if (attackTurn == 0 && !needNewRoundHeader && currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
+            // Проверка специальных способностей после каждого удара, если оба бойца живы
+            if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
             {
                 CheckAndExecuteSpecialAbilities();
             }
@@ -352,7 +363,7 @@ namespace ArmyBattle.Game
                 if (!unit.IsAlive)
                     continue;
 
-                if (unitType != null && unit.GetType() != unitType)
+                if (unitType != null && unit.GetRootType() != unitType)
                     continue;
 
                 // Бойцы, которые участвовали в раунде, не могут использовать специальные способности
@@ -376,12 +387,17 @@ namespace ArmyBattle.Game
                 }
                 else if (isCloning)
                 {
-                    // Маг клонирует случайного союзника (способность сама выбирает)
-                    target = null;
+                    // Маг клонирует случайного союзника (кроме лекаря, тяжелого бойца, себя и другого мага)
+                    var possibleTargets = attackingArmy.Units.Where(u => u.IsAlive && u != unit && !u.Is<Healer>() && !u.Is<StrongFighter>() && !u.Is<Wizard>()).ToList();
+                    if (possibleTargets.Count == 0) continue;
+                    target = possibleTargets[random.Next(possibleTargets.Count)];
                 }
                 else if (isHealing)
                 {
-                    target = null;
+                    // Лекарь лечит случайного союзника, кроме себя и StrongFighter
+                    var possibleTargets = attackingArmy.Units.Where(u => u.IsAlive && u != unit && !u.Is<StrongFighter>()).ToList();
+                    if (possibleTargets.Count == 0) continue;
+                    target = possibleTargets[random.Next(possibleTargets.Count)];
                 }
                 else
                 {
@@ -443,20 +459,20 @@ namespace ArmyBattle.Game
                             Console.ForegroundColor = abilityColor;
                             Console.Write(" стреляет в ");
                             Console.ForegroundColor = defendingArmy.Color;
-                            Console.Write(target.GetDisplayName(defendingArmy.Name));
+                            Console.Write(target?.GetDisplayName(defendingArmy.Name));
                             Console.ResetColor();
                             Console.WriteLine();
                         }
 
                         if (!(realUnit is Wizard))
                         {
-                            int damage = healthBefore - target.Health;
+                            int damage = healthBefore - (target?.Health ?? 0);
                             Console.WriteLine($"Урон: {damage}");
                             Console.Write($"Здоровье ");
                             Console.ForegroundColor = defendingArmy.Color;
-                            Console.Write(target.GetDisplayName(defendingArmy.Name));
+                            Console.Write(target?.GetDisplayName(defendingArmy.Name));
                             Console.ResetColor();
-                            Console.WriteLine($": {Math.Max(0, target.Health)}/{target.MaxHealth}");
+                            Console.WriteLine($": {Math.Max(0, target?.Health ?? 0)}/{target?.MaxHealth ?? 0}");
                         }
 
                         if (!target?.IsAlive ?? false)
@@ -468,7 +484,7 @@ namespace ArmyBattle.Game
                             Console.ForegroundColor = abilityColor;
                             Console.Write(" убивает ");
                             Console.ForegroundColor = defendingArmy.Color;
-                            Console.Write(target.GetDisplayName(defendingArmy.Name));
+                            Console.Write(target?.GetDisplayName(defendingArmy.Name));
                             Console.ForegroundColor = abilityColor;
                             Console.Write(" специальной способностью!");
                             Console.ResetColor();
