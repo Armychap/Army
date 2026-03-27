@@ -85,6 +85,7 @@ namespace ArmyBattle
                 _lastArmy2.GenerateArmyWithBudget(budget);
 
                 // Очищаем экран и показываем информацию об созданной армии
+                //
                 ConsoleMenu.ClearConsole();
                 ConsoleMenu.PrintHeader($"СОЗДАНА АРМИЯ: {name2}");
                 _lastArmy2.DisplayArmyInfo(true);
