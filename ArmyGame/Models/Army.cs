@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ArmyBattle.Services;
 
 namespace ArmyBattle.Models
 {
@@ -191,6 +192,8 @@ namespace ArmyBattle.Models
                 var selectedFighter = affordableFighters[random.Next(affordableFighters.Count)];
 
                 IUnit newUnit = selectedFighter.Item2(fighterNumber);
+                // Применяем прокси для логирования и других функций
+                newUnit = UnitFactoryProvider.Instance.Wrap(newUnit);
                 AddUnit(newUnit);
                 remainingBudget -= selectedFighter.Item1;
                 fighterNumber++;

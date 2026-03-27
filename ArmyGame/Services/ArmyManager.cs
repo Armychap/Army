@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using ArmyBattle.Models;
+using ArmyBattle.Services;
 
 namespace ArmyBattle.Services
 {
@@ -300,7 +301,8 @@ namespace ArmyBattle.Services
                 result.Add(new UnitSaveData
                 {
                     // Сохраняем тип юнита (имя класса: WeakFighter, Archer, StrongFighter)
-                    Type = unit.GetType().Name,
+                    // Используем GetRootType() чтобы сохранить реальный тип, не прокси
+                    Type = unit.GetRootType().Name,
                     
                     // Сохраняем номер боя для идентификации внутри армии
                     FighterNumber = unit.FighterNumber,
@@ -361,8 +363,11 @@ namespace ArmyBattle.Services
                 // (это важно если юнит был поврежден в предыдущем бою)
                 unit.Health = unitData.Health;
                 
+                // ✅ Применяем прокси для логирования, звуков и других функций
+                IUnit wrappedUnit = UnitFactoryProvider.Instance.Wrap(unit);
+                
                 // Добавляем восстановленного юнита в армию
-                army.AddUnit(unit);
+                army.AddUnit(wrappedUnit);
             }
         }
     }
