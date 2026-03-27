@@ -1,5 +1,5 @@
 {
-  "Army1Name": "\u0440\u043E\u0440\u043E",
+  "Army1Name": "\u0446\u0443",
   "Army1Prefix": null,
   "Army1Color": 12,
   "Army1Units": [
@@ -12,12 +12,12 @@
       "Cost": 25
     },
     {
-      "Type": "WeakFighter",
+      "Type": "Healer",
       "FighterNumber": 2,
-      "Health": 13,
-      "Attack": 10,
-      "Defence": 8,
-      "Cost": 15
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
     },
     {
       "Type": "StrongFighter",
@@ -36,23 +36,23 @@
       "Cost": 15
     }
   ],
-  "TotalCost1": 95,
-  "Army2Name": "\u0442\u043E\u0442\u043E",
+  "TotalCost1": 100,
+  "Army2Name": "\u043A\u0443",
   "Army2Prefix": null,
   "Army2Color": 9,
   "Army2Units": [
     {
-      "Type": "WeakFighter",
+      "Type": "Healer",
       "FighterNumber": 1,
-      "Health": 25,
-      "Attack": 10,
-      "Defence": 8,
-      "Cost": 15
+      "Health": -11,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
     },
     {
       "Type": "StrongFighter",
       "FighterNumber": 2,
-      "Health": 58,
+      "Health": 59,
       "Attack": 20,
       "Defence": 15,
       "Cost": 40
@@ -66,16 +66,16 @@
       "Cost": 15
     },
     {
-      "Type": "Healer",
+      "Type": "WeakFighter",
       "FighterNumber": 4,
-      "Health": 15,
-      "Attack": 3,
-      "Defence": 2,
-      "Cost": 20
+      "Health": 19,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
     }
   ],
   "TotalCost2": 90,
-  "SaveDate": "2026-03-25T18:53:12.2228024+03:00",
+  "SaveDate": "2026-03-27T11:53:12.1549027+03:00",
   "CurrentRound": 1,
   "AttackTurn": 0,
   "FirstAttackerIsArmy1": false,

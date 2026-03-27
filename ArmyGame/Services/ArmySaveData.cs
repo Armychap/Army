@@ -9,9 +9,9 @@ namespace ArmyBattle.Services
     public class ArmySaveData
     {
         // ДАННЫЕ ПЕРВОЙ АРМИИ
-        public string Army1Name { get; set; }
+        public string? Army1Name { get; set; }
         
-        public string Army1Prefix { get; set; }
+        public string? Army1Prefix { get; set; }
         
         // Цвет консоли для отображения первой армии (есть, Blue, Green и т.д.).
 
@@ -21,7 +21,7 @@ namespace ArmyBattle.Services
         /// Список всех юнитов первой армии в сохраняемом формате.
         /// Каждый элемент содержит параметры и характеристики одного боя.
         /// </summary>
-        public List<UnitSaveData> Army1Units { get; set; }
+        public List<UnitSaveData> ?Army1Units { get; set; }
         
         /// <summary>
         /// Общая стоимость всех юнитов первой армии.
@@ -31,8 +31,8 @@ namespace ArmyBattle.Services
 
         //ДАННЫЕ ВТОРОЙ АРМИИ
         
-        public string Army2Name { get; set; }
-        public string Army2Prefix { get; set; }
+        public string? Army2Name { get; set; }
+        public string? Army2Prefix { get; set; }
         
         // Цвет консоли для отображения второй армии 
         public ConsoleColor Army2Color { get; set; }
@@ -41,7 +41,7 @@ namespace ArmyBattle.Services
         /// Список всех юнитов второй армии в сохраняемом формате.
         /// Каждый элемент содержит параметры и характеристики одного боя.
         /// </summary>
-        public List<UnitSaveData> Army2Units { get; set; }
+        public List<UnitSaveData> ?Army2Units { get; set; }
         
         /// <summary>
         /// Общая стоимость всех юнитов второй армии.
@@ -78,7 +78,7 @@ namespace ArmyBattle.Services
         /// <summary>
         /// Имя файла лога битвы для продолжения.
         /// </summary>
-        public string BattleLogName { get; set; }
+        public string? BattleLogName { get; set; }
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ namespace ArmyBattle.Services
         /// Тип юнита в виде строки (например: "WeakFighter", "Archer", "StrongFighter").
         /// Используется для определения, какой класс создавать при загрузке.
         /// </summary>
-        public string Type { get; set; }
+        public string? Type { get; set; }
         
         /// <summary>
         /// Номер боя внутри армии (1, 2, 3 и т.д.).

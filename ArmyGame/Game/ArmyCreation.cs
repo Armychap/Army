@@ -122,7 +122,7 @@ namespace ArmyBattle
             if (key.Key == ConsoleKey.Enter)
             {
                 // Запускаем битву между вручную созданными армиями
-                BattleMenu.StartBattle(army1, army2);
+                _ = BattleMenu.StartBattle(army1, army2);
             }
 
             return (army1, army2);

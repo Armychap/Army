@@ -42,7 +42,7 @@ namespace ArmyBattle
             ConsoleMenu.PrintHeader("СОХРАНЕНИЕ АРМИЙ");
             string saveName = ConsoleMenu.GetInput("Введите название для сохранения (без пробелов): ");
             
-            armyManager.SaveArmies(_lastArmy1, _lastArmy2, saveName);
+            armyManager?.SaveArmies(_lastArmy1, _lastArmy2, saveName);
             ConsoleMenu.ShowSuccess($"Армии сохранены!");
             Console.ReadKey();
         }
@@ -50,7 +50,7 @@ namespace ArmyBattle
         // Показывает интерактивное меню для просмотра состава армий из сохраненных битв
         public static void ShowStoredArmiesInfo()
         {
-            string[] savedBattles = battleManager.GetSavedBattleArmies();
+            string[] savedBattles = battleManager?.GetSavedBattleArmies() ?? Array.Empty<string>();
 
             if (savedBattles.Length == 0)
             {
@@ -67,7 +67,7 @@ namespace ArmyBattle
 
                 if (choice >= 1 && choice <= savedBattles.Length)
                 {
-                    var armyData = battleManager.LoadBattleArmies(savedBattles[choice - 1]);
+                    var armyData = battleManager?.LoadBattleArmies(savedBattles[choice - 1]);
 
                     if (armyData != null)
                     {
