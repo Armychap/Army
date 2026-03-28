@@ -43,10 +43,10 @@ namespace ArmyBattle.UI
         /// Выводит информацию о составе и характеристиках одной армии.
         /// Показывает название, бюджет, и список всех юнитов с их параметрами.
         /// </summary>
-        public static void DisplayArmyComposition(string armyName, ConsoleColor color, List<UnitSaveData> units, int totalCost)
+        public static void DisplayArmyComposition(string armyName, int color, List<UnitSaveData> units, int totalCost)
         {
             // Устанавливаем цвет для армии (красный, синий и т.д.)
-            Console.ForegroundColor = color;
+            Console.ForegroundColor = (ConsoleColor)color;
             
             // Выводим название армии и её общий бюджет
             Console.WriteLine($"\n{armyName} (Бюджет: {totalCost}):");

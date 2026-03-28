@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using ArmyBattle.Models;
 using ArmyBattle.Services;
@@ -117,13 +118,13 @@ namespace ArmyBattle.Services
                 if (string.IsNullOrWhiteSpace(saveData.Army1Name))
                     return false;
                     
-                army1 = new Army(saveData.Army1Name, saveData.Army1Color);
+                army1 = new Army(saveData.Army1Name, (ConsoleColor)saveData.Army1Color);
                 
                 // Создаем вторую армию с восстановленными параметрами
                 if (string.IsNullOrWhiteSpace(saveData.Army2Name))
                     return false;
                     
-                army2 = new Army(saveData.Army2Name, saveData.Army2Color);
+                army2 = new Army(saveData.Army2Name, (ConsoleColor)saveData.Army2Color);
 
                 // Добавляем юнитов в первую армию из сохраненных данных
                 if (saveData.Army1Units != null)
@@ -132,6 +133,40 @@ namespace ArmyBattle.Services
                 // Добавляем юнитов во вторую армию из сохраненных данных
                 if (saveData.Army2Units != null)
                     DeserializeUnits(saveData.Army2Units, army2);
+
+                // Восстанавливаем порядок и текущие индексы
+                if (saveData.Army1AliveOrder != null && saveData.Army1AliveOrder.Count > 0)
+                {
+                    var order1 = new List<IUnit>();
+                    foreach (var number in saveData.Army1AliveOrder)
+                    {
+                        var unit = army1.Units.FirstOrDefault(u => u.FighterNumber == number && u.IsAlive);
+                        if (unit != null) order1.Add(unit);
+                    }
+                    army1.AliveFightersInBattleOrder = order1;
+                }
+                else
+                {
+                    army1.RefreshAliveFighters();
+                }
+
+                if (saveData.Army2AliveOrder != null && saveData.Army2AliveOrder.Count > 0)
+                {
+                    var order2 = new List<IUnit>();
+                    foreach (var number in saveData.Army2AliveOrder)
+                    {
+                        var unit = army2.Units.FirstOrDefault(u => u.FighterNumber == number && u.IsAlive);
+                        if (unit != null) order2.Add(unit);
+                    }
+                    army2.AliveFightersInBattleOrder = order2;
+                }
+                else
+                {
+                    army2.RefreshAliveFighters();
+                }
+
+                army1.CurrentFighterIndex = Math.Min(saveData.Army1CurrentFighterIndex, army1.AliveFightersInBattleOrder.Count);
+                army2.CurrentFighterIndex = Math.Min(saveData.Army2CurrentFighterIndex, army2.AliveFightersInBattleOrder.Count);
 
                 // Восстанавливаем состояние битвы
                 currentRound = saveData.CurrentRound;
@@ -194,8 +229,8 @@ namespace ArmyBattle.Services
                     if (saveData != null && !string.IsNullOrWhiteSpace(saveData.Army1Name) && !string.IsNullOrWhiteSpace(saveData.Army2Name))
                     {
                         // Создаем временные армии для проверки
-                        var army1 = new Army(saveData.Army1Name, saveData.Army1Color);
-                        var army2 = new Army(saveData.Army2Name, saveData.Army2Color);
+                        var army1 = new Army(saveData.Army1Name, (ConsoleColor)saveData.Army1Color);
+                        var army2 = new Army(saveData.Army2Name, (ConsoleColor)saveData.Army2Color);
                         
                         if (saveData.Army1Units != null)
                             DeserializeUnits(saveData.Army1Units, army1);
@@ -248,7 +283,7 @@ namespace ArmyBattle.Services
                 Army1Name = army1.Name,
                 
                 // Сохраняем цвет для отображения первой армии в консоли
-                Army1Color = army1.Color,
+                Army1Color = (int)army1.Color,
                 
                 // Сериализуем список юнитов первой армии
                 Army1Units = SerializeUnits(army1.Units),
@@ -261,7 +296,7 @@ namespace ArmyBattle.Services
                 Army2Name = army2.Name,
                 
                 // Сохраняем цвет для отображения второй армии в консоли
-                Army2Color = army2.Color,
+                Army2Color = (int)army2.Color,
                 
                 // Сериализуем список юнитов второй армии
                 Army2Units = SerializeUnits(army2.Units),
@@ -276,9 +311,15 @@ namespace ArmyBattle.Services
                 // Сохраняем состояние битвы
                 CurrentRound = currentRound,
                 AttackTurn = attackTurn,
+                Army1CurrentFighterIndex = army1.CurrentFighterIndex,
+                Army2CurrentFighterIndex = army2.CurrentFighterIndex,
                 FirstAttackerIsArmy1 = firstAttackerIsArmy1,
                 NeedNewRoundHeader = needNewRoundHeader,
-                BattleLogName = battleLogName
+                BattleLogName = battleLogName,
+
+                // Сохраняем реальный порядок жизни бойцов (для корректного продолжения)
+                Army1AliveOrder = army1.AliveFightersInBattleOrder?.Select(u => u.FighterNumber).ToList(),
+                Army2AliveOrder = army2.AliveFightersInBattleOrder?.Select(u => u.FighterNumber).ToList()
             };
         }
 
@@ -354,6 +395,9 @@ namespace ArmyBattle.Services
 
                     // Если тип был "Wizard" создаем мага
                     nameof(Wizard) => new Wizard(unitData.FighterNumber),
+
+                    // Если тип был "ShieldWall" создаем стену щитов
+                    nameof(ShieldWall) => new ShieldWall(unitData.FighterNumber),
                     
                     // Если тип неизвестен выбрасываем исключение с описанием ошибки
                     _ => throw new Exception($"Неизвестный тип юнита: {unitData.Type}")

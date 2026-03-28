@@ -116,10 +116,7 @@ namespace ArmyBattle
                 BattleEngine battle = new BattleEngine(army1, army2, 400);
                 battle.SetBattleState(currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader);
 
-                army1.RefreshAliveFighters();
-                army2.RefreshAliveFighters();
-
-                // ✅ Восстанавливаем текущих бойцов
+                // Восстанавливаем порядок бойцов и индекс уже в LoadArmies, здесь не перемешиваем заново.
                 battle.SetCurrentFightersForContinuation();
                 battle.SetBattleInitialized(true);
 

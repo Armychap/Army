@@ -22,7 +22,7 @@ namespace ArmyBattle.Models
         List<IUnit> Units { get; }
         
         //Список живых бойцов в порядке боя
-        List<IUnit> AliveFightersInBattleOrder { get; }
+        List<IUnit> AliveFightersInBattleOrder { get; set; }
 
         //Индекс текущего бойца в порядке боя
         int CurrentFighterIndex { get; set; }

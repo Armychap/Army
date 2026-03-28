@@ -81,7 +81,13 @@ namespace ArmyBattle.Models
             {
                 File.AppendAllText(logFile, line + Environment.NewLine);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                // Если логирование рушит программу, хотя бы пропускаем
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"[LOG ERROR] Не удалось записать лог: {ex.Message}");
+                Console.ResetColor();
+            }
         }
     }
 

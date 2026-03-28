@@ -25,17 +25,24 @@ namespace ArmyBattle.Services
                         Current = settings;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Игнорируем ошибки, оставляем значение по умолчанию
+                Console.WriteLine($"[WARNING] Ошибка загрузки настроек прокси: {ex.Message}");
             }
         }
 
         public static void Save()
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string json = JsonSerializer.Serialize(Current, options);
-            File.WriteAllText(SettingsFile, json);
+            try
+            {
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                string json = JsonSerializer.Serialize(Current, options);
+                File.WriteAllText(SettingsFile, json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WARNING] Ошибка сохранения настроек прокси: {ex.Message}");
+            }
         }
 
         public static void Reset()
