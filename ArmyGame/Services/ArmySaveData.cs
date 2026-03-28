@@ -15,7 +15,7 @@ namespace ArmyBattle.Services
         
         // Цвет консоли для отображения первой армии (есть, Blue, Green и т.д.).
 
-        public ConsoleColor Army1Color { get; set; }
+        public int Army1Color { get; set; }
         
         /// <summary>
         /// Список всех юнитов первой армии в сохраняемом формате.
@@ -35,7 +35,7 @@ namespace ArmyBattle.Services
         public string? Army2Prefix { get; set; }
         
         // Цвет консоли для отображения второй армии 
-        public ConsoleColor Army2Color { get; set; }
+        public int Army2Color { get; set; }
         
         /// <summary>
         /// Список всех юнитов второй армии в сохраняемом формате.
@@ -66,6 +66,16 @@ namespace ArmyBattle.Services
         public int AttackTurn { get; set; }
         
         /// <summary>
+        /// Индекс текущего бойца в очереди армии 1.
+        /// </summary>
+        public int Army1CurrentFighterIndex { get; set; }
+        
+        /// <summary>
+        /// Индекс текущего бойца в очереди армии 2.
+        /// </summary>
+        public int Army2CurrentFighterIndex { get; set; }
+
+        /// <summary>
         /// Флаг, кто первый атакующий (true - армия 1, false - армия 2).
         /// </summary>
         public bool FirstAttackerIsArmy1 { get; set; }
@@ -75,6 +85,16 @@ namespace ArmyBattle.Services
         /// </summary>
         public bool NeedNewRoundHeader { get; set; }
         
+        /// <summary>
+        /// Порядок живых бойцов армии 1 (по FighterNumber) для восстановленного хода.
+        /// </summary>
+        public List<int>? Army1AliveOrder { get; set; }
+
+        /// <summary>
+        /// Порядок живых бойцов армии 2 (по FighterNumber) для восстановленного хода.
+        /// </summary>
+        public List<int>? Army2AliveOrder { get; set; }
+
         /// <summary>
         /// Имя файла лога битвы для продолжения.
         /// </summary>

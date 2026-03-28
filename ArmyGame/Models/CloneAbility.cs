@@ -29,6 +29,9 @@ namespace ArmyBattle.Models
             if (user == null || user.Army == null)
                 return;
 
+            // Сбрасываем предыдущий результат перед каждой попыткой
+            ChosenToClone = null;
+
             // Шанс сработать
             if (random.Next(100) >= Power)
                 return;

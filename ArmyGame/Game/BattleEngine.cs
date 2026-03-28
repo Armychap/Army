@@ -79,23 +79,35 @@ namespace ArmyBattle.Game
             Console.ResetColor();
             Console.WriteLine($" ({currentFighter2?.PowerLevel})");
             Console.WriteLine(new string('=', 40));
+
+            DisplayBattleOrder();
         }
 
         private void DisplayBattleOrder()
         {
-            Console.WriteLine("ПОРЯДОК БОЙЦОВ:");
-            Console.Write($"{army1.Name}: ");
-            foreach (var unit in army1.AliveFightersInBattleOrder)
+            Console.WriteLine("Порядок боя (формат: название команды: номер (тип)): ");
+
+            string FormatUnit(IUnit unit)
             {
-                Console.Write($"{unit.FighterNumber} ({unit.GetShortType()}) ");
+                string shortType = unit.PowerLevel.ToLowerInvariant() switch
+                {
+                    "слабый" => "слаб",
+                    "маг" => "маг",
+                    "стена" => "стен",
+                    "гуляй город" => "стен",
+                    "лучник" => "луч",
+                    "лекарь" => "лек",
+                    "сильный" => "сил",
+                    _ => unit.PowerLevel.Length <= 4 ? unit.PowerLevel.ToLowerInvariant() : unit.PowerLevel.Substring(0, 4).ToLowerInvariant()
+                };
+                return $"{unit.FighterNumber} ({shortType})";
             }
-            Console.WriteLine();
-            Console.Write($"{army2.Name}: ");
-            foreach (var unit in army2.AliveFightersInBattleOrder)
-            {
-                Console.Write($"{unit.FighterNumber} ({unit.GetShortType()}) ");
-            }
-            Console.WriteLine();
+
+            var order1 = string.Join(" -> ", army1.AliveFightersInBattleOrder.Select(FormatUnit));
+            var order2 = string.Join(" -> ", army2.AliveFightersInBattleOrder.Select(FormatUnit));
+
+            Console.WriteLine($"{army1.Name}: {order1}");
+            Console.WriteLine($"{army2.Name}: {order2}");
             Console.WriteLine();
         }
 
@@ -109,16 +121,29 @@ namespace ArmyBattle.Game
         // Выполняет один удар от attacker к defender, выводит сообщения и обновляет очередь.
         private void PerformAttack(IArmy attackingArmy, IArmy defendingArmy, ref IUnit attacker, ref IUnit defender)
         {
-            if (attacker.Attack > 0)
+            // Если атакующий не имеет атаки (например, ShieldWall), он пропускает ход
+            if (attacker.Attack == 0)
             {
                 Console.ForegroundColor = attackingArmy.Color;
                 Console.Write(attacker.GetDisplayName(attackingArmy.Name));
                 Console.ResetColor();
-                Console.Write(" бьет ");
-                Console.ForegroundColor = defendingArmy.Color;
-                Console.Write($"{defender.GetDisplayName(defendingArmy.Name)}");
-                Console.ResetColor();
+                Console.Write(" пропускает ход (нет атаки)");
                 Console.WriteLine();
+                
+                // Пропускаем атаку, продолжаем с другим боецом
+                attackTurn = 1 - attackTurn;
+                // НЕ меняем needNewRoundHeader при пропуске - раунд продолжается, пока никто не умер
+                return;
+            }
+
+            Console.ForegroundColor = attackingArmy.Color;
+            Console.Write(attacker.GetDisplayName(attackingArmy.Name));
+            Console.ResetColor();
+            Console.Write(" бьет ");
+            Console.ForegroundColor = defendingArmy.Color;
+            Console.Write($"{defender.GetDisplayName(defendingArmy.Name)}");
+            Console.ResetColor();
+            Console.WriteLine();
 
                 int healthBefore = defender.Health;
                 attacker.AttackUnit(defender);
@@ -150,13 +175,17 @@ namespace ArmyBattle.Game
                 Console.WriteLine();
 
                 defendingArmy?.RemoveDeadFighter(defender);
-                needNewRoundHeader = true;
                 defender = defendingArmy?.GetNextFighterInBattleOrder();
+                
+                // После смерти, продолжаем раунд как обычно - меняем attackTurn
+                attackTurn = 1 - attackTurn;
+                needNewRoundHeader = (attackTurn == 0);
             }
             else
             {
                 attackTurn = 1 - attackTurn;
-                needNewRoundHeader = false;
+                // Если attackTurn вернулся на 0, это конец раунда - начинаем новый
+                needNewRoundHeader = (attackTurn == 0);
             }
         }
 

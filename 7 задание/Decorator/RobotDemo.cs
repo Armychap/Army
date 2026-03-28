@@ -70,7 +70,7 @@ public class RobotDemo
         while (adding)
         {
             Console.Clear();
-            Console.WriteLine(" ТЕКУЩАЯ КОНФИГУРАЦИЯ РОБОТА:");
+            Console.WriteLine("Текущая конфигурация робота:");
             robot.ShowInfo();
 
             Console.WriteLine("\n Доступные улучшения:");

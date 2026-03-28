@@ -23,6 +23,14 @@ namespace ArmyBattle.Services
             return wrapped;
         }
 
+        /// <summary>
+        /// Переоборачивает юнита с актуальными настройками логирования
+        /// </summary>
+        public IUnit ReWrap(IUnit unit)
+        {
+            return Wrap(unit);
+        }
+
         public IUnit CreateFromType(string unitType, int fighterNumber)
         {
             IUnit unit = unitType switch

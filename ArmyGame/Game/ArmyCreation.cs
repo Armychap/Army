@@ -166,7 +166,7 @@ namespace ArmyBattle
                 Console.WriteLine("2 - Добавить лучника (ATK 5, DEF 3, HP 18) - 25");
                 Console.WriteLine("3 - Добавить мага (клонирует союзников) - 30");
                 Console.WriteLine("4 - Добавить сильного бойца (ATK 20, DEF 15, HP 60) - 40");
-                Console.WriteLine("5 - Добавить гуляй-город (ATK 0, DEF 100, HP 100, не атакует, не лечится, не копируется) - 60");
+                Console.WriteLine("5 - Добавить Гуляй город (ATK 0, DEF 50, HP 70) - 55");
                 Console.WriteLine("6 - Удалить последнего бойца");
                 Console.WriteLine("7 - Завершить настройку");
                 Console.Write("Выбор: ");
@@ -256,14 +256,15 @@ namespace ArmyBattle
                     break;
 
                 case "5":
-                    if (totalCost + 60 <= maxBudget)
+                    // Добавить Гуляй город (стена щитов)
+                    if (totalCost + 55 <= maxBudget)
                     {
                         IUnit fighter = new ShieldWall(fighterNumber++);
                         // Применяем прокси для логирования и других функций
                         fighter = UnitFactoryProvider.Instance.Wrap(fighter);
                         army.AddUnit(fighter);
-                        totalCost += 60;
-                        Console.WriteLine("Гуляй-город добавлен!");
+                        totalCost += 55;
+                        Console.WriteLine("Гуляй город добавлен!");
                     }
                     else
                         Console.WriteLine("Недостаточно бюджета!");

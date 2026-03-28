@@ -18,7 +18,8 @@ namespace ArmyBattle.Models
               )
         {
             FighterNumber = fighterNumber;
-            SpecialAbility = new CloneAbility("Клонирование", 1, 15);
+            // 30% шанс клонировать союзника при срабатывании способности
+            SpecialAbility = new CloneAbility("Клонирование", 1, 30);
         }
     }
 }
