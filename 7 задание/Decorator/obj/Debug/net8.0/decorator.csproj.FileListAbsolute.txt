@@ -1,0 +1,15 @@
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\bin\Debug\net8.0\decorator.exe
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\bin\Debug\net8.0\decorator.deps.json
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\bin\Debug\net8.0\decorator.runtimeconfig.json
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\bin\Debug\net8.0\decorator.dll
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\bin\Debug\net8.0\decorator.pdb
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\decorator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\decorator.AssemblyInfoInputs.cache
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\decorator.AssemblyInfo.cs
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\decorator.csproj.CoreCompileInputs.cache
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\decorator.sourcelink.json
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\decorator.dll
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\refint\decorator.dll
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\decorator.pdb
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\decorator.genruntimeconfig.cache
+C:\Users\Alex\.vscode\Army\7 задание\Decorator\obj\Debug\net8.0\ref\decorator.dll

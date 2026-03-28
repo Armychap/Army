@@ -38,9 +38,9 @@ namespace ArmyBattle.Models
 
             var army = user.Army;
 
-            // Выбираем случайного кандидата для клона (только слабый боец или лучник, не маг и не лекарь)
+            // Выбираем случайного кандидата для клона (только слабый боец или лучник, не маг и не лекарь, и может быть клонирован)
             var candidates = army.Units
-                .Where(u => u != user && (u is WeakFighter || u is Archer))
+                .Where(u => u != user && (u is WeakFighter || u is Archer) && u.CanBeCloned())
                 .ToList();
 
             if (candidates.Count == 0)

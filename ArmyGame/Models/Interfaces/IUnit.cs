@@ -59,5 +59,11 @@ namespace ArmyBattle.Models
         
         /// Получить отображаемое имя бойца с префиксом
         string GetDisplayName(string prefix);
+
+        /// Может ли боец быть скопирован магом
+        bool CanBeCloned();
+
+        /// Может ли боец быть вылечен лекарем
+        bool CanBeHealed();
     }
 }

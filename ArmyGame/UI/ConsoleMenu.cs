@@ -66,6 +66,10 @@ namespace ArmyBattle.UI
                     "WeakFighter" => "Слабый боец",
                     "Archer" => "Лучник",
                     "StrongFighter" => "Сильный боец",
+                    "Healer" => "Лекарь",
+                    "Wizard" => "Маг",
+                    "ShieldWall" => "Гуляй-город",
+                    "ShieldWallAdapter" => "Гуляй-город (адаптер)",
                     // Если тип неизвестен - используем оригинальное имя
                     _ => unit.Type
                 };
@@ -174,6 +178,12 @@ namespace ArmyBattle.UI
                 
                 // Сильные бойцы имают максимум 60 HP
                 "StrongFighter" => 60,
+
+                // Гуляй-город имеет максимум 80 HP
+                "ShieldWall" => 80,
+
+                // Гуляй-город адаптер имеет максимум 100 HP
+                "ShieldWallAdapter" => 100,
                 
                 // Если тип неизвестен - возвращаем 0
                 _ => 0

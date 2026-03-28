@@ -55,6 +55,16 @@ namespace ArmyBattle.Models
         {
             return inner.GetDisplayName(prefix);
         }
+
+        public virtual bool CanBeCloned()
+        {
+            return inner.CanBeCloned();
+        }
+
+        public virtual bool CanBeHealed()
+        {
+            return inner.CanBeHealed();
+        }
     }
 
     /// <summary>
