@@ -23,5 +23,17 @@ namespace ArmyBattle.Models
         {
             return unit.GetRootUnit().GetType();
         }
+
+        public static string GetShortType(this IUnit unit)
+        {
+            var type = unit.GetRootType();
+            if (type == typeof(Wizard)) return "маг";
+            if (type == typeof(Archer)) return "лук";
+            if (type == typeof(Healer)) return "лек";
+            if (type == typeof(StrongFighter)) return "сил";
+            if (type == typeof(WeakFighter)) return "слаб";
+            if (type == typeof(ShieldWall)) return "стен";
+            return "?";
+        }
     }
 }

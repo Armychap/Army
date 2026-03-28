@@ -165,6 +165,7 @@ namespace ArmyBattle.Models
             // Список доступных типов бойцов с их стоимостью
             var availableFighters = new List<Tuple<int, Func<int, IUnit>>>
             {
+                new Tuple<int, Func<int, IUnit>>(60, (num) => new ShieldWall(num)),
                 new Tuple<int, Func<int, IUnit>>(40, (num) => new StrongFighter(num)),
                 new Tuple<int, Func<int, IUnit>>(30, (num) => new Wizard(num)),
                 new Tuple<int, Func<int, IUnit>>(25, (num) => new Archer(num)),

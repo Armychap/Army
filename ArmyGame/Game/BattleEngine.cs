@@ -81,6 +81,24 @@ namespace ArmyBattle.Game
             Console.WriteLine(new string('=', 40));
         }
 
+        private void DisplayBattleOrder()
+        {
+            Console.WriteLine("ПОРЯДОК БОЙЦОВ:");
+            Console.Write($"{army1.Name}: ");
+            foreach (var unit in army1.AliveFightersInBattleOrder)
+            {
+                Console.Write($"{unit.FighterNumber} ({unit.GetShortType()}) ");
+            }
+            Console.WriteLine();
+            Console.Write($"{army2.Name}: ");
+            foreach (var unit in army2.AliveFightersInBattleOrder)
+            {
+                Console.Write($"{unit.FighterNumber} ({unit.GetShortType()}) ");
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+
         private void DisplayHealthInfo()
         {
             Console.WriteLine($"Здоровье {currentFighter1?.FighterNumber}: {Math.Max(0, currentFighter1?.Health ?? 0)}/{currentFighter1?.MaxHealth ?? 0}");
@@ -91,21 +109,33 @@ namespace ArmyBattle.Game
         // Выполняет один удар от attacker к defender, выводит сообщения и обновляет очередь.
         private void PerformAttack(IArmy attackingArmy, IArmy defendingArmy, ref IUnit attacker, ref IUnit defender)
         {
-            Console.ForegroundColor = attackingArmy.Color;
-            Console.Write(attacker.GetDisplayName(attackingArmy.Name));
-            Console.ResetColor();
-            Console.Write(" бьет ");
-            Console.ForegroundColor = defendingArmy.Color;
-            Console.Write($"{defender.GetDisplayName(defendingArmy.Name)}");
-            Console.ResetColor();
-            Console.WriteLine();
+            if (attacker.Attack > 0)
+            {
+                Console.ForegroundColor = attackingArmy.Color;
+                Console.Write(attacker.GetDisplayName(attackingArmy.Name));
+                Console.ResetColor();
+                Console.Write(" бьет ");
+                Console.ForegroundColor = defendingArmy.Color;
+                Console.Write($"{defender.GetDisplayName(defendingArmy.Name)}");
+                Console.ResetColor();
+                Console.WriteLine();
 
-            int healthBefore = defender.Health;
-            attacker.AttackUnit(defender);
-            int damage = healthBefore - defender.Health;
+                int healthBefore = defender.Health;
+                attacker.AttackUnit(defender);
+                int damage = healthBefore - defender.Health;
 
-            Console.WriteLine($"Урон: {damage}");
-            DisplayHealthInfo();
+                Console.WriteLine($"Урон: {damage}");
+                DisplayHealthInfo();
+            }
+            else
+            {
+                // Юнит не может атаковать, пропускает ход
+                Console.ForegroundColor = attackingArmy.Color;
+                Console.Write(attacker.GetDisplayName(attackingArmy.Name));
+                Console.ResetColor();
+                Console.WriteLine(" пропускает ход (не может атаковать)");
+                Console.WriteLine();
+            }
 
             if (!defender.IsAlive)
             {
@@ -269,6 +299,7 @@ namespace ArmyBattle.Game
             // Показываем заголовок раунда только если нужен новый раунд
             if (needNewRoundHeader)
             {
+                DisplayBattleOrder();
                 DisplayRoundHeader();
                 
                 // В начале каждого раунда случайно определяем, кто бьет первым

@@ -32,6 +32,7 @@ namespace ArmyBattle.Services
                 nameof(StrongFighter) => new StrongFighter(fighterNumber),
                 nameof(Healer) => new Healer(fighterNumber),
                 nameof(Wizard) => new Wizard(fighterNumber),
+                nameof(ShieldWall) => new ShieldWall(fighterNumber),
                 _ => throw new InvalidOperationException($"Неизвестный тип юнита: {unitType}")
             };
 

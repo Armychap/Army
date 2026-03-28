@@ -28,8 +28,8 @@ namespace ArmyBattle.Models
         {
             if (user is Healer)
             {
-                // Лечение: выбрать случайного союзника
-                var allies = user.Army.Units.Where(u => u.IsAlive && u != user && u is ICanBeHealed).ToList();
+                // Лечение: выбрать случайного союзника, который может быть вылечен
+                var allies = user.Army.Units.Where(u => u.IsAlive && u != user && u.CanBeHealed()).ToList();
                 if (allies.Count == 0) 
                 {
                     LastHealed = null;
@@ -123,11 +123,29 @@ namespace ArmyBattle.Models
             Health -= actualDamage;
         }
 
+        // Перегрузка для совместимости
+        public virtual void TakeDamage(int damage)
+        {
+            TakeDamage(damage, "Unknown");
+        }
+
         // Атаковать цель через интерфейс
         public virtual void AttackUnit(IUnit target)
         {
             target.TakeDamage(Attack, Name);
             DamageDealt += Math.Max(1, Attack - target.Defence);
+        }
+        
+        // Может ли юнит быть скопирован магом
+        public virtual bool CanBeCloned()
+        {
+            return true;
+        }
+
+        // Может ли юнит быть вылечен лекарем
+        public virtual bool CanBeHealed()
+        {
+            return true;
         }
         
         // Проверка наличия специального умения в пределах дальности
