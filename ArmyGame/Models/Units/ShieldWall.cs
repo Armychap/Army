@@ -20,7 +20,7 @@ namespace ArmyBattle.Models
               )
         {
             FighterNumber = fighterNumber;
-            // Гуляй город не имеет специальных способностей
+            // Гуляй поле не имеет специальных способностей
             // Его нельзя копировать (Wizard) или лечить (Healer)
             SpecialAbility = null;
         }

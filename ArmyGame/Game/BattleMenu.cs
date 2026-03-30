@@ -46,7 +46,7 @@ namespace ArmyBattle
                 Console.WriteLine();
 
                 string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                string logName = $"{army1.Name} vs {army2.Name}_{timestamp}";
+                string logName = $"{army1.Name} vs {army2.Name}";
 
                 bool userExited = RunBattleMenu(battle, army1, army2, "", logName);
 
@@ -83,7 +83,7 @@ namespace ArmyBattle
                     fullLog += "\nИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: true);
 
-                    string unfinishedSaveName = $"{army1.Name}_vs_{army2.Name}_{DateTime.Now:yyyyMMdd_HHmmss}";
+                    string unfinishedSaveName = $"{army1.Name}_vs_{army2.Name}";
                     armyManager?.SaveArmies(army1, army2, unfinishedSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName);
                     return false;
                 }
@@ -172,7 +172,7 @@ namespace ArmyBattle
 
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: false);
 
-                    // ✅ Удаляем файл продолжения из Saves (игра больше не продолжится)
+                    // Удаляем файл продолжения из Saves (игра больше не продолжится)
                     if (!string.IsNullOrWhiteSpace(saveName))
                     {
                         string? savePath = armyManager?.GetSavePath(saveName);
@@ -193,7 +193,7 @@ namespace ArmyBattle
                     fullLog += "\nИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: false);
                     
-                    // ✅ Обновляем состояние незавершенной игры
+                    // Обновляем состояние незавершенной игры
                     armyManager?.SaveArmies(army1, army2, saveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName);
                 }
             }
@@ -346,7 +346,7 @@ namespace ArmyBattle
 
             // Определяем имя лога битвы
             bool isContinuation = !string.IsNullOrWhiteSpace(saveName);
-            string battleLogName = !string.IsNullOrWhiteSpace(battleLogNameParam) ? battleLogNameParam : (isContinuation ? actualSaveName : $"{army1.Name} vs {army2.Name}_{DateTime.Now:yyyyMMdd_HHmmss}");
+            string battleLogName = !string.IsNullOrWhiteSpace(battleLogNameParam) ? battleLogNameParam : (isContinuation ? actualSaveName : $"{army1.Name} vs {army2.Name}");
 
             ConsoleMenu.ClearConsole();
             ConsoleMenu.PrintHeader("СОХРАНЕНИЕ СОСТОЯНИЯ ИГРЫ");
