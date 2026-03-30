@@ -1,11 +1,61 @@
 {
   "version": 3,
   "targets": {
-    "net9.0": {}
+    "net9.0": {
+      "System.Windows.Extensions/10.0.5": {
+        "type": "package",
+        "compile": {
+          "lib/net9.0/System.Windows.Extensions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/System.Windows.Extensions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net9.0/System.Windows.Extensions.dll": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "System.Windows.Extensions/10.0.5": {
+      "sha512": "5hVP2TIgEqqA590MnKmMN5+Fgzl6xBRjR1wbgC3M1znrZZJe63TwBPN+ymaMgwT0vjsiXk95AjMAe8SAhhJSTg==",
+      "type": "package",
+      "path": "system.windows.extensions/10.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net10.0/System.Windows.Extensions.dll",
+        "lib/net10.0/System.Windows.Extensions.xml",
+        "lib/net8.0/System.Windows.Extensions.dll",
+        "lib/net8.0/System.Windows.Extensions.xml",
+        "lib/net9.0/System.Windows.Extensions.dll",
+        "lib/net9.0/System.Windows.Extensions.xml",
+        "runtimes/win/lib/net10.0/System.Windows.Extensions.dll",
+        "runtimes/win/lib/net10.0/System.Windows.Extensions.xml",
+        "runtimes/win/lib/net8.0/System.Windows.Extensions.dll",
+        "runtimes/win/lib/net8.0/System.Windows.Extensions.xml",
+        "runtimes/win/lib/net9.0/System.Windows.Extensions.dll",
+        "runtimes/win/lib/net9.0/System.Windows.Extensions.xml",
+        "system.windows.extensions.10.0.5.nupkg.sha512",
+        "system.windows.extensions.nuspec",
+        "useSharedDesignerContext.txt"
+      ]
+    }
+  },
   "projectFileDependencyGroups": {
-    "net9.0": []
+    "net9.0": [
+      "System.Windows.Extensions >= 10.0.5"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Alex\\.nuget\\packages\\": {},
@@ -56,6 +106,12 @@
     "frameworks": {
       "net9.0": {
         "targetAlias": "net9.0",
+        "dependencies": {
+          "System.Windows.Extensions": {
+            "target": "Package",
+            "version": "[10.0.5, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",

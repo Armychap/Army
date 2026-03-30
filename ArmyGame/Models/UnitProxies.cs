@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Media;
+using System.Runtime.InteropServices;
 
 namespace ArmyBattle.Models
 {
@@ -103,8 +105,28 @@ namespace ArmyBattle.Models
 
     public class DeathBeepUnitProxy : UnitProxy
     {
+        private static readonly SoundPlayer soundPlayer = new SoundPlayer("death_sound.wav");
+
         public DeathBeepUnitProxy(IUnit inner) : base(inner)
         {
+        }
+
+        private void PlayDeathSound()
+        {
+            if (!OperatingSystem.IsWindows())
+                return; // Звук только на Windows
+
+            try
+            {
+                soundPlayer.Play();
+            }
+            catch
+            {
+                // Fallback на мелодию если файл не найден
+                Console.Beep(400, 150);
+                Console.Beep(600, 150);
+                Console.Beep(400, 200);
+            }
         }
 
         // ✅ Переопределяем Health для отслеживания смерти при прямой установке значения
@@ -119,8 +141,7 @@ namespace ArmyBattle.Models
 
                 if (wasAlive && isDeadNow)
                 {
-                    Console.Beep();
-                    Console.Beep(1000, 300);
+                    PlayDeathSound();
                 }
             }
         }
@@ -137,8 +158,7 @@ namespace ArmyBattle.Models
 
                 if (wasAlive && isDeadNow)
                 {
-                    Console.Beep();
-                    Console.Beep(1000, 300);
+                    PlayDeathSound();
                 }
             }
         }
@@ -151,8 +171,7 @@ namespace ArmyBattle.Models
 
             if (wasAlive && isDeadNow)
             {
-                Console.Beep();
-                Console.Beep(1000, 300);
+                PlayDeathSound();
             }
         }
     }
