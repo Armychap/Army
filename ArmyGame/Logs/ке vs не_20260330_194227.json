@@ -1,0 +1,158 @@
+{
+  "Army1Name": "\u043A\u0435",
+  "Army1Prefix": null,
+  "Army1Color": 12,
+  "Army1Units": [
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 1,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 2,
+      "Health": -3,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 3,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 4,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 5,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 6,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 7,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 8,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 9,
+      "Health": 0,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    }
+  ],
+  "TotalCost1": 190,
+  "Army2Name": "\u043D\u0435",
+  "Army2Prefix": null,
+  "Army2Color": 9,
+  "Army2Units": [
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 1,
+      "Health": 21,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 2,
+      "Health": 50,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 3,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 4,
+      "Health": 64,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 5,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 6,
+      "Health": -7,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    }
+  ],
+  "TotalCost2": 190,
+  "SaveDate": "2026-03-30T19:42:27.9128163+03:00",
+  "CurrentRound": 1,
+  "AttackTurn": 0,
+  "Army1CurrentFighterIndex": 1,
+  "Army2CurrentFighterIndex": 1,
+  "FirstAttackerIsArmy1": false,
+  "NeedNewRoundHeader": true,
+  "Army1AliveOrder": [
+    3,
+    4,
+    5,
+    6,
+    1,
+    8,
+    7
+  ],
+  "Army2AliveOrder": [
+    2,
+    4,
+    1,
+    3,
+    5
+  ],
+  "BattleLogName": null
+}

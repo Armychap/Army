@@ -20,8 +20,8 @@ namespace ArmyBattle.Models
         public string Name { get => inner.Name; set => inner.Name = value; }
         public int Attack { get => inner.Attack; set => inner.Attack = value; }
         public int Defence { get => inner.Defence; set => inner.Defence = value; }
-        public int Health { get => inner.Health; set => inner.Health = value; }
-        public int MaxHealth { get => inner.MaxHealth; set => inner.MaxHealth = value; }
+        public virtual int Health { get => inner.Health; set => inner.Health = value; }
+        public virtual int MaxHealth { get => inner.MaxHealth; set => inner.MaxHealth = value; }
         public int Cost { get => inner.Cost; set => inner.Cost = value; }
         public string PowerLevel { get => inner.PowerLevel; set => inner.PowerLevel = value; }
         public int DamageDealt { get => inner.DamageDealt; set => inner.DamageDealt = value; }
@@ -101,13 +101,46 @@ namespace ArmyBattle.Models
         }
     }
 
-    /// <summary>
-    /// Прокси для сигнала (бип) при смерти юнита.
-    /// </summary>
     public class DeathBeepUnitProxy : UnitProxy
     {
         public DeathBeepUnitProxy(IUnit inner) : base(inner)
         {
+        }
+
+        // ✅ Переопределяем Health для отслеживания смерти при прямой установке значения
+        public override int Health
+        {
+            get => inner.Health;
+            set
+            {
+                bool wasAlive = inner.IsAlive;
+                inner.Health = value;
+                bool isDeadNow = !inner.IsAlive;
+
+                if (wasAlive && isDeadNow)
+                {
+                    Console.Beep();
+                    Console.Beep(1000, 300);
+                }
+            }
+        }
+
+        // ✅ Переопределяем MaxHealth на случай если он устанавливается ниже текущего здоровья
+        public override int MaxHealth
+        {
+            get => inner.MaxHealth;
+            set
+            {
+                bool wasAlive = inner.IsAlive;
+                inner.MaxHealth = value;
+                bool isDeadNow = !inner.IsAlive;
+
+                if (wasAlive && isDeadNow)
+                {
+                    Console.Beep();
+                    Console.Beep(1000, 300);
+                }
+            }
         }
 
         public override void TakeDamage(int damage, string attackerName)
@@ -118,7 +151,8 @@ namespace ArmyBattle.Models
 
             if (wasAlive && isDeadNow)
             {
-                Console.WriteLine("бииип");
+                Console.Beep();
+                Console.Beep(1000, 300);
             }
         }
     }
