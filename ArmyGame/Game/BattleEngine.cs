@@ -85,7 +85,7 @@ namespace ArmyBattle.Game
 
         private void DisplayBattleOrder()
         {
-            Console.WriteLine("Порядок боя (формат: название команды: номер (тип)): ");
+            Console.WriteLine("Порядок боя");
 
             string FormatUnit(IUnit unit)
             {
@@ -145,22 +145,12 @@ namespace ArmyBattle.Game
             Console.ResetColor();
             Console.WriteLine();
 
-                int healthBefore = defender.Health;
-                attacker.AttackUnit(defender);
-                int damage = healthBefore - defender.Health;
+            int healthBefore = defender.Health;
+            attacker.AttackUnit(defender);
+            int damage = healthBefore - defender.Health;
 
-                Console.WriteLine($"Урон: {damage}");
-                DisplayHealthInfo();
-            }
-            else
-            {
-                // Юнит не может атаковать, пропускает ход
-                Console.ForegroundColor = attackingArmy.Color;
-                Console.Write(attacker.GetDisplayName(attackingArmy.Name));
-                Console.ResetColor();
-                Console.WriteLine(" пропускает ход (не может атаковать)");
-                Console.WriteLine();
-            }
+            Console.WriteLine($"Урон: {damage}");
+            DisplayHealthInfo();
 
             if (!defender.IsAlive)
             {
@@ -174,19 +164,24 @@ namespace ArmyBattle.Game
                 Console.ResetColor();
                 Console.WriteLine();
 
-                defendingArmy?.RemoveDeadFighter(defender);
-                defender = defendingArmy?.GetNextFighterInBattleOrder();
+                Console.WriteLine("бииип");
+
+                // Армия проигрывает, если ее боец умирает
+                foreach (var unit in defendingArmy.Units)
+                {
+                    unit.Health = 0;
+                }
                 
-                // После смерти, продолжаем раунд как обычно - меняем attackTurn
-                attackTurn = 1 - attackTurn;
-                needNewRoundHeader = (attackTurn == 0);
+                // После смерти начинается новый раунд (но битва завершится)
+                needNewRoundHeader = true;
             }
             else
             {
-                attackTurn = 1 - attackTurn;
-                // Если attackTurn вернулся на 0, это конец раунда - начинаем новый
-                needNewRoundHeader = (attackTurn == 0);
+                // Раунд продолжается
+                needNewRoundHeader = false;
             }
+
+            attackTurn = 1 - attackTurn;
         }
 
         // Завершение битвы и вывод результатов
@@ -298,15 +293,16 @@ namespace ArmyBattle.Game
 
             Console.WriteLine($"Начинаем раунд {round}");
             
-            // Запоминаем текущий номер раунда
-            int startRound = round;
-            
-            // Выполняем ходы пока раунд не изменится (или битва не закончится)
-            while (round == startRound)
+            // Выполняем ходы пока раунд не закончится (т.е. пока никто не умер)
+            while (!needNewRoundHeader)
             {
                 if (!DoSingleMove())
                     return false;
             }
+            
+            // После раунда увеличиваем номер раунда и сбрасываем флаг
+            round++;
+            needNewRoundHeader = false;
             
             return true;
         }
@@ -347,12 +343,6 @@ namespace ArmyBattle.Game
             if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
             {
                 CheckAndExecuteSpecialAbilities();
-            }
-            
-            // Если после специальных способностей нужно начать новый раунд, увеличиваем номер раунда
-            if (needNewRoundHeader)
-            {
-                round++;
             }
             
             return true; // Ход выполнен успешно

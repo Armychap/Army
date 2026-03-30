@@ -42,6 +42,13 @@ namespace ArmyBattle.Models
                 // Восстанавливаем здоровье до первоначального состояния
                 chosen.Health = chosen.MaxHealth;
             }
+            else if (user is Archer)
+            {
+                // Для лучника урон с учетом защиты, но минимум 1
+                if (target == null) return;
+                target.TakeDamage(Power, user.Name);
+                user.DamageDealt += Math.Max(1, Power - target.Defence);
+            }
             else
             {
                 // Урон по умолчанию

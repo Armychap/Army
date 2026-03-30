@@ -131,7 +131,7 @@ namespace ArmyBattle
         // GameMenu.cs
         public static void ShowBattleLogs()
         {
-            // ✅ Получаем только завершенные битвы, исключая незавершенные игры
+            // Получаем только завершенные битвы, исключая незавершенные игры
             string[] battles = battleManager?.GetFinishedBattles() ?? Array.Empty<string>();
 
             if (battles.Length == 0)
