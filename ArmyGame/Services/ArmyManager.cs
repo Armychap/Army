@@ -59,23 +59,30 @@ namespace ArmyBattle.Services
         /// </summary>
         public void SaveArmies(IArmy army1, IArmy army2, string? saveName = null, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true, string? battleLogName = null)
         {
-            // Если название не указано или пусто используем автогенерируемое имя с временем
-            if (string.IsNullOrWhiteSpace(saveName))
+            try
             {
-                saveName = $"Armies_{DateTime.Now:yyyyMMdd_HHmmss}";
+                // Если название не указано или пусто используем автогенерируемое имя с временем
+                if (string.IsNullOrWhiteSpace(saveName))
+                {
+                    saveName = $"Armies_{DateTime.Now:yyyyMMdd_HHmmss}";
+                }
+
+                // Конвертируем армии в сериализуемый формат
+                var saveData = SerializeArmies(army1, army2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader, battleLogName);
+                
+                // Преобразуем объект в JSON строку с отступами для читаемости
+                string json = JsonSerializer.Serialize(saveData, new JsonSerializerOptions { WriteIndented = true });
+                
+                // Формируем полный путь: Saves/[имя].json
+                string filePath = Path.Combine(savesDirectory, $"{saveName}.json");
+
+                // Записываем JSON в файл
+                File.WriteAllText(filePath, json);
             }
-
-            // Конвертируем армии в сериализуемый формат
-            var saveData = SerializeArmies(army1, army2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader, battleLogName);
-            
-            // Преобразуем объект в JSON строку с отступами для читаемости
-            string json = JsonSerializer.Serialize(saveData, new JsonSerializerOptions { WriteIndented = true });
-            
-            // Формируем полный путь: Saves/[имя].json
-            string filePath = Path.Combine(savesDirectory, $"{saveName}.json");
-
-            // Записываем JSON в файл
-            File.WriteAllText(filePath, json);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\n❌ Ошибка при сохранении: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -165,8 +172,21 @@ namespace ArmyBattle.Services
                     army2.RefreshAliveFighters();
                 }
 
-                army1.CurrentFighterIndex = Math.Min(saveData.Army1CurrentFighterIndex, army1.AliveFightersInBattleOrder.Count);
-                army2.CurrentFighterIndex = Math.Min(saveData.Army2CurrentFighterIndex, army2.AliveFightersInBattleOrder.Count);
+                if (army1.AliveFightersInBattleOrder.Count > 0)
+                {
+                    // Если индекс выходит за границы (уже был равен Count), сбрасываем на 0
+                    army1.CurrentFighterIndex = Math.Min(saveData.Army1CurrentFighterIndex, army1.AliveFightersInBattleOrder.Count - 1);
+                    if (saveData.Army1CurrentFighterIndex >= army1.AliveFightersInBattleOrder.Count)
+                        army1.CurrentFighterIndex = 0; // Новый раунд - начинаем с первого
+                }
+
+                if (army2.AliveFightersInBattleOrder.Count > 0)
+                {
+                    // Если индекс выходит за границы (уже был равен Count), сбрасываем на 0
+                    army2.CurrentFighterIndex = Math.Min(saveData.Army2CurrentFighterIndex, army2.AliveFightersInBattleOrder.Count - 1);
+                    if (saveData.Army2CurrentFighterIndex >= army2.AliveFightersInBattleOrder.Count)
+                        army2.CurrentFighterIndex = 0; // Новый раунд - начинаем с первого
+                }
 
                 // Восстанавливаем состояние битвы
                 currentRound = saveData.CurrentRound;
@@ -332,38 +352,53 @@ namespace ArmyBattle.Services
         /// </summary>
         private List<UnitSaveData> SerializeUnits(List<IUnit> units)
         {
-            // Создаем пустой список для результатов
-            var result = new List<UnitSaveData>();
-            
-            // Итерируемся по каждому юниту в списке
-            foreach (var unit in units)
+            try
             {
-                // Добавляем сохраненные данные юнита в результат
-                result.Add(new UnitSaveData
+                // Создаем пустой список для результатов
+                var result = new List<UnitSaveData>();
+                
+                // Итерируемся по каждому юниту в списке
+                foreach (var unit in units)
                 {
-                    // Сохраняем тип юнита (имя класса: WeakFighter, Archer, StrongFighter)
-                    // Используем GetRootType() чтобы сохранить реальный тип, не прокси
-                    Type = unit.GetRootType().Name,
-                    
-                    // Сохраняем номер боя для идентификации внутри армии
-                    FighterNumber = unit.FighterNumber,
-                    
-                    // Сохраняем текущее здоровье юнита (может быть повреждено в бою)
-                    Health = unit.Health,
-                    
-                    // Сохраняем параметр атаки юнита
-                    Attack = unit.Attack,
-                    
-                    // Сохраняем параметр защиты юнита
-                    Defence = unit.Defence,
-                    
-                    // Сохраняем стоимость юнита для подсчета бюджета
-                    Cost = unit.Cost
-                });
+                    try
+                    {
+                        // Добавляем сохраненные данные юнита в результат
+                        result.Add(new UnitSaveData
+                        {
+                            // Сохраняем тип юнита (имя класса: WeakFighter, Archer, StrongFighter)
+                            // Используем GetRootType() чтобы сохранить реальный тип, не прокси
+                            Type = unit.GetRootType().Name,
+                            
+                            // Сохраняем номер боя для идентификации внутри армии
+                            FighterNumber = unit.FighterNumber,
+                            
+                            // Сохраняем текущее здоровье юнита (может быть повреждено в бою)
+                            Health = unit.Health,
+                            
+                            // Сохраняем параметр атаки юнита
+                            Attack = unit.Attack,
+                            
+                            // Сохраняем параметр защиты юнита
+                            Defence = unit.Defence,
+                            
+                            // Сохраняем стоимость юнита для подсчета бюджета
+                            Cost = unit.Cost
+                        });
+                    }
+                    catch (Exception unitEx)
+                    {
+                        Console.WriteLine($"\nОшибка при сериализации юнита: {unitEx.Message}");
+                    }
+                }
+                
+                // Возвращаем заполненный список сохраненных юнитов
+                return result;
             }
-            
-            // Возвращаем заполненный список сохраненных юнитов
-            return result;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nОшибка в SerializeUnits: {ex.Message}");
+                return new List<UnitSaveData>();
+            }
         }
 
         /// <summary>
@@ -407,7 +442,7 @@ namespace ArmyBattle.Services
                 // (это важно если юнит был поврежден в предыдущем бою)
                 unit.Health = unitData.Health;
                 
-                // ✅ Применяем прокси для логирования, звуков и других функций
+                // прокси для логирования, звуков и других функций
                 IUnit wrappedUnit = UnitFactoryProvider.Instance.Wrap(unit);
                 
                 // Добавляем восстановленного юнита в армию

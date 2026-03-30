@@ -1,0 +1,50 @@
+{
+  "Army1Name": "\u0440\u0430\u0437",
+  "Army1Prefix": null,
+  "Army1Color": 12,
+  "Army1Units": [
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 1,
+      "Health": 56,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    }
+  ],
+  "TotalCost1": 40,
+  "Army2Name": "\u0434\u0432\u0430",
+  "Army2Prefix": null,
+  "Army2Color": 9,
+  "Army2Units": [
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 1,
+      "Health": -11,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 2,
+      "Health": -16,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    }
+  ],
+  "TotalCost2": 40,
+  "SaveDate": "2026-03-30T18:11:51.704468+03:00",
+  "CurrentRound": 1,
+  "AttackTurn": 0,
+  "Army1CurrentFighterIndex": 1,
+  "Army2CurrentFighterIndex": 0,
+  "FirstAttackerIsArmy1": false,
+  "NeedNewRoundHeader": true,
+  "Army1AliveOrder": [
+    1
+  ],
+  "Army2AliveOrder": [],
+  "BattleLogName": null
+}

@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using ArmyBattle.Models;
 using ArmyBattle.Game;
 using ArmyBattle.Services;
@@ -67,14 +65,40 @@ namespace ArmyBattle
                 {
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: true);
 
-                    // Если был сохраненный файл некогда, удалить его (если остался в Saves)
-                    // это может быть не нужно здесь, так как продолжение сам удаляет, но на всякий случай.
-                    string saveName = $"{army1.Name} vs {army2.Name}";
-                    string? savePath = armyManager?.GetSavePath(saveName);
+                    // ✅ Удаляем файл продолжения из Saves (используем logName как имя сохранения)
+                    string? savePath = armyManager?.GetSavePath(logName);
                     if (!string.IsNullOrWhiteSpace(savePath) && File.Exists(savePath))
                     {
-                        try { File.Delete(savePath); } catch { }
+                        try 
+                        { 
+                            File.Delete(savePath);
+                        } 
+                        catch { }
                     }
+
+                    // ✅ ПОСЛЕ восстановления консоли - выводим результаты ВТОРУЮ раз
+                    ConsoleMenu.ClearConsole();
+                    Console.WriteLine("БИТВА ЗАВЕРШЕНА");
+                    Console.WriteLine(new string('=', 40));
+
+                    // Определяем победителя
+                    if (army1.HasAliveUnits())
+                    {
+                        Console.ForegroundColor = army1.Color;
+                        Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = army2.Color;
+                        Console.WriteLine($"ПОБЕДИТЕЛЬ: {army2.Name}!");
+                        Console.ResetColor();
+                    }
+
+                    Console.WriteLine("\nМеню действий");
+                    Console.WriteLine("1. Выйти в главное меню");
+                    Console.Write("Выбор: ");
+                    Console.ReadLine();
 
                     return true;
                 }
@@ -83,8 +107,11 @@ namespace ArmyBattle
                     fullLog += "\nИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: true);
 
-                    string unfinishedSaveName = $"{army1.Name}_vs_{army2.Name}";
-                    armyManager?.SaveArmies(army1, army2, unfinishedSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName);
+                    // ✅ Восстанавливаем консоль перед сохранением
+                    Console.SetOut(originalOutput);
+                    
+                    // ✅ Используем единый формат имени сохранения
+                    armyManager?.SaveArmies(army1, army2, logName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName);
                     return false;
                 }
             }
@@ -186,6 +213,30 @@ namespace ArmyBattle
                             catch { }
                         }
                     }
+
+                    // ✅ ПОСЛЕ восстановления консоли - выводим результаты
+                    ConsoleMenu.ClearConsole();
+                    Console.WriteLine("БИТВА ЗАВЕРШЕНА");
+                    Console.WriteLine(new string('=', 40));
+
+                    // Определяем победителя
+                    if (army1.HasAliveUnits())
+                    {
+                        Console.ForegroundColor = army1.Color;
+                        Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = army2.Color;
+                        Console.WriteLine($"ПОБЕДИТЕЛЬ: {army2.Name}!");
+                        Console.ResetColor();
+                    }
+
+                    Console.WriteLine("\nМеню действий");
+                    Console.WriteLine("1. Выйти в главное меню");
+                    Console.Write("Выбор: ");
+                    Console.ReadLine();
                 }
                 else
                 {
@@ -257,12 +308,11 @@ namespace ArmyBattle
                             string exitSaveName = string.IsNullOrWhiteSpace(saveName) ? battleLogName : saveName;
                             string exitLogName = string.IsNullOrWhiteSpace(battleLogName) ? saveName : battleLogName;
 
-                            // Сохраняем армии с состоянием битвы и логом
-                            armyManager?.SaveArmies(army1, army2, exitSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, exitLogName);
-
-                            // ✅ Добавляем статус в лог для дальнейшего сохранения
                             Console.WriteLine("\nИГРА НЕ ЗАВЕРШЕНА");
                             Console.WriteLine("Состояние армий сохранено для продолжения.");
+
+                            // ✅ Сохраняем армии с состоянием битвы и логом
+                            armyManager?.SaveArmies(army1, army2, exitSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, exitLogName);
 
                             ConsoleMenu.ShowSuccess($"Игра сохранена!");
                             Console.ReadKey();
@@ -278,51 +328,8 @@ namespace ArmyBattle
                 }
             }
 
-            // После завершения битвы - показываем меню
-            ConsoleMenu.ClearConsole();
-            Console.WriteLine("БИТВА ЗАВЕРШЕНА");
-            Console.WriteLine(new string('=', 40));
-
-            // Определяем победителя
-            if (army1.HasAliveUnits())
-            {
-                Console.ForegroundColor = army1.Color;
-                Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
-                Console.ResetColor();
-            }
-            else
-            {
-                Console.ForegroundColor = army2.Color;
-                Console.WriteLine($"ПОБЕДИТЕЛЬ: {army2.Name}!");
-                Console.ResetColor();
-            }
-
-            // Если это было продолжением сохраненной игры, удаляем файл сохранения
-            if (!string.IsNullOrWhiteSpace(saveName))
-            {
-                string? savePath = armyManager?.GetSavePath(saveName);
-                if (!string.IsNullOrWhiteSpace(savePath) && File.Exists(savePath))
-                {
-                    try
-                    {
-                        File.Delete(savePath);
-                        Console.WriteLine($"Сохраненная игра '{saveName}' удалена (игра завершена).");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Не удалось удалить файл сохранения: {ex.Message}");
-                    }
-                }
-            }
-
-            // Меню после завершения битвы
-            Console.WriteLine("\nМеню действий");
-            Console.WriteLine("1. Выйти в главное меню");
-            Console.Write("Выбор: ");
-
-            // Ждем любого ввода для выхода
-            Console.ReadLine();
-            
+            // ✅ НЕ выводим финальное меню здесь - оно попадает в логирование
+            // Возвращаем false чтобы сигнализировать что битва естественно завершена
             return false;  // ✅ Возвращаем false - битва завершена естественным путем
         }
 
