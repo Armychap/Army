@@ -24,6 +24,9 @@ namespace ArmyBattle.Game
         private int attackTurn; // 0 = первый атакующий, 1 = второй атакующий
 
         private bool battleInitialized = false;
+        private int noLethalActions = 0;
+        private const int maxNoLethalActions = 80;
+        private bool stalemateReached = false;
         
         public BattleEngine(IArmy army1, IArmy army2, int speed = 400)
         {
@@ -129,6 +132,13 @@ namespace ArmyBattle.Game
                 Console.ResetColor();
                 Console.Write(" пропускает ход (нет атаки)");
                 Console.WriteLine();
+
+                noLethalActions++;
+                if (noLethalActions >= maxNoLethalActions)
+                {
+                    stalemateReached = true;
+                    Console.WriteLine("Патовая ситуация: слишком много ходов без смертей. Битва объявлена ничьей.");
+                }
                 
                 // Пропускаем атаку, продолжаем с другим боецом
                 attackTurn = 1 - attackTurn;
@@ -166,19 +176,25 @@ namespace ArmyBattle.Game
 
                 Console.WriteLine("бииип");
 
-                // Армия проигрывает, если ее боец умирает
-                foreach (var unit in defendingArmy.Units)
-                {
-                    unit.Health = 0;
-                }
-                
-                // После смерти начинается новый раунд (но битва завершится)
+                defendingArmy?.RemoveDeadFighter(defender);
+                defender = defendingArmy?.GetNextFighterInBattleOrder();
+
+                noLethalActions = 0;
+
+                // Конец текущего раунда (переход на новый после смерти бойца)
+                round++;
                 needNewRoundHeader = true;
             }
             else
             {
                 // Раунд продолжается
                 needNewRoundHeader = false;
+                noLethalActions++;
+                if (noLethalActions >= maxNoLethalActions)
+                {
+                    stalemateReached = true;
+                    Console.WriteLine("Патовая ситуация: слишком много ходов без смертей. Битва объявлена ничьей.");
+                }
             }
 
             attackTurn = 1 - attackTurn;
@@ -300,8 +316,7 @@ namespace ArmyBattle.Game
                     return false;
             }
             
-            // После раунда увеличиваем номер раунда и сбрасываем флаг
-            round++;
+            // После раунда не увеличиваем round здесь, он меняется в PerformAttack при смерти
             needNewRoundHeader = false;
             
             return true;
@@ -315,6 +330,12 @@ namespace ArmyBattle.Game
                 InitializeBattle();
             }
             
+            if (stalemateReached)
+            {
+                Console.WriteLine("Битва прекращена: патовая ситуация.");
+                return false;
+            }
+
             if (!(army1.HasAliveUnits() && army2.HasAliveUnits() && 
                    currentFighter1 != null && currentFighter2 != null))
             {
@@ -444,10 +465,20 @@ namespace ArmyBattle.Game
                 }
                 else if (isHealing)
                 {
-                    // Лекарь лечит случайного союзника, кроме себя и StrongFighter
-                    var possibleTargets = attackingArmy.Units.Where(u => u.IsAlive && u != unit && !u.Is<StrongFighter>()).ToList();
+                    // Лекарь лечит случайного союзника, кроме StrongFighter.
+                    var possibleTargets = attackingArmy.Units.Where(u => u.IsAlive && !u.Is<StrongFighter>()).ToList();
                     if (possibleTargets.Count == 0) continue;
-                    target = possibleTargets[random.Next(possibleTargets.Count)];
+
+                    // Попробуем выбрать другого союзника, но если никого нет, может лечить себя.
+                    var filtered = possibleTargets.Where(u => u != unit).ToList();
+                    if (filtered.Count > 0)
+                    {
+                        target = filtered[random.Next(filtered.Count)];
+                    }
+                    else
+                    {
+                        target = unit; // себе
+                    }
                 }
                 else
                 {
@@ -462,6 +493,11 @@ namespace ArmyBattle.Game
                     
                     // Для мага сначала выполняем способность, чтобы узнать, кого он клонирует
                     if (isCloning)
+                    {
+                        unit.UseSpecialAbility(target);
+                    }
+                    // Выполняем способность для лучников и лекарей ДО вывода сообщение о урона
+                    else if (realUnit is Archer)
                     {
                         unit.UseSpecialAbility(target);
                     }
@@ -550,8 +586,8 @@ namespace ArmyBattle.Game
                         }
                     }
 
-                    // Выполняем способность после вывода сообщения (для лучников и лекарей)
-                    if (!isCloning)
+                    // Выполняем способность для лекарей (после вывода сообщения о лучнике)
+                    if (isHealing)
                     {
                         unit.UseSpecialAbility(target);
                     }

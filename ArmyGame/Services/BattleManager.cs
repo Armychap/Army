@@ -246,7 +246,7 @@ namespace ArmyBattle.Services
                 }
             }
 
-            // Заменяем _vs_ на " vs "
+            // Заменяем vs на " vs "
             fileName = fileName.Replace("_vs_", " vs ");
 
             return fileName;

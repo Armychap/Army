@@ -1,0 +1,124 @@
+{
+  "Army1Name": "\u043F\u0435",
+  "Army1Prefix": null,
+  "Army1Color": 12,
+  "Army1Units": [
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 1,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 2,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 3,
+      "Health": 50,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 4,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 5,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    }
+  ],
+  "TotalCost1": 190,
+  "Army2Name": "\u0432\u0442",
+  "Army2Prefix": null,
+  "Army2Color": 9,
+  "Army2Units": [
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 1,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 2,
+      "Health": -3,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 3,
+      "Health": 55,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 4,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 5,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 6,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    }
+  ],
+  "TotalCost2": 200,
+  "SaveDate": "2026-03-30T15:41:26.4809471+03:00",
+  "CurrentRound": 1,
+  "AttackTurn": 0,
+  "Army1CurrentFighterIndex": 1,
+  "Army2CurrentFighterIndex": 1,
+  "FirstAttackerIsArmy1": false,
+  "NeedNewRoundHeader": true,
+  "Army1AliveOrder": [
+    3,
+    4,
+    1,
+    5,
+    2
+  ],
+  "Army2AliveOrder": [
+    3,
+    1,
+    6,
+    5,
+    4
+  ],
+  "BattleLogName": null
+}

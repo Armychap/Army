@@ -26,26 +26,31 @@ namespace ArmyBattle.Models
         // Выполняет способность: урон или лечение в зависимости от типа юнита
         public void Execute(IUnit? user, IUnit? target)
         {
-            if (user is Healer)
+            var rootUser = user?.GetRootUnit();
+
+            if (rootUser is Healer)
             {
-                // Лечение: выбрать случайного союзника, который может быть вылечен
-                var allies = user.Army.Units.Where(u => u.IsAlive && u != user && u.CanBeHealed()).ToList();
-                if (allies.Count == 0) 
+                // Лечение: выбрать случайного союзника, который может быть вылечен (не себя)
+                var allies = user.Army.Units
+                    .Where(u => u.IsAlive && u != user && u.CanBeHealed() && !u.Is<StrongFighter>())
+                    .ToList();
+
+                if (allies.Count == 0)
                 {
                     LastHealed = null;
                     return;
                 }
-                
+
                 var chosen = allies[random.Next(allies.Count)];
                 LastHealed = chosen;
-                
+
                 // Восстанавливаем здоровье до первоначального состояния
                 chosen.Health = chosen.MaxHealth;
             }
-            else if (user is Archer)
+            else if (rootUser is Archer)
             {
                 // Для лучника урон с учетом защиты, но минимум 1
-                if (target == null) return;
+                if (target == null || user == null) return;
                 target.TakeDamage(Power, user.Name);
                 user.DamageDealt += Math.Max(1, Power - target.Defence);
             }
