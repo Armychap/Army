@@ -5,6 +5,8 @@ namespace ArmyBattle.Models
     /// <summary>
     /// Маг: может с небольшой вероятностью клонировать случайного союзника (только слабого бойца или лучника).
     /// </summary>
+    /// 
+    /// 
     public class Wizard : Unit
     {
         public Wizard(int fighterNumber)
