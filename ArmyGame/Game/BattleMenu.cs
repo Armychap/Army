@@ -268,9 +268,11 @@ namespace ArmyBattle
                 // Выводим меню управления боем
                 Console.WriteLine("\nМеню действий");
                 Console.WriteLine("1. Сделать ход");
-                Console.WriteLine("2. Автоматически пройти до конца");
-                Console.WriteLine("3. Сохранить игру");
-                Console.WriteLine("4. Выйти (назад в меню)");
+                Console.WriteLine("2. Пройти раунд");
+                Console.WriteLine("3. Автоматически пройти до конца");
+                Console.WriteLine("4. Посмотреть состояние");
+                Console.WriteLine("5. Сохранить игру");
+                Console.WriteLine("6. Выйти (назад в меню)");
                 Console.Write("Выбор: ");
 
                 string? choice = Console.ReadLine();
@@ -287,6 +289,28 @@ namespace ArmyBattle
                         break;
 
                     case "2":
+                        // Пройти текущий раунд (до следующей смены раунда)
+                        if (battle.NeedNewRoundHeader)
+                        {
+                            if (!battle.DoSingleMove())
+                            {
+                                battleActive = false;
+                                break;
+                            }
+                        }
+
+                        while (!battle.NeedNewRoundHeader && army1.HasAliveUnits() && army2.HasAliveUnits())
+                        {
+                            if (!battle.DoSingleMove())
+                            {
+                                battleActive = false;
+                                break;
+                            }
+                        }
+
+                        break;
+
+                    case "3":
                         // Выполняем все ходы до конца без меню
                         Console.WriteLine("\nАвтоматическое проведение боя...\n");
                         while (battle.DoSingleMove())
@@ -296,11 +320,18 @@ namespace ArmyBattle
                         battleActive = false;
                         break;
 
-                    case "3":
-                        // Сохраняем текущое состояние игры и выходим в главное меню
+                    case "4":
+                        // Посмотреть состояние (порядок боя)
+                        battle.DisplayBattleOrder();
+                        Console.WriteLine("Нажмите любую клавишу для продолжения...");
+                        Console.ReadKey();
+                        break;
+
+                    case "5":
+                        // Сохраняем текущее состояние игры и выходим в главное меню
                         SaveGameDuringBattle(army1, army2, battle, saveName, battleLogName);
                         return true;  // ✅ Указываем что пользователь вышел
-                    case "4":
+                    case "6":
                         Console.WriteLine("\nВы уверены? Битва будет потеряна (д/н): ");
                         if (Console.ReadLine()?.ToLower() == "д")
                         {
