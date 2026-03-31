@@ -13,3 +13,7 @@ C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0\refint\ArmyGame.dll
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0\ArmyGame.pdb
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0\ArmyGame.genruntimeconfig.cache
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0\ref\ArmyGame.dll
+C:\Users\Alex\.vscode\Army\ArmyGame\bin\Debug\net9.0\System.Windows.Extensions.dll
+C:\Users\Alex\.vscode\Army\ArmyGame\bin\Debug\net9.0\runtimes\win\lib\net9.0\System.Windows.Extensions.dll
+C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0\ArmyGame.csproj.AssemblyReference.cache
+C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0\ArmyGame.csproj.Up2Date

@@ -27,12 +27,13 @@ namespace ArmyBattle.Game
         private int noLethalActions = 0;
         private const int maxNoLethalActions = 80;
         private bool stalemateReached = false;
+        private int moveCount = 0;
         
         public BattleEngine(IArmy army1, IArmy army2, int speed = 400)
         {
             this.army1 = army1;
             this.army2 = army2;
-            round = 1;
+            round = 0;
             random = new Random();
             battleSpeed = Math.Max(100, Math.Min(1000, speed));
             currentFighter1 = null;
@@ -182,7 +183,6 @@ namespace ArmyBattle.Game
                 noLethalActions = 0;
 
                 // Конец текущего раунда (переход на новый после смерти бойца)
-                round++;
                 needNewRoundHeader = true;
             }
             else
@@ -232,7 +232,8 @@ namespace ArmyBattle.Game
         {
             Console.WriteLine("\nСТАТИСТИКА БИТВЫ:");
             
-            Console.WriteLine($"Всего раундов: {round - 1}");
+            Console.WriteLine($"Всего раундов: {round}");
+            Console.WriteLine($"Всего ходов: {moveCount}");
             
             // Статистика по армиям
             Console.WriteLine($"\n{army1.Name}:");
@@ -254,7 +255,8 @@ namespace ArmyBattle.Game
             currentFighter1 = army1.GetNextFighterInBattleOrder();
             currentFighter2 = army2.GetNextFighterInBattleOrder();
             
-            round = 1;
+            round = 0;
+            moveCount = 0;
             needNewRoundHeader = true;
             attackTurn = 0;
             battleInitialized = true;
@@ -345,6 +347,7 @@ namespace ArmyBattle.Game
             // Показываем заголовок раунда только если нужен новый раунд
             if (needNewRoundHeader)
             {
+                round++;
                 DisplayBattleOrder();
                 DisplayRoundHeader();
                 
@@ -352,6 +355,9 @@ namespace ArmyBattle.Game
                 firstAttackerIsArmy1 = random.Next(2) == 0;
                 attackTurn = 0;
             }
+            
+            moveCount++;
+            Console.WriteLine($"Ход {moveCount}");
             
             bool currentAttackerIsArmy1 = attackTurn == 0 ? firstAttackerIsArmy1 : !firstAttackerIsArmy1;
 
