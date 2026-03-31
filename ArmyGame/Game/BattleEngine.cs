@@ -87,7 +87,7 @@ namespace ArmyBattle.Game
             DisplayBattleOrder();
         }
 
-        private void DisplayBattleOrder()
+        public void DisplayBattleOrder()
         {
             Console.WriteLine("Порядок боя");
 

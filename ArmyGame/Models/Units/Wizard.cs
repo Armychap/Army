@@ -9,17 +9,18 @@ namespace ArmyBattle.Models
     {
         public Wizard(int fighterNumber)
             : base(
-                "Маг",    // name
-                7,         // attack
-                4,         // defence
-                22,        // health
-                30,        // cost
-                "Маг"     // powerlevel
+                "Маг",  
+                7,       
+                4,       
+                22,      
+                30,       
+                "Маг"     
               )
         {
             FighterNumber = fighterNumber;
             // 30% шанс клонировать союзника при срабатывании способности
-            SpecialAbility = new CloneAbility("Клонирование", 1, 30);
+            // Дальность действия мага - 5
+            SpecialAbility = new CloneAbility("Клонирование", 5, 30);
         }
     }
 }
