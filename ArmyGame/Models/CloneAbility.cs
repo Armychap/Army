@@ -38,9 +38,10 @@ namespace ArmyBattle.Models
 
             var army = user.Army;
 
-            // Выбираем случайного кандидата для клона (только слабый боец или лучник, не маг и не лекарь, и может быть клонирован)
-            var candidates = army.Units
-                .Where(u => u != user && (u is WeakFighter || u is Archer) && u.CanBeCloned())
+            // Выбираем случайного кандидата для клона (только слабый боец или лучник в радиусе действия, не маг и не лекарь, и может быть клонирован)
+            int myIndex = army.AliveFightersInBattleOrder.IndexOf(user);
+            var candidates = army.AliveFightersInBattleOrder
+                .Where(u => u.IsAlive && u != user && (u is WeakFighter || u is Archer) && u.CanBeCloned() && Math.Abs(army.AliveFightersInBattleOrder.IndexOf(u) - myIndex) <= Range)
                 .ToList();
 
             if (candidates.Count == 0)
