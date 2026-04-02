@@ -1,0 +1,15 @@
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\bin\Debug\net8.0\GameFacade.exe
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\bin\Debug\net8.0\GameFacade.deps.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\bin\Debug\net8.0\GameFacade.runtimeconfig.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\bin\Debug\net8.0\GameFacade.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\bin\Debug\net8.0\GameFacade.pdb
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\GameFacade.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\GameFacade.AssemblyInfoInputs.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\GameFacade.AssemblyInfo.cs
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\GameFacade.csproj.CoreCompileInputs.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\GameFacade.sourcelink.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\GameFacade.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\refint\GameFacade.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\GameFacade.pdb
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\GameFacade.genruntimeconfig.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\7 задание\Fasad\obj\Debug\net8.0\ref\GameFacade.dll
