@@ -105,7 +105,7 @@ namespace ArmyBattle.Models
 
     public class DeathBeepUnitProxy : UnitProxy
     {
-        private static readonly SoundPlayer soundPlayer = new SoundPlayer("death_sound.wav");
+        private static readonly SoundPlayer soundPlayer = new SoundPlayer("death_sound.mp3");
 
         public DeathBeepUnitProxy(IUnit inner) : base(inner)
         {
@@ -129,7 +129,7 @@ namespace ArmyBattle.Models
             }
         }
 
-        // ✅ Переопределяем Health для отслеживания смерти при прямой установке значения
+        // Переопределяем Health для отслеживания смерти при прямой установке значения
         public override int Health
         {
             get => inner.Health;
@@ -146,7 +146,7 @@ namespace ArmyBattle.Models
             }
         }
 
-        // ✅ Переопределяем MaxHealth на случай если он устанавливается ниже текущего здоровья
+        // Переопределяем MaxHealth на случай если он устанавливается ниже текущего здоровья
         public override int MaxHealth
         {
             get => inner.MaxHealth;

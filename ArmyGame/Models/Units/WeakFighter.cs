@@ -10,10 +10,10 @@ namespace ArmyBattle.Models
         public WeakFighter(int fighterNumber) 
             : base(
                 "Слабый боец",
-                10,
-                8,
-                25,
-                15,
+                10, // атака
+                8, // защита
+                25, // здоровье
+                15, // стоимость
                 "Слабый"
               )
         {

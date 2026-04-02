@@ -2,8 +2,10 @@ using System;
 
 namespace ArmyBattle.Models
 {
+    /// Расширения для IUnit, чтобы получать корневой тип юнита, его короткое имя и т.д.
     public static class UnitExtensions
     {
+        /// Получить корневой юнит, разворачивая все прокси
         public static IUnit GetRootUnit(this IUnit unit)
         {
             IUnit current = unit;
@@ -14,16 +16,19 @@ namespace ArmyBattle.Models
             return current;
         }
 
+        /// Проверить, является ли юнит определенным типом (например, Archer, Wizard и т.д.)
         public static bool Is<T>(this IUnit unit) where T : class, IUnit
         {
             return unit.GetRootUnit() is T;
         }
 
+        // Получить тип корневого юнита
         public static Type GetRootType(this IUnit unit)
         {
             return unit.GetRootUnit().GetType();
         }
 
+        // Получить короткое имя типа юнита для отображения в UI
         public static string GetShortType(this IUnit unit)
         {
             var type = unit.GetRootType();

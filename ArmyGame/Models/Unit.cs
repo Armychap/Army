@@ -12,7 +12,7 @@ namespace ArmyBattle.Models
         public int Range { get; set; }  // Дальность действия
         public int Power { get; set; }  // Сила способности
         
-        public IUnit LastHealed { get; private set; }  // Для лечения
+        public IUnit? LastHealed { get; private set; }  // Для лечения
         
         private Random random = new Random();
         
@@ -21,6 +21,7 @@ namespace ArmyBattle.Models
             Name = name;
             Range = range;
             Power = power;
+            LastHealed = null;
         }
 
         // Выполняет способность: урон или лечение в зависимости от типа юнита
@@ -31,17 +32,17 @@ namespace ArmyBattle.Models
             if (rootUser is Healer)
             {
                 // Лечение: выбрать случайного союзника, который может быть вылечен (не себя)
-                var allies = user.Army.Units
+                var allies = user?.Army.Units
                     .Where(u => u.IsAlive && u != user && u.CanBeHealed() && !u.Is<StrongFighter>())
                     .ToList();
 
-                if (allies.Count == 0)
+                if (allies?.Count == 0)
                 {
                     LastHealed = null;
                     return;
                 }
 
-                var chosen = allies[random.Next(allies.Count)];
+                var chosen = allies?[random.Next(allies.Count)];
                 LastHealed = chosen;
 
                 // Восстанавливаем здоровье до первоначального состояния
@@ -100,10 +101,10 @@ namespace ArmyBattle.Models
         public int FighterNumber { get; set; }
         
         // Специальная способность (например, для лучников)
-        public ISpecialAbility SpecialAbility { get; set; }
+        public ISpecialAbility? SpecialAbility { get; set; }
 
         // Армия, к которой принадлежит юнит
-        public IArmy Army { get; set; }
+        public IArmy? Army { get; set; }
 
         // Конструктор для инициализации характеристик
         protected Unit(string name, int attack, int defence, int health, 
@@ -174,7 +175,7 @@ namespace ArmyBattle.Models
         {
             if (CanUseSpecialAbility(target))
             {
-                SpecialAbility.Execute(this, target);
+                SpecialAbility?.Execute(this, target);
             }
         }
         

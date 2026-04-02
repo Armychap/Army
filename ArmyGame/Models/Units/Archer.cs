@@ -9,16 +9,16 @@ namespace ArmyBattle.Models
     {
         public Archer(int fighterNumber) 
             : base(
-                "Лучник", //name
-                5, //attack
-                3, //defence
-                18, // health (maxhealth)
-                25, //cost
-                "Лучник" //powerlevel (выводится в скобках с юнитом)
+                "Лучник", 
+                5, //атака
+                3, //защита
+                18, // здоровье (макс. здоровье)
+                25, //стоимость
+                "Лучник" //уровень силы (выводится в скобках с юнитом)
               )
         {
             FighterNumber = fighterNumber;
-            // лучник имеет дальнюю способность
+            // использует стрелы
             SpecialAbility = new SpecialAbility("Выстрел стрелы", 5, 12);
         }
     }

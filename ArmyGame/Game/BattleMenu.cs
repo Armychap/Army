@@ -59,7 +59,7 @@ namespace ArmyBattle
                     return false;
                 }
 
-                bool battleFinished = !(army1.HasAliveUnits() && army2.HasAliveUnits());
+                bool battleFinished = !(army1.HasAliveUnits() && army2.HasAliveUnits()) || battle.StalemateReached;
 
                 if (battleFinished)
                 {
@@ -81,8 +81,14 @@ namespace ArmyBattle
                     Console.WriteLine("БИТВА ЗАВЕРШЕНА");
                     Console.WriteLine(new string('=', 40));
 
-                    // Определяем победителя
-                    if (army1.HasAliveUnits())
+                    // Определяем результат
+                    if (battle.StalemateReached)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("НИЧЬЯ! Жизнь обоих бойцов не изменялась в течение 10 ходов.");
+                        Console.ResetColor();
+                    }
+                    else if (army1.HasAliveUnits())
                     {
                         Console.ForegroundColor = army1.Color;
                         Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
@@ -183,7 +189,7 @@ namespace ArmyBattle
                 string fullLog = existingLog + logCapture.ToString();
 
                 // Проверяем, была ли битва завершена
-                bool battleFinished = !(army1.HasAliveUnits() && army2.HasAliveUnits());
+                bool battleFinished = !(army1.HasAliveUnits() && army2.HasAliveUnits()) || battle.StalemateReached;
 
                 if (battleFinished)
                 {
@@ -219,8 +225,14 @@ namespace ArmyBattle
                     Console.WriteLine("БИТВА ЗАВЕРШЕНА");
                     Console.WriteLine(new string('=', 40));
 
-                    // Определяем победителя
-                    if (army1.HasAliveUnits())
+                    // Определяем результат
+                    if (battle.StalemateReached)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("НИЧЬЯ! Жизнь обоих бойцов не изменялась в течение 10 ходов.");
+                        Console.ResetColor();
+                    }
+                    else if (army1.HasAliveUnits())
                     {
                         Console.ForegroundColor = army1.Color;
                         Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");

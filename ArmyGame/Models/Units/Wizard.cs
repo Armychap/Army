@@ -10,10 +10,10 @@ namespace ArmyBattle.Models
         public Wizard(int fighterNumber)
             : base(
                 "Маг",  
-                7,       
-                4,       
-                22,      
-                30,       
+                7, // атака
+                4, // защита
+                22, // здоровье
+                30, // стоимость
                 "Маг"     
               )
         {
