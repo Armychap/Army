@@ -88,7 +88,7 @@ namespace ArmyBattle.Models
             inner.TakeDamage(damage, attackerName);
             int actualDamage = healthBefore - inner.Health;
 
-            string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {inner.Army?.Name ?? "Unknown Army"} {inner.GetDisplayName("")}: {actualDamage} урона от {attackerName}. HP {Math.Max(inner.Health,0)}/{inner.MaxHealth}";
+            string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {inner.Army?.Name ?? "Unknown Army"} {inner.GetDisplayName("")}: {actualDamage} урона от {attackerName}. HP {Math.Max(inner.Health, 0)}/{inner.MaxHealth}";
             try
             {
                 File.AppendAllText(logFile, line + Environment.NewLine);
@@ -105,7 +105,19 @@ namespace ArmyBattle.Models
 
     public class DeathBeepUnitProxy : UnitProxy
     {
-        private static readonly SoundPlayer soundPlayer = new SoundPlayer("death_sound.mp3");
+        private static readonly SoundPlayer soundPlayer = new SoundPlayer("death_sound.wav");
+
+        static DeathBeepUnitProxy()
+        {
+            try
+            {
+                soundPlayer.Load();
+            }
+            catch
+            {
+                // Игнорируем ошибки загрузки
+            }
+        }
 
         public DeathBeepUnitProxy(IUnit inner) : base(inner)
         {
