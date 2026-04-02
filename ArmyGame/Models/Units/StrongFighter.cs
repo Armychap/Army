@@ -10,10 +10,10 @@ namespace ArmyBattle.Models
         public StrongFighter(int fighterNumber) 
             : base(
                 "Сильный боец",
-                20,
-                15,
-                60,
-                40,
+                20, // атака
+                15, // защита
+                60, // здоровье
+                40, // стоимость
                 "Сильный"
               )
         {

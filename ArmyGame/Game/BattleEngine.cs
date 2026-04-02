@@ -28,6 +28,10 @@ namespace ArmyBattle.Game
         private const int maxNoLethalActions = 80;
         private bool stalemateReached = false;
         private int moveCount = 0;
+        private int noHealthChangeCount = 0;
+        private int fighter1HealthBefore = 0;
+        private int fighter2HealthBefore = 0;
+        private const int maxNoHealthChangeActions = 10;
         
         public BattleEngine(IArmy army1, IArmy army2, int speed = 400)
         {
@@ -49,6 +53,7 @@ namespace ArmyBattle.Game
         public int AttackTurn => attackTurn;
         public bool FirstAttackerIsArmy1 => firstAttackerIsArmy1;
         public bool NeedNewRoundHeader => needNewRoundHeader;
+        public bool StalemateReached => stalemateReached;
 
         // Запуск битвы с выводом заголовка и полной симуляцией ходов
         public void StartBattle()
@@ -140,10 +145,12 @@ namespace ArmyBattle.Game
                     stalemateReached = true;
                     Console.WriteLine("Патовая ситуация: слишком много ходов без смертей. Битва объявлена ничьей.");
                 }
+
+                // Раунд продолжается, так как никто не умер
+                needNewRoundHeader = false;
                 
                 // Пропускаем атаку, продолжаем с другим боецом
                 attackTurn = 1 - attackTurn;
-                // НЕ меняем needNewRoundHeader при пропуске - раунд продолжается, пока никто не умер
                 return;
             }
 
@@ -181,6 +188,7 @@ namespace ArmyBattle.Game
                 defender = defendingArmy?.GetNextFighterInBattleOrder();
 
                 noLethalActions = 0;
+                noHealthChangeCount = 0;
 
                 // Конец текущего раунда (переход на новый после смерти бойца)
                 needNewRoundHeader = true;
@@ -210,8 +218,14 @@ namespace ArmyBattle.Game
             bool army1Wins = army1.HasAliveUnits();
             bool army2Wins = army2.HasAliveUnits();
             
-            // Ничьей быть не может - всегда должен быть победитель
-            if (army1Wins)
+            // Проверяем, была ли ничья
+            if (stalemateReached && army1Wins && army2Wins)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("НИЧЬЯ!");
+                Console.ResetColor();
+            }
+            else if (army1Wins)
             {
                 Console.ForegroundColor = army1.Color;
                 Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
@@ -257,6 +271,7 @@ namespace ArmyBattle.Game
             
             round = 0;
             moveCount = 0;
+            noHealthChangeCount = 0;
             needNewRoundHeader = true;
             attackTurn = 0;
             battleInitialized = true;
@@ -359,6 +374,10 @@ namespace ArmyBattle.Game
             moveCount++;
             Console.WriteLine($"Ход {moveCount}");
             
+            // Сохраняем здоровье в начале хода
+            fighter1HealthBefore = currentFighter1?.Health ?? 0;
+            fighter2HealthBefore = currentFighter2?.Health ?? 0;
+            
             bool currentAttackerIsArmy1 = attackTurn == 0 ? firstAttackerIsArmy1 : !firstAttackerIsArmy1;
 
             if (currentAttackerIsArmy1)
@@ -370,6 +389,26 @@ namespace ArmyBattle.Game
             if (currentFighter1 != null && currentFighter2 != null && currentFighter1.IsAlive && currentFighter2.IsAlive)
             {
                 CheckAndExecuteSpecialAbilities();
+            }
+            
+            // Проверяем, изменилось ли здоровье обоих бойцов
+            int fighter1HealthAfter = currentFighter1?.Health ?? 0;
+            int fighter2HealthAfter = currentFighter2?.Health ?? 0;
+            
+            if (fighter1HealthAfter == fighter1HealthBefore && fighter2HealthAfter == fighter2HealthBefore)
+            {
+                noHealthChangeCount++;
+                if (noHealthChangeCount >= maxNoHealthChangeActions)
+                {
+                    stalemateReached = true;
+                    Console.WriteLine();
+                    Console.WriteLine("НИЧЬЯ: Жизнь обоих бойцов не изменялась течение 10 ходов!");
+                    return false;
+                }
+            }
+            else
+            {
+                noHealthChangeCount = 0;
             }
             
             return true; // Ход выполнен успешно
