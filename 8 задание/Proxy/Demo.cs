@@ -14,16 +14,20 @@ namespace Proxy
             var admin = new User("Олег", "Admin");
 
             // Демонстрация для каждого пользователя
-            Console.WriteLine("Пользователь 'guest'");
+            Console.WriteLine("\n------------------------------");
+            Console.WriteLine("Пользователь 'Guest'");
             DemonstrateUserActions(guest);
 
-            Console.WriteLine("\nПользователь 'user'");
+            Console.WriteLine("\n------------------------------");
+            Console.WriteLine("Пользователь 'User'");
             DemonstrateUserActions(regularUser);
 
-            Console.WriteLine("\nПользователь 'manager'");
+            Console.WriteLine("\n------------------------------");
+            Console.WriteLine("Пользователь 'Manager'");
             DemonstrateUserActions(manager);
 
-            Console.WriteLine("\nПользователь 'admin'");
+            Console.WriteLine("\n------------------------------");
+            Console.WriteLine("Пользователь 'Admin'");
             DemonstrateUserActions(admin);
         }
 
