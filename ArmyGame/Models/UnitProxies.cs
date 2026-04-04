@@ -1,7 +1,4 @@
-using System;
-using System.IO;
 using System.Media;
-using System.Runtime.InteropServices;
 
 namespace ArmyBattle.Models
 {
@@ -22,14 +19,16 @@ namespace ArmyBattle.Models
         public string Name { get => inner.Name; set => inner.Name = value; }
         public int Attack { get => inner.Attack; set => inner.Attack = value; }
         public int Defence { get => inner.Defence; set => inner.Defence = value; }
+        public int EffectiveAttack => inner.EffectiveAttack;
+        public int EffectiveDefence => inner.EffectiveDefence;
         public virtual int Health { get => inner.Health; set => inner.Health = value; }
         public virtual int MaxHealth { get => inner.MaxHealth; set => inner.MaxHealth = value; }
         public int Cost { get => inner.Cost; set => inner.Cost = value; }
         public string PowerLevel { get => inner.PowerLevel; set => inner.PowerLevel = value; }
         public int DamageDealt { get => inner.DamageDealt; set => inner.DamageDealt = value; }
         public int FighterNumber { get => inner.FighterNumber; set => inner.FighterNumber = value; }
-        public ISpecialAbility SpecialAbility { get => inner.SpecialAbility; set => inner.SpecialAbility = value; }
-        public IArmy Army { get => inner.Army; set => inner.Army = value; }
+        public ISpecialAbility? SpecialAbility { get => inner.SpecialAbility; set => inner.SpecialAbility = value; }
+        public IArmy? Army { get => inner.Army; set => inner.Army = value; }
 
         public bool IsAlive => inner.IsAlive;
 
@@ -48,7 +47,7 @@ namespace ArmyBattle.Models
             return inner.CanUseSpecialAbility(target);
         }
 
-        public virtual void UseSpecialAbility(IUnit target)
+        public virtual void UseSpecialAbility(IUnit? target)
         {
             inner.UseSpecialAbility(target);
         }
@@ -105,10 +104,12 @@ namespace ArmyBattle.Models
 
     public class DeathBeepUnitProxy : UnitProxy
     {
-        private static readonly SoundPlayer soundPlayer = new SoundPlayer("death_sound.wav");
+        private static readonly SoundPlayer? soundPlayer;
 
         static DeathBeepUnitProxy()
         {
+    #if WINDOWS
+            SoundPlayer = new SoundPlayer("death_sound.wav");
             try
             {
                 soundPlayer.Load();
@@ -117,6 +118,7 @@ namespace ArmyBattle.Models
             {
                 // Игнорируем ошибки загрузки
             }
+    #endif
         }
 
         public DeathBeepUnitProxy(IUnit inner) : base(inner)
@@ -130,7 +132,8 @@ namespace ArmyBattle.Models
 
             try
             {
-                soundPlayer.Play();
+                if (soundPlayer != null)
+                    soundPlayer.Play();
             }
             catch
             {

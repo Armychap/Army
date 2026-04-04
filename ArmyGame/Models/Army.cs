@@ -1,6 +1,6 @@
-using System;
-using System.Collections.Generic;
 using ArmyBattle.Services;
+using System;
+
 
 namespace ArmyBattle.Models
 {
@@ -54,13 +54,13 @@ namespace ArmyBattle.Models
                 }
             }
 
-            for (int i = AliveFightersInBattleOrder.Count - 1; i > 0; i--)
+            // Временно сортируем, чтобы WeakFighter был первым для тестирования
+            AliveFightersInBattleOrder.Sort((a, b) => 
             {
-                int j = random.Next(i + 1);
-                var temp = AliveFightersInBattleOrder[i];
-                AliveFightersInBattleOrder[i] = AliveFightersInBattleOrder[j];
-                AliveFightersInBattleOrder[j] = temp;
-            }
+                if (a is WeakFighter && !(b is WeakFighter)) return -1;
+                if (b is WeakFighter && !(a is WeakFighter)) return 1;
+                return 0;
+            });
 
             CurrentFighterIndex = 0;
         }

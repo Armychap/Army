@@ -286,7 +286,7 @@ namespace ArmyBattle.Services
         /// <summary>
         /// Загружает данные армий из сохраненной битвы
         /// </summary>
-        public ArmySaveData LoadBattleArmies(string battleName)
+        public ArmySaveData? LoadBattleArmies(string battleName)
         {
             // Объединяем путь к JSON файлу в папке логов
             string jsonPath = Path.Combine(logsDirectory, $"{battleName}.json");
