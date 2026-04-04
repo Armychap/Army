@@ -15,7 +15,7 @@ namespace ArmyBattle.Services
         private readonly TextWriter[] _writers;
         
         // Поставщик формата (запятые, точки и т.д.) из первого писателя
-        private readonly IFormatProvider _formatProvider;
+        private readonly IFormatProvider? _formatProvider;
 
         /// <summary>
         /// Конструктор инициализирует составной писатель с несколькими целевыми писателями.
@@ -93,7 +93,7 @@ namespace ArmyBattle.Services
         /// Пишет форматированную строку во все целевые писатели одновременно.
         /// Позволяет использовать форматирование как в Console.WriteLine.
         /// </summary>
-        public override void WriteLine(string format, params object[] arg)
+        public override void WriteLine(string format, params object?[] arg)
         {
             // Итерируемся по каждому писателю
             foreach (var writer in _writers)

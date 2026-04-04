@@ -18,6 +18,12 @@ namespace ArmyBattle.Models
         //Показатель защиты - уменьшает получаемый урон
         int Defence { get; set; }
         
+        //Эффективная атака с учетом бафов
+        int EffectiveAttack { get; }
+        
+        //Эффективная защита с учетом бафов
+        int EffectiveDefence { get; }
+        
         //Текущее здоровье бойца
         int Health { get; set; }
         
@@ -37,10 +43,10 @@ namespace ArmyBattle.Models
         int FighterNumber { get; set; }
         
         //Специальная способность бойца
-        ISpecialAbility SpecialAbility { get; set; }
+        ISpecialAbility? SpecialAbility { get; set; }
 
         //Армия, к которой принадлежит боец
-        IArmy Army { get; set; }
+        IArmy? Army { get; set; }
 
         /// Проверить живой ли боец
         bool IsAlive { get; }
@@ -55,7 +61,7 @@ namespace ArmyBattle.Models
         bool CanUseSpecialAbility(IUnit? target);
         
         /// Использовать специальную способность против цели
-        void UseSpecialAbility(IUnit target);
+        void UseSpecialAbility(IUnit? target);
         
         /// Получить отображаемое имя бойца с префиксом
         string GetDisplayName(string prefix);

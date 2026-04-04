@@ -124,6 +124,14 @@ namespace ArmyBattle.Game
         {
             Console.WriteLine($"Здоровье {currentFighter1?.FighterNumber}: {Math.Max(0, currentFighter1?.Health ?? 0)}/{currentFighter1?.MaxHealth ?? 0}");
             Console.WriteLine($"Здоровье {currentFighter2?.FighterNumber}: {Math.Max(0, currentFighter2?.Health ?? 0)}/{currentFighter2?.MaxHealth ?? 0}");
+            if (currentFighter1 is WeakFighter wf1 && wf1.Buffs.Count > 0)
+            {
+                Console.WriteLine($"Бафы {wf1.FighterNumber}: {string.Join(", ", wf1.Buffs.Select(b => b.Name))}");
+            }
+            if (currentFighter2 is WeakFighter wf2 && wf2.Buffs.Count > 0)
+            {
+                Console.WriteLine($"Бафы {wf2.FighterNumber}: {string.Join(", ", wf2.Buffs.Select(b => b.Name))}");
+            }
             Console.WriteLine();
         }
 
@@ -131,7 +139,7 @@ namespace ArmyBattle.Game
         private void PerformAttack(IArmy attackingArmy, IArmy defendingArmy, ref IUnit attacker, ref IUnit defender)
         {
             // Если атакующий не имеет атаки (например, ShieldWall), он пропускает ход
-            if (attacker.Attack == 0)
+            if (attacker.EffectiveAttack == 0)
             {
                 Console.ForegroundColor = attackingArmy.Color;
                 Console.Write(attacker.GetDisplayName(attackingArmy.Name));
@@ -182,10 +190,8 @@ namespace ArmyBattle.Game
                 Console.ResetColor();
                 Console.WriteLine();
 
-                Console.WriteLine("бииип");
-
                 defendingArmy?.RemoveDeadFighter(defender);
-                defender = defendingArmy?.GetNextFighterInBattleOrder();
+                defender = defendingArmy.GetNextFighterInBattleOrder();
 
                 noLethalActions = 0;
                 noHealthChangeCount = 0;
@@ -206,6 +212,41 @@ namespace ArmyBattle.Game
             }
 
             attackTurn = 1 - attackTurn;
+        }
+
+        // Проверка, может ли слабый боец надеть баф (рядом сильный боец)
+        private bool CanEquipBuff(WeakFighter wf, IArmy army)
+        {
+            int index = army.Units.IndexOf(wf);
+            if (index == -1) return false;
+            // Проверить слева
+            if (index > 0 && army.Units[index - 1] is StrongFighter sf1 && sf1.IsAlive) return true;
+            // Проверить справа
+            if (index < army.Units.Count - 1 && army.Units[index + 1] is StrongFighter sf2 && sf2.IsAlive) return true;
+            return false;
+        }
+
+        // Надеть баф на слабого бойца
+        private void EquipBuff(WeakFighter wf)
+        {
+            // Рандомный выбор бафа
+            int choice = random.Next(1, 5); // 1-4
+
+            Buff? buff = choice switch
+            {
+                1 => Buffs.Horse,
+                2 => Buffs.Shield,
+                3 => Buffs.Helmet,
+                4 => Buffs.Spear,
+                _ => null
+            };
+
+            if (buff != null)
+            {
+                wf.Buffs.Add(buff);
+                Console.WriteLine($"{wf.GetDisplayName(wf.Army?.Name ?? "")} надевает баф: {buff.Name} (+{buff.AttackBonus} атаки, +{buff.DefenceBonus} защиты)");
+                Console.WriteLine($"Теперь характеристики: Атака {wf.EffectiveAttack}, Защита {wf.EffectiveDefence}, Здоровье {wf.Health}/{wf.MaxHealth}");
+            }
         }
 
         // Завершение битвы и вывод результатов
@@ -373,6 +414,14 @@ namespace ArmyBattle.Game
             
             moveCount++;
             Console.WriteLine($"Ход {moveCount}");
+            
+            // Надеваем баф в начале хода на подходящего слабого бойца
+            var weakFighters = army1.Units.Concat(army2.Units).Where(u => u is WeakFighter wf && u.IsAlive && CanEquipBuff((WeakFighter)u, u.Army)).Cast<WeakFighter>().ToList();
+            if (weakFighters.Any())
+            {
+                var chosen = weakFighters[random.Next(weakFighters.Count)];
+                EquipBuff(chosen);
+            }
             
             // Сохраняем здоровье в начале хода
             fighter1HealthBefore = currentFighter1?.Health ?? 0;

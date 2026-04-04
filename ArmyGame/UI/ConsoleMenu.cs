@@ -43,7 +43,7 @@ namespace ArmyBattle.UI
         /// Выводит информацию о составе и характеристиках одной армии.
         /// Показывает название, бюджет, и список всех юнитов с их параметрами.
         /// </summary>
-        public static void DisplayArmyComposition(string armyName, int color, List<UnitSaveData> units, int totalCost)
+        public static void DisplayArmyComposition(string? armyName, int color, List<UnitSaveData> units, int totalCost)
         {
             // Устанавливаем цвет для армии (красный, синий и т.д.)
             Console.ForegroundColor = (ConsoleColor)color;
@@ -61,7 +61,7 @@ namespace ArmyBattle.UI
             foreach (var unit in units)
             {
                 // Преобразуем тип юнита из английского в русское название
-                string unitType = unit.Type switch
+                string? unitType = unit.Type switch
                 {
                     "WeakFighter" => "Слабый боец",
                     "Archer" => "Лучник",
@@ -75,7 +75,7 @@ namespace ArmyBattle.UI
                 };
                 
                 // Получаем максимальное здоровье для этого типа юнита
-                int maxHealth = GetMaxHealth(unit.Type);
+                int maxHealth = GetMaxHealth(unitType);
                 
                 // Выводим информацию о юните в формате: 1 - Слабый боец (HP: 25/25, ATK: 10, DEF: 8, Стоимость: 15)
                 Console.WriteLine($"  {unit.FighterNumber} - {unitType} (HP: {unit.Health}/{maxHealth}, ATK: {unit.Attack}, DEF: {unit.Defence}, Стоимость: {unit.Cost})");
@@ -122,7 +122,7 @@ namespace ArmyBattle.UI
         /// <summary>
         /// Получает строку от пользователя с подсказкой (prompt).
         /// </summary>
-        public static string GetInput(string prompt)
+        public static string? GetInput(string prompt)
         {
             // Выводим подсказку без переноса строки
             Console.Write(prompt);
@@ -165,7 +165,7 @@ namespace ArmyBattle.UI
         /// Возвращает максимальное здоровье юнита по его типу.
         /// Используется для отображения текущего/ максимального здоровья.
         /// </summary>
-        private static int GetMaxHealth(string unitType)
+        private static int GetMaxHealth(string? unitType)
         {
             // Используем switch выражение для определения максимального здоровья
             return unitType switch

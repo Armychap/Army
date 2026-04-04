@@ -439,7 +439,7 @@ namespace ArmyBattle
         {
             ConsoleMenu.ClearConsole();
             ConsoleMenu.PrintHeader("СОХРАНЕНИЕ СОСТОЯНИЯ ИГРЫ");
-            string saveName = ConsoleMenu.GetInput("Введите название для сохранения (без пробелов): ");
+            string? saveName = ConsoleMenu.GetInput("Введите название для сохранения (без пробелов): ");
 
             if (!string.IsNullOrWhiteSpace(saveName))
             {

@@ -40,9 +40,12 @@ namespace ArmyBattle
             }
 
             ConsoleMenu.PrintHeader("СОХРАНЕНИЕ АРМИЙ");
-            string saveName = ConsoleMenu.GetInput("Введите название для сохранения (без пробелов): ");
+            string? saveName = ConsoleMenu.GetInput("Введите название для сохранения (без пробелов): ");
             
-            armyManager?.SaveArmies(_lastArmy1, _lastArmy2, saveName);
+            if (!string.IsNullOrWhiteSpace(saveName))
+            {
+                armyManager?.SaveArmies(_lastArmy1, _lastArmy2, saveName);
+            }
             ConsoleMenu.ShowSuccess($"Армии сохранены!");
             Console.ReadKey();
         }
@@ -75,12 +78,12 @@ namespace ArmyBattle
                         ConsoleMenu.PrintHeader($"БИТВА: {savedBattles[choice - 1]}");
 
                         ConsoleMenu.DisplayArmyComposition(
-                            armyData.Army1Name, armyData.Army1Color,
-                            armyData.Army1Units, armyData.TotalCost1);
+                            armyData.Army1Name ?? "Армия 1", armyData.Army1Color,
+                            armyData.Army1Units ?? new List<UnitSaveData>() , armyData.TotalCost1);
 
                         ConsoleMenu.DisplayArmyComposition(
-                            armyData.Army2Name, armyData.Army2Color,
-                            armyData.Army2Units, armyData.TotalCost2);
+                            armyData.Army2Name ?? "Армия 2", armyData.Army2Color,
+                            armyData.Army2Units ?? new List<UnitSaveData>(), armyData.TotalCost2);
 
                         ConsoleMenu.WaitForKey("\nНажмите любую клавишу для возврата к списку...");
                     }

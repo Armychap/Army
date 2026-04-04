@@ -11,11 +11,11 @@ namespace ArmyBattle.Models
         public string Name { get; set; }
         public int Range { get; set; }  // Дальность действия
         public int Power { get; set; }  // Сила способности
-        
+
         public IUnit? LastHealed { get; private set; }  // Для лечения
-        
+
         private Random random = new Random();
-        
+
         public SpecialAbility(string name, int range, int power)
         {
             Name = name;
@@ -29,7 +29,7 @@ namespace ArmyBattle.Models
         {
             var rootUser = user?.GetRootUnit();
 
-            if (rootUser is Healer)
+            if (rootUser is Healer && user?.Army != null)
             {
                 // Лечение: выбрать случайного союзника, который может быть вылечен (не себя)
                 var allies = user?.Army.Units
@@ -46,7 +46,10 @@ namespace ArmyBattle.Models
                 LastHealed = chosen;
 
                 // Восстанавливаем здоровье до первоначального состояния
-                chosen.Health = chosen.MaxHealth;
+                if (chosen != null)
+                {
+                    chosen.Health = chosen.MaxHealth;
+                }
             }
             else if (rootUser is Archer)
             {
@@ -64,7 +67,7 @@ namespace ArmyBattle.Models
             }
         }
     }
-    
+
     /// <summary>
     /// Базовая реализация IUnit. Позволяет соблюдать Liskov Substitution:
     /// любой подкласс может использоваться вместо IUnit.
@@ -75,31 +78,37 @@ namespace ArmyBattle.Models
     {
         // Название юнита для отображения
         public string Name { get; set; }
-        
+
         // Сила атаки
         public int Attack { get; set; }
-        
+
         // Защита от урона
         public int Defence { get; set; }
-        
+
+        // Эффективная атака с учетом бафов
+        public virtual int EffectiveAttack => Attack;
+
+        // Эффективная защита с учетом бафов
+        public virtual int EffectiveDefence => Defence;
+
         // Текущее здоровье
         public int Health { get; set; }
-        
+
         // Максимальный запас здоровья
         public int MaxHealth { get; set; }
-        
+
         // Стоимость найма
         public int Cost { get; set; }
-        
+
         // Уровень силы (слабый, средний, сильный)
         public string PowerLevel { get; set; }
-        
+
         // Счетчик нанесенного урона
         public int DamageDealt { get; set; }
-        
+
         // Порядковый номер бойца в армии
         public int FighterNumber { get; set; }
-        
+
         // Специальная способность (например, для лучников)
         public ISpecialAbility? SpecialAbility { get; set; }
 
@@ -107,8 +116,8 @@ namespace ArmyBattle.Models
         public IArmy? Army { get; set; }
 
         // Конструктор для инициализации характеристик
-        protected Unit(string name, int attack, int defence, int health, 
-                      int cost, string powerLevel)
+        protected Unit(string name, int attack, int defence, int health,
+                      int cost, string powerLevel, IArmy? army = null)
         {
             Name = name;
             Attack = attack;
@@ -120,6 +129,7 @@ namespace ArmyBattle.Models
             DamageDealt = 0;
             FighterNumber = 0;
             SpecialAbility = null;
+            Army = army;
         }
 
         // Проверка, жив ли юнит
@@ -132,7 +142,7 @@ namespace ArmyBattle.Models
         public virtual void TakeDamage(int damage, string attackerName)
         {
             // Расчет урона с учетом защиты
-            int actualDamage = Math.Max(1, damage - Defence);
+            int actualDamage = Math.Max(1, damage - EffectiveDefence);
             Health -= actualDamage;
         }
 
@@ -145,10 +155,10 @@ namespace ArmyBattle.Models
         // Атаковать цель через интерфейс
         public virtual void AttackUnit(IUnit target)
         {
-            target.TakeDamage(Attack, Name);
-            DamageDealt += Math.Max(1, Attack - target.Defence);
+            target.TakeDamage(EffectiveAttack, Name);
+            DamageDealt += Math.Max(1, EffectiveAttack - target.EffectiveDefence);
         }
-        
+
         // Может ли юнит быть скопирован магом
         public virtual bool CanBeCloned()
         {
@@ -160,7 +170,7 @@ namespace ArmyBattle.Models
         {
             return true;
         }
-        
+
         // Проверка наличия специального умения в пределах дальности
         public bool CanUseSpecialAbility(IUnit? target)
         {
@@ -169,7 +179,7 @@ namespace ArmyBattle.Models
             int distance = 1;
             return distance <= SpecialAbility.Range;
         }
-        
+
         // Использование специального умения через интерфейс
         public virtual void UseSpecialAbility(IUnit? target)
         {
@@ -178,7 +188,7 @@ namespace ArmyBattle.Models
                 SpecialAbility?.Execute(this, target);
             }
         }
-        
+
         // Получение отображаемого имени бойца
         public string GetDisplayName(string prefix)
         {
