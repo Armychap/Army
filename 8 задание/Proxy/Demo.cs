@@ -53,7 +53,16 @@ namespace Proxy
             // 3. Чтение документа
             Console.WriteLine("\n3. Попытка прочитать документ N1:");
             string content = service.ReadDocument(1);
-            Console.WriteLine($"   Содержимое: {content}");
+
+            if (content.StartsWith("Гости не могут") || content.StartsWith("ОШИБКА"))
+            {
+                Console.WriteLine($"    {content}");
+            }
+
+            else
+            {
+                Console.WriteLine($"   Содержимое: {content}");
+            }
 
             // 4. Создание документа
             Console.WriteLine("\n4. Попытка создать новый документ:");

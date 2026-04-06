@@ -11,7 +11,7 @@ namespace Proxy
         {
             Name = name;
             Role = role;
-            Console.WriteLine($"  [User] Создан пользователь: {name} (роль: {role})");
+            Console.WriteLine($"[USER] Создан пользователь: {name} (роль: {role})");
         }
     }
 }
