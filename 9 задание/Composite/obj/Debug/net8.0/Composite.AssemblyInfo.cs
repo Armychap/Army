@@ -10,12 +10,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("ArmyGame")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("Composite")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+281d9446d9a7472bf2d399366196576392ca4678")]
-[assembly: System.Reflection.AssemblyProductAttribute("ArmyGame")]
-[assembly: System.Reflection.AssemblyTitleAttribute("ArmyGame")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e46d2e42e3078018b2d31c8fffb243c9f3c2d919")]
+[assembly: System.Reflection.AssemblyProductAttribute("Composite")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Composite")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // Создано классом WriteCodeFragment MSBuild.
