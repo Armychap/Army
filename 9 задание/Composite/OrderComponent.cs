@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace CompositeOrderSystem
 {
-    // Базовый компонент (Component) паттерна Composite.
+    //Component
     abstract class OrderComponent
     {
         public string Name { get; protected set; }
@@ -11,6 +11,7 @@ namespace CompositeOrderSystem
         {
             Name = name;
         }
+        // Базовые операции, которые должны реализовать все компоненты
 
         // Возвращает общую стоимость компонента
         public abstract decimal GetTotalPrice();
@@ -23,6 +24,7 @@ namespace CompositeOrderSystem
         // Собирает все наименования товаров из компонента
         public abstract List<string> GetAllNames();
 
+        // Операции для работы с вложенными элементами
         // Композиция: только Composite переопределяет эти методы
         public virtual void Add(OrderComponent component) { }
         public virtual void Remove(OrderComponent component) { }

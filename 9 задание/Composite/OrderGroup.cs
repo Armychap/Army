@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace CompositeOrderSystem
 {
-    // Композитный элемент (Composite) в паттерне Composite.
+    // Композитный элемент (Composite)
     class OrderGroup : OrderComponent
     {
-        private List<OrderComponent> _components = new List<OrderComponent>();
+        private List<OrderComponent> _components = new List<OrderComponent>(); // Содержит другие компоненты
         private string _groupCategory;
 
         public OrderGroup(string groupName, string groupCategory = "Группа")
