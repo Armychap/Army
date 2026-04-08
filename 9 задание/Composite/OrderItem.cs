@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CompositeOrderSystem
 {
-    // Листовой элемент (Leaf) в паттерне Composite.
+    // Листовой элемент (Leaf)
     class OrderItem : OrderComponent
     {
         public decimal Price { get; set; }
@@ -45,7 +45,7 @@ namespace CompositeOrderSystem
         // Печатает информацию о товаре с отступом
         public override void PrintOrder(int depth = 0)
         {
-            Console.WriteLine($"{new string(' ', depth * 2)}{Name} | Кат: {Category} | {Quantity} шт | {GetTotalPrice():C} (сред: {Price:C})");
+            Console.WriteLine($"{Name} | Кат: {Category} | {Quantity} шт | {GetTotalPrice():C} (сред: {Price:C})");
         }
 
         public override void Add(OrderComponent component) { }
