@@ -78,24 +78,6 @@ namespace CompositeOrderSystem
             return allNames;
         }
 
-        // Находит все товары дороже заданной цены
-        public List<OrderItem> FindExpensiveItems(decimal minPrice)
-        {
-            var expensive = new List<OrderItem>();
-            foreach (var component in _components)
-            {
-                if (component is OrderItem item && item.Price > minPrice)
-                {
-                    expensive.Add(item);
-                }
-                else if (component is OrderGroup group)
-                {
-                    expensive.AddRange(group.FindExpensiveItems(minPrice));
-                }
-            }
-            return expensive;
-        }
-
         // Собирает статистику по категориям товаров
         public Dictionary<string, decimal> GetCategoryStats()
         {

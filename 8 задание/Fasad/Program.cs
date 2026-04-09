@@ -1,5 +1,12 @@
 using System.Text;
 using GameFacade;
 
-Console.OutputEncoding = Encoding.UTF8;
-GameFacadeDemoRunner.Run(Console.Out);
+class Program
+{
+    static void Main()
+    {
+        Console.OutputEncoding = Encoding.UTF8;
+        GameFacadeDemoRunner.Run(Console.Out);
+    }
+}
+

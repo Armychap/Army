@@ -7,7 +7,7 @@ namespace CompositeOrderSystem
     class OrderItem : OrderComponent
     {
         public decimal Price { get; set; }
-        public int Quantity { get; set; }
+        public int Quantity { get; set; } // Количество единиц товара
         public string Category { get; set; }
 
         public OrderItem(string name, decimal price, int quantity, string category = "Общее")
@@ -42,7 +42,7 @@ namespace CompositeOrderSystem
             return new List<string> { $"{Name} (x{Quantity})" };
         }
 
-        // Печатает информацию о товаре с отступом
+        // Печатает информацию о товаре
         public override void PrintOrder(int depth = 0)
         {
             Console.WriteLine($"{Name} | Кат: {Category} | {Quantity} шт | {GetTotalPrice():C} (сред: {Price:C})");
