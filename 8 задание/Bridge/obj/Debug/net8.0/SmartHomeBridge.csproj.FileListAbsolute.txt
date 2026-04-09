@@ -1,0 +1,15 @@
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\bin\Debug\net8.0\SmartHomeBridge.exe
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\bin\Debug\net8.0\SmartHomeBridge.deps.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\bin\Debug\net8.0\SmartHomeBridge.runtimeconfig.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\bin\Debug\net8.0\SmartHomeBridge.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\bin\Debug\net8.0\SmartHomeBridge.pdb
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\SmartHomeBridge.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\SmartHomeBridge.AssemblyInfoInputs.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\SmartHomeBridge.AssemblyInfo.cs
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\SmartHomeBridge.csproj.CoreCompileInputs.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\SmartHomeBridge.sourcelink.json
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\SmartHomeBridge.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\refint\SmartHomeBridge.dll
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\SmartHomeBridge.pdb
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\SmartHomeBridge.genruntimeconfig.cache
+C:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\8 задание\Bridge\obj\Debug\net8.0\ref\SmartHomeBridge.dll

@@ -11,7 +11,6 @@ public class GamePlatformFacade
     private readonly AchievementManager _achievements;
     private readonly LeaderboardManager _leaderboard;
     private readonly InGamePurchaseService _store;
-    private string? _currentPlayerName;
 
     public GamePlatformFacade(
         PlayerManager players,
@@ -30,7 +29,6 @@ public class GamePlatformFacade
     /// <summary>Новая игра: регистрация/вход, сессия, старт уровня, начисление стартовых монет.</summary>
     public void StartNewGame(string playerDisplayName)
     {
-        _currentPlayerName = playerDisplayName;
         int pid = _players.RegisterOrGetPlayerId(playerDisplayName);
         _players.BeginSession(pid);
         _levels.ResetRun();
@@ -52,32 +50,22 @@ public class GamePlatformFacade
         _players.EndSession();
     }
 
-    public void ShowLeaderboard()
-    {
-        var top = _leaderboard.GetTop(10);
-        Console.WriteLine("--- Таблица лидеров (топ-10) ---");
-        int place = 1;
-        foreach (var (playerId, score) in top)
-        {
-            Console.WriteLine($"  {place++}. Игрок #{playerId}: {score} очков");
-        }
-        if (top.Count == 0)
-            Console.WriteLine("  (пока нет записей)");
-    }
+    public IReadOnlyList<(int PlayerId, int Score)> GetLeaderboardTop(int count) =>
+        _leaderboard.GetTop(count);
 
     /// <summary>Для демо: имитация прохождения уровней без отдельного UI.</summary>
-    public void PlayDemoRounds(int rounds)
+    /// <returns>false, если сессия не начата.</returns>
+    public bool PlayDemoRounds(int rounds)
     {
         if (_players.CurrentPlayerId is null || !_players.IsSessionActive)
-        {
-            Console.WriteLine("Сначала вызовите StartNewGame.");
-            return;
-        }
+            return false;
+
         for (int i = 0; i < rounds; i++)
         {
             _levels.SimulateLevelProgress();
             if (i % 2 == 1)
                 _levels.LoadLevel(_levels.CurrentLevel + 1);
         }
+        return true;
     }
 }

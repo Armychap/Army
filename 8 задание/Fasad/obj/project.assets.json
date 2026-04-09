@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\voxix\\go\\pkg\\src\\github.com\\LilVoxy\\Army-main\\Army\\7 задание\\Fasad\\GameFacade.csproj",
+      "projectUniqueName": "c:\\Users\\voxix\\go\\pkg\\src\\github.com\\LilVoxy\\Army-main\\Army\\8 задание\\Fasad\\GameFacade.csproj",
       "projectName": "GameFacade",
-      "projectPath": "c:\\Users\\voxix\\go\\pkg\\src\\github.com\\LilVoxy\\Army-main\\Army\\7 задание\\Fasad\\GameFacade.csproj",
+      "projectPath": "c:\\Users\\voxix\\go\\pkg\\src\\github.com\\LilVoxy\\Army-main\\Army\\8 задание\\Fasad\\GameFacade.csproj",
       "packagesPath": "C:\\Users\\voxix\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\voxix\\go\\pkg\\src\\github.com\\LilVoxy\\Army-main\\Army\\7 задание\\Fasad\\obj\\",
+      "outputPath": "c:\\Users\\voxix\\go\\pkg\\src\\github.com\\LilVoxy\\Army-main\\Army\\8 задание\\Fasad\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
