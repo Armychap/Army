@@ -9,8 +9,6 @@ public static class BridgeDemo
         var cloud = new CloudControl(output);
         var voice = new VoiceControl(output);
 
-        output.WriteLine("=== Bridge: умный дом — абстракция «устройство», реализация «канал» ===\n");
-
         output.WriteLine("Один светильник, три способа управления (локально → облако → голос):");
         var lamp = new Light("гостиная", local);
         lamp.TurnOn();

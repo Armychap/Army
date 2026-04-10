@@ -15,7 +15,7 @@ public static class ProgramAfterFacade
 
         var platform = new GamePlatformFacade(players, levels, achievements, leaderboard, store);
 
-        log.Line("=== С фасадом: высокоуровневые StartNewGame / EndGame / данные лидерборда ===");
+        log.Line("С фасадом");
 
         platform.StartNewGame("Алексей");
         log.Line("1) StartNewGame — сессия, уровень 1, монеты.");
