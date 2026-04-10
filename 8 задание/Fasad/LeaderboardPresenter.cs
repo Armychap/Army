@@ -5,7 +5,7 @@ public static class LeaderboardPresenter
 {
     public static void Write(TextWriter output, string title, IReadOnlyList<(int PlayerId, int Score)> rows)
     {
-        output.WriteLine("--- {0} (топ-10) ---", title);
+        output.WriteLine("{0} (топ-10)", title);
         if (rows.Count == 0)
         {
             output.WriteLine("  (пока нет записей)");

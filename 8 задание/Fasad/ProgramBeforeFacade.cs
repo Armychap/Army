@@ -13,7 +13,7 @@ public static class ProgramBeforeFacade
         var leaderboard = new LeaderboardManager();
         var store = new InGamePurchaseService();
 
-        log.Line("=== Без фасада: те же шаги вручную через подсистемы ===");
+        log.Line("Без фасада");
 
         int pid = players.RegisterOrGetPlayerId("Мария");
         players.BeginSession(pid);

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmartHomeBridge")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be79ee79213e55b0bdc4aa270ef42504bdefc5a6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26ed156e3e78ae987cb8d4c2927868a9ceb3bbac")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmartHomeBridge")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmartHomeBridge")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
