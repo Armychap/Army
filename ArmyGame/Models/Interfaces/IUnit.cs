@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using ArmyBattle.Models.Interfaces;
 
 namespace ArmyBattle.Models
 {
@@ -50,6 +52,25 @@ namespace ArmyBattle.Models
 
         /// Проверить живой ли боец
         bool IsAlive { get; }
+        /// <summary>
+        /// Список наблюдателей за событиями юнита
+        /// </summary>
+        List<IUnitObserver> Observers { get; }
+        
+        /// <summary>
+        /// Подписать наблюдателя
+        /// </summary>
+        void AttachObserver(IUnitObserver observer);
+        
+        /// <summary>
+        /// Отписать наблюдателя
+        /// </summary>
+        void DetachObserver(IUnitObserver observer);
+        
+        /// <summary>
+        /// Очистить всех наблюдателей
+        /// </summary>
+        void ClearObservers();
 
         /// Получить урон от атакующего
         void TakeDamage(int damage, string attackerName);

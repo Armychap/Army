@@ -187,8 +187,8 @@
     }
   ],
   "TotalCost2": 375,
-  "SaveDate": "2026-04-13T21:31:01.6237649+03:00",
-  "CurrentRound": 4,
+  "SaveDate": "2026-04-13T21:31:02.0970786+03:00",
+  "CurrentRound": 1,
   "AttackTurn": 0,
   "Army1CurrentFighterIndex": 2,
   "Army2CurrentFighterIndex": 2,
@@ -216,5 +216,5 @@
     7,
     8
   ],
-  "BattleLogName": "\u043A\u0443\u043A\u0443 vs \u043C\u043C\u043C"
+  "BattleLogName": null
 }

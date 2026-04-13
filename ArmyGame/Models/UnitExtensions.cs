@@ -8,12 +8,7 @@ namespace ArmyBattle.Models
         /// Получить корневой юнит, разворачивая все прокси
         public static IUnit GetRootUnit(this IUnit unit)
         {
-            IUnit current = unit;
-            while (current is UnitProxy proxy)
-            {
-                current = proxy.InnerUnit;
-            }
-            return current;
+            return unit;
         }
 
         /// Проверить, является ли юнит определенным типом (например, Archer, Wizard и т.д.)

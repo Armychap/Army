@@ -1,5 +1,6 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
+using ArmyBattle.Models.Interfaces;
 
 namespace ArmyBattle.Models
 {
@@ -114,7 +115,12 @@ namespace ArmyBattle.Models
 
         // Армия, к которой принадлежит юнит
         public IArmy? Army { get; set; }
+        /// <summary>
+        /// Список наблюдателей
+        /// </summary>
+        public List<IUnitObserver> Observers { get; } = new List<IUnitObserver>();
 
+        public bool IsAlive => Health > 0;
         // Конструктор для инициализации характеристик
         protected Unit(string name, int attack, int defence, int health,
                       int cost, string powerLevel, IArmy? army = null)
@@ -132,10 +138,63 @@ namespace ArmyBattle.Models
             Army = army;
         }
 
-        // Проверка, жив ли юнит
-        public bool IsAlive
+
+        /// <summary>
+        /// Подписать наблюдателя
+        /// </summary>
+        public void AttachObserver(IUnitObserver observer)
         {
-            get { return Health > 0; }
+            if (!Observers.Contains(observer))
+                Observers.Add(observer);
+        }
+
+        /// <summary>
+        /// Отписать наблюдателя
+        /// </summary>
+        public void DetachObserver(IUnitObserver observer)
+        {
+            Observers.Remove(observer);
+        }
+
+        /// <summary>
+        /// Очистить всех наблюдателей
+        /// </summary>
+        public void ClearObservers()
+        {
+            Observers.Clear();
+        }
+
+        /// <summary>
+        /// Уведомить наблюдателей о получении урона
+        /// </summary>
+        protected void NotifyDamageTaken(int damage, string attackerName, int newHealth)
+        {
+            foreach (var observer in Observers)
+            {
+                observer.OnDamageTaken(this, damage, attackerName, newHealth);
+            }
+        }
+
+        /// <summary>
+        /// Уведомить наблюдателей о смерти
+        /// </summary>
+        protected void NotifyDeath(string killerName)
+        {
+            foreach (var observer in Observers)
+            {
+                observer.OnDeath(this, killerName);
+            }
+        }
+
+        /// <summary>
+        /// Уведомить наблюдателей о лечении
+        /// </summary>
+        protected void NotifyHealed(int amount, int newHealth)
+        {
+            foreach (var observer in Observers)
+            {
+                observer.OnHealed(this, amount, newHealth);
+            }
         }
 
         // Метод получения урона
@@ -143,7 +202,15 @@ namespace ArmyBattle.Models
         {
             // Расчет урона с учетом защиты
             int actualDamage = Math.Max(1, damage - EffectiveDefence);
+            int previousHealth = Health;
+
             Health -= actualDamage;
+            NotifyDamageTaken(actualDamage, attackerName, Health);
+
+            if (previousHealth > 0 && Health <= 0)
+            {
+                NotifyDeath(attackerName);
+            }
         }
 
         // Перегрузка для совместимости
