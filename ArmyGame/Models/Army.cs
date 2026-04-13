@@ -55,7 +55,7 @@ namespace ArmyBattle.Models
             }
 
             // Временно сортируем, чтобы WeakFighter был первым для тестирования
-            AliveFightersInBattleOrder.Sort((a, b) => 
+            AliveFightersInBattleOrder.Sort((a, b) =>
             {
                 if (a is WeakFighter && !(b is WeakFighter)) return -1;
                 if (b is WeakFighter && !(a is WeakFighter)) return 1;
@@ -193,8 +193,6 @@ namespace ArmyBattle.Models
                 var selectedFighter = affordableFighters[random.Next(affordableFighters.Count)];
 
                 IUnit newUnit = selectedFighter.Item2(fighterNumber);
-                // Применяем прокси для логирования и других функций
-                newUnit = UnitFactoryProvider.Instance.Wrap(newUnit);
                 AddUnit(newUnit);
                 remainingBudget -= selectedFighter.Item1;
                 fighterNumber++;

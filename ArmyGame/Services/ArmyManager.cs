@@ -81,7 +81,7 @@ namespace ArmyBattle.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n❌ Ошибка при сохранении: {ex.Message}");
+                Console.WriteLine($"\nОшибка при сохранении: {ex.Message}");
             }
         }
 
@@ -442,11 +442,7 @@ namespace ArmyBattle.Services
                 // (это важно если юнит был поврежден в предыдущем бою)
                 unit.Health = unitData.Health;
                 
-                // прокси для логирования, звуков и других функций
-                IUnit wrappedUnit = UnitFactoryProvider.Instance.Wrap(unit);
-                
-                // Добавляем восстановленного юнита в армию
-                army.AddUnit(wrappedUnit);
+                army.AddUnit(unit);
             }
         }
     }

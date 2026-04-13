@@ -184,8 +184,6 @@ namespace ArmyBattle
                         {
                             // Создаем нового слабого бойца с текущим номером
                             IUnit fighter = new WeakFighter(fighterNumber++);
-                            // Применяем прокси для логирования и других функций
-                            fighter = UnitFactoryProvider.Instance.Wrap(fighter);
                             
                             // Добавляем бойца в армию
                             army.AddUnit(fighter);
@@ -208,8 +206,6 @@ namespace ArmyBattle
                         {
                             // Создаем нового лучника с текущим номером
                             IUnit fighter = new Archer(fighterNumber++);
-                            // Применяем прокси для логирования и других функций
-                            fighter = UnitFactoryProvider.Instance.Wrap(fighter);
                             
                             // Добавляем лучника в армию
                             army.AddUnit(fighter);
@@ -231,8 +227,6 @@ namespace ArmyBattle
                     if (totalCost + 30 <= maxBudget)
                     {
                         IUnit fighter = new Wizard(fighterNumber++);
-                        // Применяем прокси для логирования и других функций
-                        fighter = UnitFactoryProvider.Instance.Wrap(fighter);
                         army.AddUnit(fighter);
                         totalCost += 30;
                         Console.WriteLine("Маг добавлен!");
@@ -245,8 +239,6 @@ namespace ArmyBattle
                     if (totalCost + 40 <= maxBudget)
                     {
                         IUnit fighter = new StrongFighter(fighterNumber++);
-                        // Применяем прокси для логирования и других функций
-                        fighter = UnitFactoryProvider.Instance.Wrap(fighter);
                         army.AddUnit(fighter);
                         totalCost += 40;
                         Console.WriteLine("Сильный боец добавлен!");
@@ -260,8 +252,6 @@ namespace ArmyBattle
                     if (totalCost + 55 <= maxBudget)
                     {
                         IUnit fighter = new ShieldWall(fighterNumber++);
-                        // Применяем прокси для логирования и других функций
-                        fighter = UnitFactoryProvider.Instance.Wrap(fighter);
                         army.AddUnit(fighter);
                         totalCost += 55;
                         Console.WriteLine("Гуляй город добавлен!");

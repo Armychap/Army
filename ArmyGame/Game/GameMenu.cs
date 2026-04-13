@@ -108,6 +108,9 @@ namespace ArmyBattle
 
             _lastArmy2.DisplayArmyInfo(true);
 
+            // Применяем настройки наблюдателей к созданным армиям
+            ObserverManager.ApplySettingsToArmies(_lastArmy1, _lastArmy2);
+
             Console.WriteLine("\nНажмите Enter для начала битвы");
 
             // Читаем нажатую клавишу
@@ -322,9 +325,8 @@ namespace ArmyBattle
                 ConsoleMenu.PrintHeader("НАСТРОЙКИ ПРОКСИ");
 
                 Console.WriteLine("Текущие настройки:");
-                Console.WriteLine($"1. Логирование урона в файл: {(ProxySettings.Current.EnableDamageLog ? "ВКЛ" : "ВЫКЛ")}");
-                Console.WriteLine($"2. Бип при смерти юнита: {(ProxySettings.Current.EnableDeathBeep ? "ВКЛ" : "ВЫКЛ")}");
-                Console.WriteLine();
+                Console.WriteLine($"1. Логирование урона в файл: {(ObserverManager.IsDamageLogEnabled() ? "ВКЛ" : "ВЫКЛ")}");
+                Console.WriteLine($"2. Бип при смерти юнита: {(ObserverManager.IsDeathBeepEnabled() ? "ВКЛ" : "ВЫКЛ")}");
                 Console.WriteLine("3. Сбросить настройки");
                 Console.WriteLine("4. Сохранить и выйти");
                 Console.WriteLine("0. Назад");
@@ -335,17 +337,18 @@ namespace ArmyBattle
                 switch (choice)
                 {
                     case "1":
-                        ProxySettings.Current.EnableDamageLog = !ProxySettings.Current.EnableDamageLog;
-                        ConsoleMenu.ShowMessage($"Логирование урона: {(ProxySettings.Current.EnableDamageLog ? "ВКЛЮЧЕНО" : "ВЫКЛЮЧЕНО")}");
+                        ObserverManager.SetDamageLogEnabled(!ObserverManager.IsDamageLogEnabled(), _lastArmy1, _lastArmy2);
+                        ConsoleMenu.ShowMessage($"Логирование урона: {(ObserverManager.IsDamageLogEnabled() ? "ВКЛЮЧЕНО" : "ВЫКЛЮЧЕНО")}");
                         Console.ReadKey();
                         break;
                     case "2":
-                        ProxySettings.Current.EnableDeathBeep = !ProxySettings.Current.EnableDeathBeep;
-                        ConsoleMenu.ShowMessage($"Бип при смерти: {(ProxySettings.Current.EnableDeathBeep ? "ВКЛЮЧЕНО" : "ВЫКЛЮЧЕНО")}");
+                        ObserverManager.SetDeathBeepEnabled(!ObserverManager.IsDeathBeepEnabled(), _lastArmy1, _lastArmy2);
+                        ConsoleMenu.ShowMessage($"Звук при смерти: {(ObserverManager.IsDeathBeepEnabled() ? "ВКЛЮЧЕНО" : "ВЫКЛЮЧЕНО")}");
                         Console.ReadKey();
                         break;
                     case "3":
                         ProxySettings.Reset();
+                        ObserverManager.LoadSettings(_lastArmy1, _lastArmy2);
                         ConsoleMenu.ShowMessage("Настройки сброшены!");
                         Console.ReadKey();
                         break;
