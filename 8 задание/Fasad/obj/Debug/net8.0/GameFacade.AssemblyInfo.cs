@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GameFacade")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26ed156e3e78ae987cb8d4c2927868a9ceb3bbac")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5ae9a939f1c68b930409658e4e5641e11a4558c")]
 [assembly: System.Reflection.AssemblyProductAttribute("GameFacade")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GameFacade")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

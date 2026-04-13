@@ -9,12 +9,12 @@ namespace CompositeOrderSystem
         {
             var (mainOrder, electronics, groceries, books, accessories, monitor) = BuildOrder();
 
-            PrintFullOrder(mainOrder);
-            PrintOverallInfo(mainOrder);
-            PrintCategoryStats(mainOrder);
-            PrintAllNames(mainOrder);
-            PrintGroupInfo(electronics, groceries, books, accessories);
-            DemonstrateDynamicChange(electronics, monitor);
+            PrintFullOrder(mainOrder); // полная структуру заказа
+            PrintOverallInfo(mainOrder); // общая информацию о заказе
+            PrintCategoryStats(mainOrder); // статистика по категориям
+            PrintAllNames(mainOrder); // все названия товаров в заказе
+            PrintGroupInfo(electronics, groceries, books, accessories); // информация по каждой группе
+            DemonstrateDynamicChange(electronics, monitor); // динамическое изменение структуры заказа (удаление монитора из электроники)
             WaitForExit();
         }
 
@@ -63,13 +63,13 @@ namespace CompositeOrderSystem
 
         private void PrintFullOrder(OrderGroup mainOrder)
         {
-            Console.WriteLine("ПОЛНАЯ СТРУКТУРА ЗАКАЗА\n");
+            Console.WriteLine("Полная структура заказа\n");
             mainOrder.PrintOrder();
         }
 
         private void PrintOverallInfo(OrderGroup mainOrder)
         {
-            Console.WriteLine("\nОБЩАЯ ИНФОРМАЦИЯ");
+            Console.WriteLine("\nОбщая информация");
             Console.WriteLine($"Общая стоимость: {mainOrder.GetTotalPrice():C}");
             Console.WriteLine($"Общее количество товаров: {mainOrder.GetTotalItems()} шт");
             Console.WriteLine($"Средняя цена товара: {mainOrder.GetAveragePrice():C}");
@@ -77,7 +77,7 @@ namespace CompositeOrderSystem
 
         private void PrintCategoryStats(OrderGroup mainOrder)
         {
-            Console.WriteLine("\nСТАТИСТИКА ПО КАТЕГОРИЯМ");
+            Console.WriteLine("\nСтатичстика по категориям");
             var categoryStats = mainOrder.GetCategoryStats();
             foreach (var category in categoryStats)
             {
@@ -87,7 +87,7 @@ namespace CompositeOrderSystem
 
         private void PrintAllNames(OrderGroup mainOrder)
         {
-            Console.WriteLine("\nВСЕ ТОВАРЫ В ЗАКАЗЕ");
+            Console.WriteLine("\nВсе товары в заказе:");
             var allNames = mainOrder.GetAllNames();
             for (int i = 0; i < allNames.Count; i++)
             {
@@ -97,7 +97,7 @@ namespace CompositeOrderSystem
 
         private void PrintGroupInfo(OrderGroup electronics, OrderGroup groceries, OrderGroup books, OrderGroup accessories)
         {
-            Console.WriteLine("\nИНФОРМАЦИЯ ПО ГРУППАМ");
+            Console.WriteLine("\nИнформация по группам");
             Console.WriteLine($"В группе 'Электроника': {electronics.GetTotalItems()} товаров на сумму {electronics.GetTotalPrice():C}");
             Console.WriteLine($"В группе 'Продукты': {groceries.GetTotalItems()} товаров на сумму {groceries.GetTotalPrice():C}");
             Console.WriteLine($"В группе 'Книги': {books.GetTotalItems()} товаров на сумму {books.GetTotalPrice():C}");
@@ -106,7 +106,7 @@ namespace CompositeOrderSystem
 
         private void DemonstrateDynamicChange(OrderGroup electronics, OrderItem monitor)
         {
-            Console.WriteLine("\nДИНАМИЧЕСКОЕ ИЗМЕНЕНИЕ");
+            Console.WriteLine("\nДинамическое изменение");
             Console.WriteLine($"До удаления: {electronics.GetComponentCount()} компонентов в Электронике");
             electronics.Remove(monitor);
             Console.WriteLine($"После удаления монитора: {electronics.GetComponentCount()} компонентов");
