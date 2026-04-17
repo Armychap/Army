@@ -7,42 +7,42 @@ namespace ShoppingCartCommandPattern
     {
         static void Main()
         {
-            var cart = new ShoppingCart();
-            var invoker = new CartInvoker();
+            var cart = new ShoppingCart(); // Получатель (Receiver) 
+            var invoker = new CartInvoker(); // Invoker, который будет управлять командами и их историей
 
-            var laptop = new CartItem { Id = "1", Name = "Ноутбук", Price = 50000, Quantity = 1 };
-            var mouse = new CartItem { Id = "2", Name = "Мышь", Price = 1500, Quantity = 2 };
+            var laptop = new CartItem { Id = "1", Name = "Ноут", Price = 50000, Quantity = 1 };
+            var mouse = new CartItem { Id = "2", Name = "Мышка", Price = 1500, Quantity = 2 };
 
-            // Исполняем конкретные команды через Invoker. Каждая команда знает, что делать с корзиной.
+            // Выполняем команды через Invoker, который управляет историей для Undo/Redo.
             invoker.Execute(new AddToCartCommand(cart, laptop));
             invoker.Execute(new AddToCartCommand(cart, mouse));
             cart.Show();
 
-            // Изменяем количество товара и применяем скидку через отдельные команды.
+            // Изменяем количество товара и применяем скидку через отдельные команды
             invoker.Execute(new ChangeQuantityCommand(cart, "2", 3));
             cart.Show();
 
-            invoker.Execute(new ApplyDiscountCommand(cart, "1", 10));
+            invoker.Execute(new ApplyDiscountCommand(cart, "1", 10)); // скидка 10% на ноутбук
             cart.Show();
 
-            // Отменяем последнее действие через Invoker: паттерн Command поддерживает Undo.
+            // Отменяем последнее действие
             invoker.Undo();
             cart.Show();
 
-            // Макрокоманда: объединяем несколько команд в одно логическое действие.
+            // объединяем несколько команд в одно 
             var promoCommands = new List<ICommand>
             {
                 new ApplyDiscountCommand(cart, "1", 15),
                 new ApplyDiscountCommand(cart, "2", 20)
             };
-            invoker.Execute(new ApplyPromoCodeCommand("BLACKFRIDAY", promoCommands));
+            invoker.Execute(new ApplyPromoCodeCommand("Распродажа", promoCommands));
             cart.Show();
 
-            // Отмена макрокоманды: Undo отменяет всю группу команд, выполненных как одну операцию.
+            // Отмена макрокоманды: Undo отменяет всю группу команд, выполненных как одну операцию
             invoker.Undo();
             cart.Show();
 
-            // Повтор последней отмененной команды / макрокоманды.
+            // Повтор последней отмененной команды / макрокоманды
             invoker.Redo();
             cart.Show();
 

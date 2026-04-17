@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ShoppingCartCommandPattern
 {
-    // Модель товара в корзине.
+    // Модель товара в корзине
     public class CartItem
     {
         public string? Id { get; set; }
@@ -15,15 +15,15 @@ namespace ShoppingCartCommandPattern
         public decimal Total => Price * Quantity * (1 - DiscountPercent / 100);
     }
 
-    // Получатель (Receiver) в паттерне Command
-    // Содержит реальную бизнес-логику работы с корзиной
+    // Получатель (Receiver)
+    // бизнес-логика работы с корзиной
     public class ShoppingCart
     {
-        private List<CartItem> items = new List<CartItem>();
+        private List<CartItem> items = new List<CartItem>(); // хранение товаров в корзине
 
         public void AddItem(CartItem item)
         {
-            var existing = items.FirstOrDefault(i => i.Id == item.Id);
+            var existing = items.FirstOrDefault(i => i.Id == item.Id); // проверяем, есть ли уже такой товар в корзине
             if (existing != null)
                 existing.Quantity += item.Quantity;
             else
@@ -33,7 +33,7 @@ namespace ShoppingCartCommandPattern
 
         public void RemoveItem(string id)
         {
-            var item = items.FirstOrDefault(i => i.Id == id);
+            var item = items.FirstOrDefault(i => i.Id == id); // находим товар по id
             if (item != null)
             {
                 items.Remove(item);
@@ -43,7 +43,7 @@ namespace ShoppingCartCommandPattern
 
         public void ChangeQuantity(string id, int newQty)
         {
-            var item = items.FirstOrDefault(i => i.Id == id);
+            var item = items.FirstOrDefault(i => i.Id == id); // находим товар по id
             if (item != null)
             {
                 Console.WriteLine($"{item.Name}: {item.Quantity} -> {newQty}");
@@ -53,7 +53,7 @@ namespace ShoppingCartCommandPattern
 
         public void ApplyDiscount(string id, decimal percent)
         {
-            var item = items.FirstOrDefault(i => i.Id == id);
+            var item = items.FirstOrDefault(i => i.Id == id); // находим товар по id
             if (item != null)
             {
                 Console.WriteLine($"Скидка {percent}% на {item.Name}");
@@ -64,13 +64,13 @@ namespace ShoppingCartCommandPattern
         public void Show()
         {
             Console.WriteLine("\nКорзина:");
-            if (!items.Any())
+            if (!items.Any()) // если корзина пуста
                 Console.WriteLine("Корзина пуста");
             else
             {
                 foreach (var i in items)
                     Console.WriteLine($"{i.Name} | {i.Quantity} шт | {i.Price:C} | скидка {i.DiscountPercent}% | итог: {i.Total:C}");
-                Console.WriteLine($"Общая сумма: {items.Sum(i => i.Total):C}");
+                Console.WriteLine($"Общая сумма: {items.Sum(i => i.Total):C}"); // выводим общую сумму всех товаров в корзине
             }
             Console.WriteLine();
         }

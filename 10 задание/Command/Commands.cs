@@ -8,15 +8,15 @@ namespace ShoppingCartCommandPattern
     {
         void Execute();
         void Undo();
-        string Description { get; }
+        string Description { get; } // для отображения в истории
     }
 
     // добавление товара в корзину
     public class AddToCartCommand : ICommand
     {
-        private ShoppingCart cart;
-        private CartItem item;
-        public string Description => $"Добавить {item.Name} x{item.Quantity}";
+        private ShoppingCart cart; // ссылка на получателя
+        private CartItem item; // данные для выполнения команды
+        public string Description => $"Добавить {item.Name} х{item.Quantity}";
 
         public AddToCartCommand(ShoppingCart cart, CartItem item)
         {
@@ -24,7 +24,7 @@ namespace ShoppingCartCommandPattern
             this.item = item;
         }
 
-        public void Execute() => cart.AddItem(item);
+        public void Execute() => cart.AddItem(item); 
         public void Undo() => cart.RemoveItem(item.Id);
     }
 
@@ -32,9 +32,9 @@ namespace ShoppingCartCommandPattern
     // Сохраняет удаленный элемент, чтобы можно было выполнить Undo
     public class RemoveFromCartCommand : ICommand
     {
-        private ShoppingCart cart;
-        private string productId;
-        private CartItem removedItem;
+        private ShoppingCart cart; // ссылка на получателя
+        private string productId; // данные для выполнения команды
+        private CartItem removedItem; // сохраняем удаленный элемент для возможности восстановления
         public string Description => $"Удалить товар {productId}";
 
         public RemoveFromCartCommand(ShoppingCart cart, string productId)
@@ -56,10 +56,10 @@ namespace ShoppingCartCommandPattern
     // Она запоминает старое состояние для отмены
     public class ChangeQuantityCommand : ICommand
     {
-        private ShoppingCart cart;
-        private string productId;
-        private int oldQuantity;
-        private int newQuantity;
+        private ShoppingCart cart; // ссылка на получателя
+        private string productId; // данные для выполнения команды
+        private int oldQuantity; // сохраняем старое количество для возможности восстановления
+        private int newQuantity; // новое количество для выполнения команды
         public string Description => $"Изменить кол-во {productId} с {oldQuantity} на {newQuantity}";
 
         public ChangeQuantityCommand(ShoppingCart cart, string productId, int newQuantity)
@@ -77,10 +77,10 @@ namespace ShoppingCartCommandPattern
     // применение скидки к товару
     public class ApplyDiscountCommand : ICommand
     {
-        private ShoppingCart cart;
-        private string productId;
-        private decimal discountPercent;
-        private decimal oldDiscount;
+        private ShoppingCart cart; // ссылка на получателя
+        private string productId; // данные для выполнения команды
+        private decimal discountPercent; // новая скидка для выполнения команды
+        private decimal oldDiscount; // сохраняем старую скидку для возможности восстановления
         public string Description => $"Скидка {discountPercent}% на {productId}";
 
         public ApplyDiscountCommand(ShoppingCart cart, string productId, decimal discountPercent)
@@ -99,8 +99,8 @@ namespace ShoppingCartCommandPattern
     // При выполнении и откате она итерирует команды внутри себя
     public class ApplyPromoCodeCommand : ICommand
     {
-        private List<ICommand> commands = new List<ICommand>();
-        private string promoCode;
+        private List<ICommand> commands = new List<ICommand>(); // набор команд, которые выполняются при применении промокода
+        private string promoCode; // данные для выполнения команды
         public string Description => $"Промокод {promoCode} ({commands.Count} скидок)";
 
         public ApplyPromoCodeCommand(string promoCode, List<ICommand> commands)
