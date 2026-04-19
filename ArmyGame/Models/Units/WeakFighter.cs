@@ -9,9 +9,6 @@ namespace ArmyBattle.Models
     /// </summary>
     public class WeakFighter : Unit, ICanBeHealed
     {
-        // Список бафов
-        public List<Buff> Buffs { get; } = new List<Buff>();
-
         public WeakFighter(int fighterNumber) 
             : base(
                 "Слабый боец",
@@ -24,11 +21,5 @@ namespace ArmyBattle.Models
         {
             FighterNumber = fighterNumber;
         }
-
-        // Эффективная атака с учетом бафов
-        public override int EffectiveAttack => Attack + Buffs.Sum(b => b.AttackBonus);
-
-        // Эффективная защита с учетом бафов
-        public override int EffectiveDefence => Defence + Buffs.Sum(b => b.DefenceBonus);
     }
 }

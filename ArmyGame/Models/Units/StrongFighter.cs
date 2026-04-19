@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ArmyBattle.Models
 {
@@ -7,6 +9,9 @@ namespace ArmyBattle.Models
     /// </summary>
     public class StrongFighter : Unit
     {
+        // Список бафов
+        public List<Buff> Buffs { get; } = new List<Buff>();
+
         public StrongFighter(int fighterNumber) 
             : base(
                 "Сильный боец",
@@ -19,5 +24,11 @@ namespace ArmyBattle.Models
         {
             FighterNumber = fighterNumber;
         }
+
+        // Эффективная атака с учетом бафов
+        public override int EffectiveAttack => Attack + Buffs.Sum(b => b.AttackBonus);
+
+        // Эффективная защита с учетом бафов
+        public override int EffectiveDefence => Defence + Buffs.Sum(b => b.DefenceBonus);
     }
 }

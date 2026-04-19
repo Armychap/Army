@@ -99,6 +99,11 @@ namespace ArmyBattle.Services
         /// Имя файла лога битвы для продолжения.
         /// </summary>
         public string? BattleLogName { get; set; }
+
+        /// <summary>
+        /// Количество ходов в битве.
+        /// </summary>
+        public int MoveCount { get; set; }
     }
 
     /// <summary>

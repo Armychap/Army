@@ -65,17 +65,19 @@ namespace ArmyBattle.Models
             CurrentFighterIndex = 0;
         }
 
-        //Возвращает следующего бойца из перемешанного списка
+        // Возвращает следующего бойца из перемешанного списка.
+        // Если индекс вышел за пределы, возвращаем первого бойца заново.
         public IUnit? GetNextFighterInBattleOrder()
         {
-            if (CurrentFighterIndex < AliveFightersInBattleOrder.Count)
-            {
-                IUnit nextFighter = AliveFightersInBattleOrder[CurrentFighterIndex];
-                CurrentFighterIndex++;
-                return nextFighter;
-            }
+            if (AliveFightersInBattleOrder.Count == 0)
+                return null;
 
-            return null;
+            if (CurrentFighterIndex >= AliveFightersInBattleOrder.Count)
+                CurrentFighterIndex = 0;
+
+            IUnit nextFighter = AliveFightersInBattleOrder[CurrentFighterIndex];
+            CurrentFighterIndex++;
+            return nextFighter;
         }
 
         /// Удаляет мёртвого бойца из порядка боя, корректируя индекс
