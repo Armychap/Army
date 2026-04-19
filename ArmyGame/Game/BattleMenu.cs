@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Linq;
 using ArmyBattle.Models;
 using ArmyBattle.Game;
 using ArmyBattle.Services;
@@ -101,6 +104,12 @@ namespace ArmyBattle
                         Console.ResetColor();
                     }
 
+                    Console.WriteLine($"\nРаундов: {battle.Round}");
+                    Console.WriteLine($"Ходов: {battle.MoveCount}");
+
+                    Console.WriteLine($"\nРаундов: {battle.Round}");
+                    Console.WriteLine($"Ходов: {battle.MoveCount}");
+
                     Console.WriteLine("\nМеню действий");
                     Console.WriteLine("1. Выйти в главное меню");
                     Console.Write("Выбор: ");
@@ -117,7 +126,7 @@ namespace ArmyBattle
                     Console.SetOut(originalOutput);
                     
                     // ✅ Используем единый формат имени сохранения
-                    armyManager?.SaveArmies(army1, army2, logName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName);
+                    armyManager?.SaveArmies(army1, army2, logName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName, battle.MoveCount);
                     return false;
                 }
             }
@@ -137,7 +146,7 @@ namespace ArmyBattle
         /// Восстанавливает боевое состояние на основе текущего состояния юнитов (их здоровья и статуса).
         /// </summary>
         // BattleMenu.cs
-        public static void ContinueBattle(IArmy army1, IArmy army2, int currentRound, int attackTurn, bool firstAttackerIsArmy1, bool needNewRoundHeader, string saveName, string battleLogName)
+        public static void ContinueBattle(IArmy army1, IArmy army2, int currentRound, int attackTurn, bool firstAttackerIsArmy1, bool needNewRoundHeader, string saveName, string battleLogName, int moveCount = 0)
         {
             var originalOutput = Console.Out;
             var logCapture = new StringWriter();
@@ -148,6 +157,7 @@ namespace ArmyBattle
             {
                 BattleEngine battle = new BattleEngine(army1, army2, 400);
                 battle.SetBattleState(currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader);
+                battle.SetMoveCount(moveCount);
 
                 // Восстанавливаем порядок бойцов и индекс уже в LoadArmies, здесь не перемешиваем заново.
                 battle.SetCurrentFightersForContinuation();
@@ -245,6 +255,9 @@ namespace ArmyBattle
                         Console.ResetColor();
                     }
 
+                    Console.WriteLine($"\nРаундов: {battle.Round}");
+                    Console.WriteLine($"Ходов: {battle.MoveCount}");
+
                     Console.WriteLine("\nМеню действий");
                     Console.WriteLine("1. Выйти в главное меню");
                     Console.Write("Выбор: ");
@@ -257,7 +270,7 @@ namespace ArmyBattle
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: false);
                     
                     // Обновляем состояние незавершенной игры
-                    armyManager?.SaveArmies(army1, army2, saveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName);
+                    armyManager?.SaveArmies(army1, army2, saveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName, battle.MoveCount);
                 }
             }
             catch (Exception ex)
@@ -283,8 +296,9 @@ namespace ArmyBattle
                 Console.WriteLine("2. Пройти раунд");
                 Console.WriteLine("3. Автоматически пройти до конца");
                 Console.WriteLine("4. Посмотреть состояние");
-                Console.WriteLine("5. Сохранить игру");
-                Console.WriteLine("6. Выйти (назад в меню)");
+                Console.WriteLine("5. Посмотреть баффы");
+                Console.WriteLine("6. Сохранить игру");
+                Console.WriteLine("7. Выйти (назад в меню)");
                 Console.Write("Выбор: ");
 
                 string? choice = Console.ReadLine();
@@ -319,7 +333,6 @@ namespace ArmyBattle
                                 break;
                             }
                         }
-
                         break;
 
                     case "3":
@@ -340,10 +353,15 @@ namespace ArmyBattle
                         break;
 
                     case "5":
+                        // Посмотреть баффы бойцов
+                        DisplayBuffs(army1, army2);
+                        break;
+
+                    case "6":
                         // Сохраняем текущее состояние игры и выходим в главное меню
                         SaveGameDuringBattle(army1, army2, battle, saveName, battleLogName);
                         return true;  // ✅ Указываем что пользователь вышел
-                    case "6":
+                    case "7":
                         Console.WriteLine("\nВы уверены? Битва будет потеряна (д/н): ");
                         if (Console.ReadLine()?.ToLower() == "д")
                         {
@@ -355,7 +373,7 @@ namespace ArmyBattle
                             Console.WriteLine("Состояние армий сохранено для продолжения.");
 
                             // ✅ Сохраняем армии с состоянием битвы и логом
-                            armyManager?.SaveArmies(army1, army2, exitSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, exitLogName);
+                            armyManager?.SaveArmies(army1, army2, exitSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, exitLogName, battle.MoveCount);
 
                             ConsoleMenu.ShowSuccess($"Игра сохранена!");
                             Console.ReadKey();
@@ -404,7 +422,7 @@ namespace ArmyBattle
             // Сохраняем состояние армий для продолжения игры
             if (battle != null)
             {
-                armyManager?.SaveArmies(army1, army2, actualSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, battleLogName);
+                armyManager?.SaveArmies(army1, army2, actualSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, battleLogName, battle.MoveCount);
             }
             else
             {
@@ -459,6 +477,45 @@ namespace ArmyBattle
             }
 
             return false;
+        }
+
+        private static void DisplayBuffs(IArmy army1, IArmy army2)
+        {
+            Console.Clear();
+            Console.WriteLine("Бафы бойцов");
+            Console.WriteLine(new string('=', 40));
+
+            void PrintArmyBuffs(IArmy army)
+            {
+                Console.ForegroundColor = army.Color;
+                Console.WriteLine($"{army.Name}:");
+                Console.ResetColor();
+
+                var buffedUnits = army.Units
+                    .Where(u => u is StrongFighter sf && sf.Buffs.Count > 0)
+                    .Cast<StrongFighter>()
+                    .ToList();
+
+                if (!buffedUnits.Any())
+                {
+                    Console.WriteLine("  Нет бойцов с баффами.");
+                    return;
+                }
+
+                foreach (var sf in buffedUnits)
+                {
+                    var buffNames = sf.Buffs.Select(b => b.Name);
+                    Console.WriteLine($"  {sf.GetDisplayName(army.Name)}: {string.Join(", ", buffNames)}");
+                }
+            }
+
+            PrintArmyBuffs(army1);
+            Console.WriteLine();
+            PrintArmyBuffs(army2);
+
+            Console.WriteLine();
+            Console.WriteLine("Нажмите любую клавишу для продолжения...");
+            Console.ReadKey();
         }
     }
 }

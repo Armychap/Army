@@ -1,119 +1,52 @@
 using System;
-using System.Text;
+using System.Collections.Generic;
 
-namespace ShoppingCartWithUndo
+namespace ShoppingCartCommandPattern
 {
-    // Класс программы - отвечает за запуск приложения и демонстрацию
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            Console.Title = "Корзина интернет-магазина с Undo/Redo";
+            var cart = new ShoppingCart(); // Получатель (Receiver) 
+            var invoker = new CartInvoker(); // Invoker, который будет управлять командами и их историей
 
-            var logger = new ConsoleLogger();
-            var cart = new ShoppingCart();
-            var commandManager = new CommandManager(logger);
+            var laptop = new CartItem { Id = "1", Name = "Ноут", Price = 50000, Quantity = 1 };
+            var mouse = new CartItem { Id = "2", Name = "Мышка", Price = 1500, Quantity = 2 };
 
-            // Создаем товары
-            var apple = new Product("1", "Яблоко", 1.5m);
-            var banana = new Product("2", "Банан", 2.0m);
-            var orange = new Product("3", "Апельсин", 3.0m);
+            // Выполняем команды через Invoker, который управляет историей для Undo/Redo.
+            invoker.Execute(new AddToCartCommand(cart, laptop));
+            invoker.Execute(new AddToCartCommand(cart, mouse));
+            cart.Show();
 
-            Console.WriteLine("=== ДОБРО ПОЖАЛОВАТЬ В МАГАЗИН ===\n");
+            // Изменяем количество товара и применяем скидку через отдельные команды
+            invoker.Execute(new ChangeQuantityCommand(cart, "2", 3));
+            cart.Show();
 
-            DemonstrateBasicOperations(commandManager, cart, apple, banana, orange);
-            DemonstrateUndoRedo(commandManager, cart);
-            DemonstrateMacroCommand(commandManager, cart, logger, apple, orange);
-            ShowAnalytics(logger);
-            DemonstrateChainUndoRedo(commandManager, cart, banana);
+            invoker.Execute(new ApplyDiscountCommand(cart, "1", 10)); // скидка 10% на ноутбук
+            cart.Show();
 
-            Console.WriteLine("\nНажмите любую клавишу для выхода...");
-            Console.ReadKey();
-        }
+            // Отменяем последнее действие
+            invoker.Undo();
+            cart.Show();
 
-        // Метод для демонстрации основных операций - добавление, изменение, скидки
-        private static void DemonstrateBasicOperations(CommandManager commandManager, ShoppingCart cart, Product apple, Product banana, Product orange)
-        {
-            // 1. Добавляем товары
-            commandManager.ExecuteCommand(new AddToCartCommand(cart, apple, 3));
-            commandManager.ExecuteCommand(new AddToCartCommand(cart, banana, 2));
-            commandManager.ExecuteCommand(new AddToCartCommand(cart, orange, 1));
-            cart.Display();
+            // объединяем несколько команд в одно 
+            var promoCommands = new List<ICommand>
+            {
+                new ApplyDiscountCommand(cart, "1", 15),
+                new ApplyDiscountCommand(cart, "2", 20)
+            };
+            invoker.Execute(new ApplyPromoCodeCommand("Распродажа", promoCommands));
+            cart.Show();
 
-            // 2. Изменяем количество
-            commandManager.ExecuteCommand(new ChangeQuantityCommand(cart, "1", 5));
-            cart.Display();
+            // Отмена макрокоманды: Undo отменяет всю группу команд, выполненных как одну операцию
+            invoker.Undo();
+            cart.Show();
 
-            // 3. Применяем скидку
-            commandManager.ExecuteCommand(new ApplyDiscountCommand(cart, "1", 0.5m));
-            cart.Display();
-        }
+            // Повтор последней отмененной команды / макрокоманды
+            invoker.Redo();
+            cart.Show();
 
-        // Метод для демонстрации Undo/Redo
-        private static void DemonstrateUndoRedo(CommandManager commandManager, ShoppingCart cart)
-        {
-            // 4. Отменяем скидку
-            Console.WriteLine("--- Отмена последнего действия (скидка) ---");
-            commandManager.Undo();
-            cart.Display();
-
-            // 5. Удаляем товар
-            commandManager.ExecuteCommand(new RemoveFromCartCommand(cart, "2"));
-            cart.Display();
-
-            // 6. Повторяем удаление (Redo не сработает, т.к. после Execute Redo очистился)
-            Console.WriteLine("--- Повтор (но Redo пуст) ---");
-            commandManager.Redo();
-
-            // 7. Отменяем удаление
-            Console.WriteLine("--- Отмена удаления ---");
-            commandManager.Undo();
-            cart.Display();
-        }
-
-        // Метод для демонстрации макрокоманды
-        private static void DemonstrateMacroCommand(CommandManager commandManager, ShoppingCart cart, ILogger logger, Product apple, Product orange)
-        {
-            // 8. МАКРОКОМАНДА: применяем несколько скидок (промокоды)
-            Console.WriteLine("--- Применяем промокоды (макрокоманда) ---");
-            var promoCommand = new ApplyPromoCodesCommand(logger);
-            promoCommand.AddDiscountCommand(new ApplyDiscountCommand(cart, "1", 0.3m));
-            promoCommand.AddDiscountCommand(new ApplyDiscountCommand(cart, "3", 0.5m));
-            commandManager.ExecuteCommand(promoCommand);
-            cart.Display();
-
-            // 9. Отменяем макрокоманду
-            Console.WriteLine("--- Отмена промокодов ---");
-            commandManager.Undo();
-            cart.Display();
-        }
-
-        // Метод для показа аналитики
-        private static void ShowAnalytics(ILogger logger)
-        {
-            // 10. Показываем аналитику
-            logger.ShowAnalytics();
-        }
-
-        // Метод для демонстрации цепочки Undo/Redo
-        private static void DemonstrateChainUndoRedo(CommandManager commandManager, ShoppingCart cart, Product banana)
-        {
-            // Демонстрация всех возможностей Undo/Redo
-            Console.WriteLine("\n=== ДЕМОНСТРАЦИЯ ЦЕПОЧКИ UNDO/REDO ===");
-            Console.WriteLine("Добавляем еще один товар и меняем количество...");
-            commandManager.ExecuteCommand(new AddToCartCommand(cart, banana, 3));
-            commandManager.ExecuteCommand(new ChangeQuantityCommand(cart, "1", 10));
-            cart.Display();
-
-            Console.WriteLine("Отмена x2...");
-            commandManager.Undo();
-            commandManager.Undo();
-            cart.Display();
-
-            Console.WriteLine("Повтор x1...");
-            commandManager.Redo();
-            cart.Display();
+            invoker.ShowAnalytics();
         }
     }
 }

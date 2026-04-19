@@ -1,183 +1,126 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace ShoppingCartWithUndo
+namespace ShoppingCartCommandPattern
 {
-    // Паттерн Command: Интерфейс команды, инкапсулирующий запрос как объект.
-    // Позволяет параметризовать клиентов с различными запросами, ставить запросы в очередь,
-    // и поддерживать отмену операций (Undo).
+    // Интерфейс команды: все команды должны выполнять действие и отменять его
     public interface ICommand
     {
-        void Execute(); // Выполнить команду
-        void Undo();    // Отменить команду
-        string GetDescription(); // Описание команды для логирования
+        void Execute();
+        void Undo();
+        string Description { get; } // для отображения в истории
     }
 
-    // Конкретная команда: Добавление товара в корзину
+    // добавление товара в корзину
     public class AddToCartCommand : ICommand
     {
-        private readonly ShoppingCart _cart;
-        private readonly Product _product;
-        private readonly int _quantity;
+        private ShoppingCart cart; // ссылка на получателя
+        private CartItem item; // данные для выполнения команды
+        public string Description => $"Добавить {item.Name} х{item.Quantity}";
 
-        public AddToCartCommand(ShoppingCart cart, Product product, int quantity)
+        public AddToCartCommand(ShoppingCart cart, CartItem item)
         {
-            _cart = cart;
-            _product = product;
-            _quantity = quantity;
+            this.cart = cart;
+            this.item = item;
         }
 
-        public void Execute()
-        {
-            _cart.AddItem(_product, _quantity);
-        }
-
-        public void Undo()
-        {
-            _cart.RemoveItem(_product.Id);
-        }
-
-        public string GetDescription() => $"Добавлен {_product.Name} x{_quantity}";
+        public void Execute() => cart.AddItem(item); 
+        public void Undo() => cart.RemoveItem(item.Id);
     }
 
-    // Конкретная команда: Удаление товара из корзины
+    // удаление товара из корзины
+    // Сохраняет удаленный элемент, чтобы можно было выполнить Undo
     public class RemoveFromCartCommand : ICommand
     {
-        private readonly ShoppingCart _cart;
-        private readonly string _productId;
-        private CartItem _removedItem;
+        private ShoppingCart cart; // ссылка на получателя
+        private string productId; // данные для выполнения команды
+        private CartItem removedItem; // сохраняем удаленный элемент для возможности восстановления
+        public string Description => $"Удалить товар {productId}";
 
         public RemoveFromCartCommand(ShoppingCart cart, string productId)
         {
-            _cart = cart;
-            _productId = productId;
+            this.cart = cart;
+            this.productId = productId;
         }
 
         public void Execute()
         {
-            _removedItem = _cart.Items.FirstOrDefault(i => i.Product.Id == _productId);
-            if (_removedItem != null)
-            {
-                _cart.RemoveItem(_productId);
-            }
+            removedItem = new CartItem { Id = productId, Name = "Товар", Quantity = 1 };
+            cart.RemoveItem(productId);
         }
 
-        public void Undo()
-        {
-            if (_removedItem != null)
-            {
-                _cart.AddItem(_removedItem.Product, _removedItem.Quantity);
-                _cart.ApplyDiscount(_productId, _removedItem.Discount);
-            }
-        }
-
-        public string GetDescription() => $"Удален товар {_productId}";
+        public void Undo() => cart.AddItem(removedItem);
     }
 
-    // Конкретная команда: Изменение количества товара
+    // изменение количества товара
+    // Она запоминает старое состояние для отмены
     public class ChangeQuantityCommand : ICommand
     {
-        private readonly ShoppingCart _cart;
-        private readonly string _productId;
-        private readonly int _newQuantity;
-        private int _oldQuantity;
+        private ShoppingCart cart; // ссылка на получателя
+        private string productId; // данные для выполнения команды
+        private int oldQuantity; // сохраняем старое количество для возможности восстановления
+        private int newQuantity; // новое количество для выполнения команды
+        public string Description => $"Изменить кол-во {productId} с {oldQuantity} на {newQuantity}";
 
         public ChangeQuantityCommand(ShoppingCart cart, string productId, int newQuantity)
         {
-            _cart = cart;
-            _productId = productId;
-            _newQuantity = newQuantity;
+            this.cart = cart;
+            this.productId = productId;
+            this.newQuantity = newQuantity;
+            this.oldQuantity = 1;
         }
 
-        public void Execute()
-        {
-            var item = _cart.Items.FirstOrDefault(i => i.Product.Id == _productId);
-            if (item != null)
-            {
-                _oldQuantity = item.Quantity;
-                _cart.ChangeQuantity(_productId, _newQuantity);
-            }
-        }
-
-        public void Undo()
-        {
-            _cart.ChangeQuantity(_productId, _oldQuantity);
-        }
-
-        public string GetDescription() => $"Изменено количество товара {_productId}: {_oldQuantity} -> {_newQuantity}";
+        public void Execute() => cart.ChangeQuantity(productId, newQuantity);
+        public void Undo() => cart.ChangeQuantity(productId, oldQuantity);
     }
 
-    // Конкретная команда: Применение скидки к товару
+    // применение скидки к товару
     public class ApplyDiscountCommand : ICommand
     {
-        private readonly ShoppingCart _cart;
-        private readonly string _productId;
-        private readonly decimal _newDiscount;
-        private decimal _oldDiscount;
+        private ShoppingCart cart; // ссылка на получателя
+        private string productId; // данные для выполнения команды
+        private decimal discountPercent; // новая скидка для выполнения команды
+        private decimal oldDiscount; // сохраняем старую скидку для возможности восстановления
+        public string Description => $"Скидка {discountPercent}% на {productId}";
 
-        public ApplyDiscountCommand(ShoppingCart cart, string productId, decimal discount)
+        public ApplyDiscountCommand(ShoppingCart cart, string productId, decimal discountPercent)
         {
-            _cart = cart;
-            _productId = productId;
-            _newDiscount = discount;
+            this.cart = cart;
+            this.productId = productId;
+            this.discountPercent = discountPercent;
+            this.oldDiscount = 0;
         }
 
-        public void Execute()
-        {
-            var item = _cart.Items.FirstOrDefault(i => i.Product.Id == _productId);
-            if (item != null)
-            {
-                _oldDiscount = item.Discount;
-                _cart.ApplyDiscount(_productId, _newDiscount);
-            }
-        }
-
-        public void Undo()
-        {
-            _cart.ApplyDiscount(_productId, _oldDiscount);
-        }
-
-        public string GetDescription() => $"Применена скидка ${_newDiscount} к {_productId} (было ${_oldDiscount})";
+        public void Execute() => cart.ApplyDiscount(productId, discountPercent);
+        public void Undo() => cart.ApplyDiscount(productId, oldDiscount);
     }
 
-    // Макрокоманда: Композитная команда, состоящая из нескольких команд.
-    // Позволяет выполнять группу команд как одну, с поддержкой Undo для всей группы.
-    public class ApplyPromoCodesCommand : ICommand
+    // компонуем несколько команд в одну логическую операцию
+    // При выполнении и откате она итерирует команды внутри себя
+    public class ApplyPromoCodeCommand : ICommand
     {
-        private readonly List<ICommand> _discountCommands = new List<ICommand>();
-        private readonly ILogger _logger;
+        private List<ICommand> commands = new List<ICommand>(); // набор команд, которые выполняются при применении промокода
+        private string promoCode; // данные для выполнения команды
+        public string Description => $"Промокод {promoCode} ({commands.Count} скидок)";
 
-        public ApplyPromoCodesCommand(ILogger logger)
+        public ApplyPromoCodeCommand(string promoCode, List<ICommand> commands)
         {
-            _logger = logger;
-        }
-
-        public void AddDiscountCommand(ICommand command)
-        {
-            _discountCommands.Add(command);
+            this.promoCode = promoCode;
+            this.commands = commands;
         }
 
         public void Execute()
         {
-            foreach (var cmd in _discountCommands)
-            {
+            Console.WriteLine($"Применяем промокод: {promoCode}");
+            foreach (var cmd in commands)
                 cmd.Execute();
-                _logger.Log($"  Выполнено: {cmd.GetDescription()}");
-            }
         }
 
         public void Undo()
         {
-            for (int i = _discountCommands.Count - 1; i >= 0; i--)
-            {
-                _discountCommands[i].Undo();
-                _logger.Log($"  Отменено: {_discountCommands[i].GetDescription()}");
-            }
-        }
-
-        public string GetDescription()
-        {
-            return $"Применение промокодов ({_discountCommands.Count} скидок)";
+            Console.WriteLine($"Отменяем промокод: {promoCode}");
+            foreach (var cmd in commands)
+                cmd.Undo();
         }
     }
 }

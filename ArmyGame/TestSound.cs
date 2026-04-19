@@ -4,7 +4,7 @@ using System.Media;
 
 class TestSound
 {
-    static void Main()
+    static void TestSoundPlayback()
     {
         try
         {

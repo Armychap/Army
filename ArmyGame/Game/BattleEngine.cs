@@ -29,8 +29,7 @@ namespace ArmyBattle.Game
         private bool stalemateReached = false;
         private int moveCount = 0;
         private int noHealthChangeCount = 0;
-        private int fighter1HealthBefore = 0;
-        private int fighter2HealthBefore = 0;
+        private Dictionary<IUnit, int> allUnitsHealthBefore = new Dictionary<IUnit, int>();
         private const int maxNoHealthChangeActions = 10;
         
         public BattleEngine(IArmy army1, IArmy army2, int speed = 400)
@@ -50,6 +49,7 @@ namespace ArmyBattle.Game
 
         // Публичные свойства для доступа к состоянию битвы
         public int Round => round;
+        public int MoveCount => moveCount;
         public int AttackTurn => attackTurn;
         public bool FirstAttackerIsArmy1 => firstAttackerIsArmy1;
         public bool NeedNewRoundHeader => needNewRoundHeader;
@@ -124,13 +124,13 @@ namespace ArmyBattle.Game
         {
             Console.WriteLine($"Здоровье {currentFighter1?.FighterNumber}: {Math.Max(0, currentFighter1?.Health ?? 0)}/{currentFighter1?.MaxHealth ?? 0}");
             Console.WriteLine($"Здоровье {currentFighter2?.FighterNumber}: {Math.Max(0, currentFighter2?.Health ?? 0)}/{currentFighter2?.MaxHealth ?? 0}");
-            if (currentFighter1 is WeakFighter wf1 && wf1.Buffs.Count > 0)
+            if (currentFighter1 is StrongFighter sf1 && sf1.Buffs.Count > 0)
             {
-                Console.WriteLine($"Бафы {wf1.FighterNumber}: {string.Join(", ", wf1.Buffs.Select(b => b.Name))}");
+                Console.WriteLine($"Бафы {sf1.FighterNumber}: {string.Join(", ", sf1.Buffs.Select(b => b.Name))}");
             }
-            if (currentFighter2 is WeakFighter wf2 && wf2.Buffs.Count > 0)
+            if (currentFighter2 is StrongFighter sf2 && sf2.Buffs.Count > 0)
             {
-                Console.WriteLine($"Бафы {wf2.FighterNumber}: {string.Join(", ", wf2.Buffs.Select(b => b.Name))}");
+                Console.WriteLine($"Бафы {sf2.FighterNumber}: {string.Join(", ", sf2.Buffs.Select(b => b.Name))}");
             }
             Console.WriteLine();
         }
@@ -214,20 +214,20 @@ namespace ArmyBattle.Game
             attackTurn = 1 - attackTurn;
         }
 
-        // Проверка, может ли слабый боец надеть баф (рядом сильный боец)
-        private bool CanEquipBuff(WeakFighter wf, IArmy army)
+        // Проверка, может ли сильный боец надеть баф (рядом слабый боец в порядке боя)
+        private bool CanEquipBuff(StrongFighter sf, IArmy army)
         {
-            int index = army.Units.IndexOf(wf);
+            int index = army.AliveFightersInBattleOrder.IndexOf(sf);
             if (index == -1) return false;
             // Проверить слева
-            if (index > 0 && army.Units[index - 1] is StrongFighter sf1 && sf1.IsAlive) return true;
+            if (index > 0 && army.AliveFightersInBattleOrder[index - 1] is WeakFighter wf1 && wf1.IsAlive && wf1 != currentFighter1 && wf1 != currentFighter2) return true;
             // Проверить справа
-            if (index < army.Units.Count - 1 && army.Units[index + 1] is StrongFighter sf2 && sf2.IsAlive) return true;
+            if (index < army.AliveFightersInBattleOrder.Count - 1 && army.AliveFightersInBattleOrder[index + 1] is WeakFighter wf2 && wf2.IsAlive && wf2 != currentFighter1 && wf2 != currentFighter2) return true;
             return false;
         }
 
-        // Надеть баф на слабого бойца
-        private void EquipBuff(WeakFighter wf)
+        // Надеть баф на сильного бойца
+        private void EquipBuff(StrongFighter sf)
         {
             // Рандомный выбор бафа
             int choice = random.Next(1, 5); // 1-4
@@ -243,9 +243,9 @@ namespace ArmyBattle.Game
 
             if (buff != null)
             {
-                wf.Buffs.Add(buff);
-                Console.WriteLine($"{wf.GetDisplayName(wf.Army?.Name ?? "")} надевает баф: {buff.Name} (+{buff.AttackBonus} атаки, +{buff.DefenceBonus} защиты)");
-                Console.WriteLine($"Теперь характеристики: Атака {wf.EffectiveAttack}, Защита {wf.EffectiveDefence}, Здоровье {wf.Health}/{wf.MaxHealth}");
+                sf.Buffs.Add(buff);
+                Console.WriteLine($"{sf.GetDisplayName(sf.Army?.Name ?? "")} надевает баф: {buff.Name} (+{buff.AttackBonus} атаки, +{buff.DefenceBonus} защиты)");
+                Console.WriteLine($"Атака {sf.EffectiveAttack}, Защита {sf.EffectiveDefence}, Здоровье {sf.Health}/{sf.MaxHealth}");
             }
         }
 
@@ -328,6 +328,11 @@ namespace ArmyBattle.Game
             battleInitialized = true;
         }
 
+        public void SetMoveCount(int count)
+        {
+            this.moveCount = count;
+        }
+
         // Выбрать текущего бойца для армии (без продвижения индекса)
         private IUnit? SelectFighterForArmy(IArmy army)
         {
@@ -397,7 +402,16 @@ namespace ArmyBattle.Game
             if (!(army1.HasAliveUnits() && army2.HasAliveUnits() && 
                    currentFighter1 != null && currentFighter2 != null))
             {
-                return false; // Битва закончена
+                if (army1.HasAliveUnits() && currentFighter1 == null)
+                    currentFighter1 = army1.GetNextFighterInBattleOrder();
+                if (army2.HasAliveUnits() && currentFighter2 == null)
+                    currentFighter2 = army2.GetNextFighterInBattleOrder();
+
+                if (!(army1.HasAliveUnits() && army2.HasAliveUnits() && 
+                       currentFighter1 != null && currentFighter2 != null))
+                {
+                    return false; // Битва закончена
+                }
             }
             
             // Показываем заголовок раунда только если нужен новый раунд
@@ -415,17 +429,35 @@ namespace ArmyBattle.Game
             moveCount++;
             Console.WriteLine($"Ход {moveCount}");
             
-            // Надеваем баф в начале хода на подходящего слабого бойца
-            var weakFighters = army1.Units.Concat(army2.Units).Where(u => u is WeakFighter wf && u.IsAlive && CanEquipBuff((WeakFighter)u, u.Army)).Cast<WeakFighter>().ToList();
-            if (weakFighters.Any())
+            // Надеваем баф в начале хода - каждая команда может надеть по одному баффу
+            // Сначала проверяем army1
+            var army1StrongFighters = army1.Units
+                .Where(u => u is StrongFighter sf && sf.IsAlive && sf.Army != null && sf != currentFighter1 && sf != currentFighter2 && CanEquipBuff(sf, u.Army))
+                .Cast<StrongFighter>()
+                .ToList();
+            if (army1StrongFighters.Any())
             {
-                var chosen = weakFighters[random.Next(weakFighters.Count)];
+                var chosen = army1StrongFighters[random.Next(army1StrongFighters.Count)];
                 EquipBuff(chosen);
             }
             
-            // Сохраняем здоровье в начале хода
-            fighter1HealthBefore = currentFighter1?.Health ?? 0;
-            fighter2HealthBefore = currentFighter2?.Health ?? 0;
+            // Затем проверяем army2
+            var army2StrongFighters = army2.Units
+                .Where(u => u is StrongFighter sf && sf.IsAlive && sf.Army != null && sf != currentFighter1 && sf != currentFighter2 && CanEquipBuff(sf, u.Army))
+                .Cast<StrongFighter>()
+                .ToList();
+            if (army2StrongFighters.Any())
+            {
+                var chosen = army2StrongFighters[random.Next(army2StrongFighters.Count)];
+                EquipBuff(chosen);
+            }
+            
+            // Сохраняем здоровье всех живых бойцов в начале хода
+            allUnitsHealthBefore.Clear();
+            foreach (var unit in army1.Units.Concat(army2.Units).Where(u => u.IsAlive))
+            {
+                allUnitsHealthBefore[unit] = unit.Health;
+            }
             
             bool currentAttackerIsArmy1 = attackTurn == 0 ? firstAttackerIsArmy1 : !firstAttackerIsArmy1;
 
@@ -440,18 +472,25 @@ namespace ArmyBattle.Game
                 CheckAndExecuteSpecialAbilities();
             }
             
-            // Проверяем, изменилось ли здоровье обоих бойцов
-            int fighter1HealthAfter = currentFighter1?.Health ?? 0;
-            int fighter2HealthAfter = currentFighter2?.Health ?? 0;
+            // Проверяем, изменилось ли здоровье хоть у одного бойца
+            bool anyHealthChanged = false;
+            foreach (var unit in army1.Units.Concat(army2.Units).Where(u => u.IsAlive))
+            {
+                if (allUnitsHealthBefore.ContainsKey(unit) && allUnitsHealthBefore[unit] != unit.Health)
+                {
+                    anyHealthChanged = true;
+                    break;
+                }
+            }
             
-            if (fighter1HealthAfter == fighter1HealthBefore && fighter2HealthAfter == fighter2HealthBefore)
+            if (!anyHealthChanged)
             {
                 noHealthChangeCount++;
                 if (noHealthChangeCount >= maxNoHealthChangeActions)
                 {
                     stalemateReached = true;
                     Console.WriteLine();
-                    Console.WriteLine("НИЧЬЯ: Жизнь обоих бойцов не изменялась течение 10 ходов!");
+                    Console.WriteLine("НИЧЬЯ: Жизнь ни одного бойца не изменялась в течение 10 ходов!");
                     return false;
                 }
             }
