@@ -62,24 +62,24 @@ namespace ArmyBattle
                     return false;
                 }
 
-                bool battleFinished = !(army1.HasAliveUnits() && army2.HasAliveUnits()) || battle.StalemateReached;
+                 bool battleFinished = !battle.IsCombatActive || battle.StalemateReached;
 
                 if (battleFinished)
                 {
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: true);
 
-                    // ✅ Удаляем файл продолжения из Saves (используем logName как имя сохранения)
+                    //  Удаляем файл продолжения из Saves (используем logName как имя сохранения)
                     string? savePath = armyManager?.GetSavePath(logName);
                     if (!string.IsNullOrWhiteSpace(savePath) && File.Exists(savePath))
                     {
-                        try 
-                        { 
+                        try
+                        {
                             File.Delete(savePath);
-                        } 
+                        }
                         catch { }
                     }
 
-                    // ✅ ПОСЛЕ восстановления консоли - выводим результаты ВТОРУЮ раз
+                    //  ПОСЛЕ восстановления консоли - выводим результаты ВТОРУЮ раз
                     ConsoleMenu.ClearConsole();
                     Console.WriteLine("БИТВА ЗАВЕРШЕНА");
                     Console.WriteLine(new string('=', 40));
@@ -122,10 +122,10 @@ namespace ArmyBattle
                     fullLog += "\nИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: true);
 
-                    // ✅ Восстанавливаем консоль перед сохранением
+                    //  Восстанавливаем консоль перед сохранением
                     Console.SetOut(originalOutput);
-                    
-                    // ✅ Используем единый формат имени сохранения
+
+                    //  Используем единый формат имени сохранения
                     armyManager?.SaveArmies(army1, army2, logName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName, battle.MoveCount);
                     return false;
                 }
@@ -171,7 +171,7 @@ namespace ArmyBattle
 
                 string logName = string.IsNullOrWhiteSpace(battleLogName) ? saveName : battleLogName;
 
-                // ✅ Загружаем существующий лог, если есть
+                //  Загружаем существующий лог, если есть
                 string existingLog = "";
                 string existingLogPath = Path.Combine("Logs", $"{logName}.txt");
                 if (File.Exists(existingLogPath))
@@ -195,12 +195,11 @@ namespace ArmyBattle
                     return;
                 }
 
-                // ✅ Сохраняем с existingLog + новый лог
+                //  Сохраняем с existingLog + новый лог
                 string fullLog = existingLog + logCapture.ToString();
 
                 // Проверяем, была ли битва завершена
-                bool battleFinished = !(army1.HasAliveUnits() && army2.HasAliveUnits()) || battle.StalemateReached;
-
+                bool battleFinished = !battle.IsCombatActive || battle.StalemateReached;
                 if (battleFinished)
                 {
                     // Битва завершена - формируем итоговый лог без метки незавершенной игры
@@ -230,7 +229,7 @@ namespace ArmyBattle
                         }
                     }
 
-                    // ✅ ПОСЛЕ восстановления консоли - выводим результаты
+                    //  ПОСЛЕ восстановления консоли - выводим результаты
                     ConsoleMenu.ClearConsole();
                     Console.WriteLine("БИТВА ЗАВЕРШЕНА");
                     Console.WriteLine(new string('=', 40));
@@ -268,7 +267,7 @@ namespace ArmyBattle
                     // Битва не завершена - добавляем статус
                     fullLog += "\nИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: false);
-                    
+
                     // Обновляем состояние незавершенной игры
                     armyManager?.SaveArmies(army1, army2, saveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName, battle.MoveCount);
                 }
@@ -297,8 +296,9 @@ namespace ArmyBattle
                 Console.WriteLine("3. Автоматически пройти до конца");
                 Console.WriteLine("4. Посмотреть состояние");
                 Console.WriteLine("5. Посмотреть баффы");
-                Console.WriteLine("6. Сохранить игру");
-                Console.WriteLine("7. Выйти (назад в меню)");
+                Console.WriteLine("6. Изменить боевое построение");
+                Console.WriteLine("7. Сохранить игру");
+                Console.WriteLine("8. Выйти (назад в меню)");
                 Console.Write("Выбор: ");
 
                 string? choice = Console.ReadLine();
@@ -358,28 +358,32 @@ namespace ArmyBattle
                         break;
 
                     case "6":
+                        ChangeFormationDuringBattle(battle);
+                        break;
+
+                    case "7":
                         // Сохраняем текущее состояние игры и выходим в главное меню
                         SaveGameDuringBattle(army1, army2, battle, saveName, battleLogName);
-                        return true;  // ✅ Указываем что пользователь вышел
-                    case "7":
+                        return true;  //  Указываем что пользователь вышел
+                    case "8":
                         Console.WriteLine("\nВы уверены? Битва будет потеряна (д/н): ");
                         if (Console.ReadLine()?.ToLower() == "д")
                         {
-                            // ✅ Используем battleLogName в качестве имени сохранения для единообразия
+                            //  Используем battleLogName в качестве имени сохранения для единообразия
                             string exitSaveName = string.IsNullOrWhiteSpace(saveName) ? battleLogName : saveName;
                             string exitLogName = string.IsNullOrWhiteSpace(battleLogName) ? saveName : battleLogName;
 
                             Console.WriteLine("\nИГРА НЕ ЗАВЕРШЕНА");
                             Console.WriteLine("Состояние армий сохранено для продолжения.");
 
-                            // ✅ Сохраняем армии с состоянием битвы и логом
+                            //  Сохраняем армии с состоянием битвы и логом
                             armyManager?.SaveArmies(army1, army2, exitSaveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, exitLogName, battle.MoveCount);
 
                             ConsoleMenu.ShowSuccess($"Игра сохранена!");
                             Console.ReadKey();
 
                             battleActive = false;
-                            return true;  // ✅ Указываем что пользователь вышел
+                            return true;  //  Указываем что пользователь вышел
                         }
                         break;
 
@@ -389,9 +393,9 @@ namespace ArmyBattle
                 }
             }
 
-            // ✅ НЕ выводим финальное меню здесь - оно попадает в логирование
+            //  НЕ выводим финальное меню здесь - оно попадает в логирование
             // Возвращаем false чтобы сигнализировать что битва естественно завершена
-            return false;  // ✅ Возвращаем false - битва завершена естественным путем
+            return false;  //  Возвращаем false - битва завершена естественным путем
         }
 
         /// <summary>
@@ -517,5 +521,36 @@ namespace ArmyBattle
             Console.WriteLine("Нажмите любую клавишу для продолжения...");
             Console.ReadKey();
         }
+
+        private static void ChangeFormationDuringBattle(BattleEngine battle)
+        {
+            Console.WriteLine("\nВыберите тип построения:");
+            Console.WriteLine("1. Одна колонна");
+            Console.WriteLine("2. Три колонны");
+            Console.WriteLine("3. Стенка");
+            Console.Write("Ваш выбор: ");
+
+            string? input = Console.ReadLine();
+
+            FormationType chosenFormation = input switch
+            {
+                "1" => FormationType.OneColumn,
+                "2" => FormationType.ThreeColumns,
+                "3" => FormationType.Wall,
+                _ => FormationType.OneColumn
+            };
+
+            battle.ReinitializeFormation(chosenFormation);
+            Console.WriteLine($"Выбрано построение: {chosenFormation}");
+
+            if (chosenFormation != FormationType.OneColumn)
+            {
+                Console.WriteLine("Режим три колонны активирован.");
+            }
+
+            Console.WriteLine("Нажмите любую клавишу для возврата в меню боя...");
+            Console.ReadKey(true);
+        }
+
     }
 }

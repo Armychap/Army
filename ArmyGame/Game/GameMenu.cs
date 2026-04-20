@@ -6,6 +6,13 @@ using ArmyBattle.UI;
 
 namespace ArmyBattle
 {
+    public enum FormationType 
+    { 
+        OneColumn,    // Одна колонна
+        ThreeColumns, // Три колонны
+        Wall          // Стенка
+    }
+    
     /// <summary>
     /// Класс для обработки главного меню игры
     /// </summary>
@@ -105,11 +112,14 @@ namespace ArmyBattle
             ConsoleMenu.PrintHeader("ИТОГОВЫЙ СОСТАВ АРМИЙ");
             _lastArmy1.DisplayArmyInfo(true);
             Console.WriteLine();
-
             _lastArmy2.DisplayArmyInfo(true);
 
             // Применяем настройки наблюдателей к созданным армиям
             ObserverManager.ApplySettingsToArmies(_lastArmy1, _lastArmy2);
+
+            Console.WriteLine("\nНастройка боевого построения:");
+            FormationType selectedFormation = ArmyCreation.AskFormationType();
+            Console.WriteLine($"Выбрано построение: {selectedFormation}");
 
             Console.WriteLine("\nНажмите Enter для начала битвы");
 

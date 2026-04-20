@@ -51,19 +51,19 @@ namespace ArmyBattle
 
             // Получаем названия обеих армий от пользователя
             var (name1, name2) = GetArmyNames();
-            
+
             // Получаем общий бюджет для обеих армий
             int budget = GetCommonBudget(200);
 
             // Создаем первую армию с красным цветом
             var army1 = new Army(name1, ConsoleColor.Red);
-            
+
             // Создаем вторую армию с синим цветом
             var army2 = new Army(name2, ConsoleColor.Blue);
 
             // Генерируем случайные юниты для первой армии в рамках бюджета
             army1.GenerateArmyWithBudget(budget);
-            
+
             // Генерируем случайные юниты для второй армии в рамках бюджета
             army2.GenerateArmyWithBudget(budget);
 
@@ -81,41 +81,41 @@ namespace ArmyBattle
 
             // Получаем названия обеих армий от пользователя
             var (name1, name2) = GetArmyNames();
-            
+
             // Получаем общий бюджет для обеих армий
             int budget = GetCommonBudget(200);
 
             // Создаем первую армию с красным цветом
             var army1 = new Army(name1, ConsoleColor.Red);
-            
+
             // Создаем вторую армию с синим цветом
             var army2 = new Army(name2, ConsoleColor.Blue);
 
             // Выводим меню настройки для первой армии
             ConsoleMenu.PrintHeader("НАСТРОЙКА ПЕРВОЙ АРМИИ");
-            
+
             // Запускаем интерактивное меню для добавления юнитов в первую армию
             SetupArmyManually(army1, budget);
 
             // Выводим меню настройки для второй армии
             ConsoleMenu.PrintHeader("НАСТРОЙКА ВТОРОЙ АРМИИ");
-            
+
             // Запускаем интерактивное меню для добавления юнитов во вторую армию
             SetupArmyManually(army2, budget);
 
             // Очищаем экран перед окончательным отображением
             ConsoleMenu.ClearConsole();
-            
+
             // Выводим финальный состав первой армии
             ConsoleMenu.PrintHeader("ИТОГОВЫЙ СОСТАВ АРМИЙ");
             army1.DisplayArmyInfo(true);
             Console.WriteLine();
-            
+
             // Выводим финальный состав второй армии
             army2.DisplayArmyInfo(true);
 
             Console.WriteLine("\nНажмите Enter для начала битвы");
-            
+
             // Читаем нажатую клавишу
             var key = Console.ReadKey();
 
@@ -136,7 +136,7 @@ namespace ArmyBattle
         {
             // Счетчик для нумерации юнитов
             int fighterNumber = 1;
-            
+
             // Текущее потраченное бюджета на юнитов
             int totalCost = 0;
 
@@ -144,7 +144,7 @@ namespace ArmyBattle
             {
                 // Очищаем экран перед выводом меню настройки
                 ConsoleMenu.ClearConsole();
-                
+
                 Console.WriteLine($"Текущий состав {army.Name}:");
                 Console.WriteLine($"Всего бойцов: {army.Units.Count}");
                 Console.WriteLine($"Потрачено: {totalCost}/{maxBudget}");
@@ -184,13 +184,13 @@ namespace ArmyBattle
                         {
                             // Создаем нового слабого бойца с текущим номером
                             IUnit fighter = new WeakFighter(fighterNumber++);
-                            
+
                             // Добавляем бойца в армию
                             army.AddUnit(fighter);
-                            
+
                             // Увеличиваем потраченный бюджет
                             totalCost += 15;
-                            
+
                             // Выводим сообщение об успехе
                             Console.WriteLine("Слабый боец добавлен!");
                         }
@@ -206,13 +206,13 @@ namespace ArmyBattle
                         {
                             // Создаем нового лучника с текущим номером
                             IUnit fighter = new Archer(fighterNumber++);
-                            
+
                             // Добавляем лучника в армию
                             army.AddUnit(fighter);
-                            
+
                             // Увеличиваем потраченный бюджет
                             totalCost += 25;
-                            
+
                             // Выводим сообщение об успехе
                             Console.WriteLine("Лучник добавлен!");
                         }
@@ -221,96 +221,115 @@ namespace ArmyBattle
                             Console.WriteLine("Недостаточно бюджета!");
                         break;
 
-                // Добавить мага
-                case "3":
-                    // Проверяем хватит ли бюджета для добавления мага
-                    if (totalCost + 30 <= maxBudget)
-                    {
-                        IUnit fighter = new Wizard(fighterNumber++);
-                        army.AddUnit(fighter);
-                        totalCost += 30;
-                        Console.WriteLine("Маг добавлен!");
-                    }
-                    else
-                        Console.WriteLine("Недостаточно бюджета!");
-                    break;
+                    // Добавить мага
+                    case "3":
+                        // Проверяем хватит ли бюджета для добавления мага
+                        if (totalCost + 30 <= maxBudget)
+                        {
+                            IUnit fighter = new Wizard(fighterNumber++);
+                            army.AddUnit(fighter);
+                            totalCost += 30;
+                            Console.WriteLine("Маг добавлен!");
+                        }
+                        else
+                            Console.WriteLine("Недостаточно бюджета!");
+                        break;
 
-                case "4":
-                    if (totalCost + 40 <= maxBudget)
-                    {
-                        IUnit fighter = new StrongFighter(fighterNumber++);
-                        army.AddUnit(fighter);
-                        totalCost += 40;
-                        Console.WriteLine("Сильный боец добавлен!");
-                    }
-                    else
-                        Console.WriteLine("Недостаточно бюджета!");
-                    break;
+                    case "4":
+                        if (totalCost + 40 <= maxBudget)
+                        {
+                            IUnit fighter = new StrongFighter(fighterNumber++);
+                            army.AddUnit(fighter);
+                            totalCost += 40;
+                            Console.WriteLine("Сильный боец добавлен!");
+                        }
+                        else
+                            Console.WriteLine("Недостаточно бюджета!");
+                        break;
 
-                case "5":
-                    // Добавить Гуляй город (стена щитов)
-                    if (totalCost + 55 <= maxBudget)
-                    {
-                        IUnit fighter = new ShieldWall(fighterNumber++);
-                        army.AddUnit(fighter);
-                        totalCost += 55;
-                        Console.WriteLine("Гуляй город добавлен!");
-                    }
-                    else
-                        Console.WriteLine("Недостаточно бюджета!");
-                    break;
+                    case "5":
+                        // Добавить Гуляй город (стена щитов)
+                        if (totalCost + 55 <= maxBudget)
+                        {
+                            IUnit fighter = new ShieldWall(fighterNumber++);
+                            army.AddUnit(fighter);
+                            totalCost += 55;
+                            Console.WriteLine("Гуляй город добавлен!");
+                        }
+                        else
+                            Console.WriteLine("Недостаточно бюджета!");
+                        break;
 
-                case "6":
-                    if (army.Units.Count > 0)
-                    {
-                        var removed = army.Units[army.Units.Count - 1];
-                        totalCost -= removed.Cost;
-                        army.Units.RemoveAt(army.Units.Count - 1);
-                        fighterNumber--;
-                        Console.WriteLine($"Боец удален! Возвращено {removed.Cost} монет.");
-                    }
-                    else
-                        Console.WriteLine("Нет бойцов для удаления!");
-                    break;
+                    case "6":
+                        if (army.Units.Count > 0)
+                        {
+                            var removed = army.Units[army.Units.Count - 1];
+                            totalCost -= removed.Cost;
+                            army.Units.RemoveAt(army.Units.Count - 1);
+                            fighterNumber--;
+                            Console.WriteLine($"Боец удален! Возвращено {removed.Cost} монет.");
+                        }
+                        else
+                            Console.WriteLine("Нет бойцов для удаления!");
+                        break;
 
-                case "7":
-                    Console.WriteLine("Настройка завершена!");
-                    Console.WriteLine("Нажмите любую клавишу, чтобы продолжить...");
-                    Console.ReadKey(true);
-                    return;
+                    case "7":
+                        Console.WriteLine("Настройка завершена!");
+                        Console.WriteLine("Нажмите любую клавишу, чтобы продолжить...");
+                        Console.ReadKey(true);
+                        return;
+                }
             }
         }
-    }
 
-    /// <summary>
-    /// Получает названия двух армий от пользователя.
-    /// </summary>
-    public static (string name1, string name2) GetArmyNames()
-    {
-        string name1 = ConsoleMenu.GetInput("Введите название первой армии: ");
-        if (string.IsNullOrWhiteSpace(name1))
+        /// <summary>
+        /// Получает названия двух армий от пользователя.
+        /// </summary>
+        public static (string name1, string name2) GetArmyNames()
         {
-            name1 = "Красная Армия";
-            Console.WriteLine($"Использовано название по умолчанию: {name1}");
+            string name1 = ConsoleMenu.GetInput("Введите название первой армии: ");
+            if (string.IsNullOrWhiteSpace(name1))
+            {
+                name1 = "Красная Армия";
+                Console.WriteLine($"Использовано название по умолчанию: {name1}");
+            }
+
+            string name2 = ConsoleMenu.GetInput("Введите название второй армии: ");
+            if (string.IsNullOrWhiteSpace(name2))
+            {
+                name2 = "Синяя Армия";
+                Console.WriteLine($"Использовано название по умолчанию: {name2}");
+            }
+
+            return (name1, name2);
         }
 
-        string name2 = ConsoleMenu.GetInput("Введите название второй армии: ");
-        if (string.IsNullOrWhiteSpace(name2))
-        {
-            name2 = "Синяя Армия";
-            Console.WriteLine($"Использовано название по умолчанию: {name2}");
-        }
-
-        return (name1, name2);
-    }
-
-    // Получает единый бюджет для обеих армий от пользователя
+        // Получает единый бюджет для обеих армий от пользователя
         public static int GetCommonBudget(int defaultBudget)
         {
             int budget = ConsoleMenu.GetIntInput($"\nВведите бюджет для обеих армий: ");
             if (budget <= 0)
                 budget = defaultBudget;
             return budget;
+        }
+
+        public static FormationType AskFormationType()
+        {
+            while (true)
+            {
+                Console.WriteLine("\nВыберите тип боевого построения:");
+                Console.WriteLine("1. Одна колонна");
+                Console.WriteLine("2. Три колонны");
+                Console.WriteLine("3. Стенка");
+                Console.Write("Выбор (1-3): ");
+                string? choice = Console.ReadLine();
+
+                if (choice == "1") return FormationType.OneColumn;
+                if (choice == "2") return FormationType.ThreeColumns;
+                if (choice == "3") return FormationType.Wall;
+
+                Console.WriteLine("Неверный выбор! Введите 1, 2 или 3.");
+            }
         }
     }
 }
