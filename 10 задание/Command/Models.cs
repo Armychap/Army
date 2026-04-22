@@ -4,36 +4,85 @@ using System.Linq;
 
 namespace ShoppingCartCommandPattern
 {
-    // Модель товара в корзине
-    public class CartItem
+    // Модель товара в магазине
+    public class Product
     {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
+        public string ProductId { get; set; } = string.Empty; // ID товара в магазине
+        public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        public int Quantity { get; set; }
-        public decimal DiscountPercent { get; set; }
-        public decimal Total => Price * Quantity * (1 - DiscountPercent / 100);
     }
 
-    // Получатель (Receiver)
-    // бизнес-логика работы с корзиной
+    // Модель позиции в корзине
+    public class CartItem
+    {
+        public string CartItemId { get; set; } = string.Empty; // Уникальный ID позиции в корзине
+        public string ProductId { get; set; } = string.Empty; // Ссылка на ID товара в магазине
+        public string Name { get; set; } = string.Empty;
+        public decimal OriginalPrice { get; set; } // исходная цена
+        public decimal CurrentPrice { get; set; }  // текущая цена (с учетом всех скидок)
+        public int Quantity { get; set; }
+        public decimal DiscountPercent { get; set; } // общий процент скидки (для отображения)
+        public decimal Total => CurrentPrice * Quantity;
+
+        public CartItem Clone()
+        {
+            return new CartItem
+            {
+                CartItemId = this.CartItemId,
+                ProductId = this.ProductId,
+                Name = this.Name,
+                OriginalPrice = this.OriginalPrice,
+                CurrentPrice = this.CurrentPrice,
+                Quantity = this.Quantity,
+                DiscountPercent = this.DiscountPercent
+            };
+        }
+    }
+
+    // Получатель (Receiver) - бизнес-логика работы с корзиной
     public class ShoppingCart
     {
-        private List<CartItem> items = new List<CartItem>(); // хранение товаров в корзине
+        private List<CartItem> items = new List<CartItem>();
+        private int nextCartItemId = 1; // Генератор ID для позиций в корзине
 
-        public void AddItem(CartItem item)
+        private string GenerateCartItemId() => (nextCartItemId++).ToString();
+
+        public bool HasProduct(string productId) => items.Any(i => i.ProductId == productId);
+
+        public CartItem? GetCartItem(string cartItemId) => items.FirstOrDefault(i => i.CartItemId == cartItemId);
+
+        public CartItem? GetCartItemByProductId(string productId) => items.FirstOrDefault(i => i.ProductId == productId);
+
+        public void AddItem(Product product, int quantity = 1)
         {
-            var existing = items.FirstOrDefault(i => i.Id == item.Id); // проверяем, есть ли уже такой товар в корзине
+            // Проверяем, есть ли уже такой товар в корзине
+            var existing = items.FirstOrDefault(i => i.ProductId == product.ProductId);
+
             if (existing != null)
-                existing.Quantity += item.Quantity;
+            {
+                existing.Quantity += quantity;
+                Console.WriteLine($"Добавлен: {product.Name} x{quantity}");
+            }
             else
-                items.Add(item);
-            Console.WriteLine($"Добавлен: {item.Name} x{item.Quantity}");
+            {
+                var newItem = new CartItem
+                {
+                    CartItemId = GenerateCartItemId(),
+                    ProductId = product.ProductId,
+                    Name = product.Name,
+                    OriginalPrice = product.Price,
+                    CurrentPrice = product.Price,
+                    Quantity = quantity,
+                    DiscountPercent = 0
+                };
+                items.Add(newItem);
+                Console.WriteLine($"Добавлен: {product.Name} x{quantity}");
+            }
         }
 
-        public void RemoveItem(string id)
+        public void RemoveItem(string cartItemId)
         {
-            var item = items.FirstOrDefault(i => i.Id == id); // находим товар по id
+            var item = items.FirstOrDefault(i => i.CartItemId == cartItemId);
             if (item != null)
             {
                 items.Remove(item);
@@ -41,36 +90,46 @@ namespace ShoppingCartCommandPattern
             }
         }
 
-        public void ChangeQuantity(string id, int newQty)
+        public void ChangeQuantity(string cartItemId, int newQty)
         {
-            var item = items.FirstOrDefault(i => i.Id == id); // находим товар по id
-            if (item != null)
+            var item = items.FirstOrDefault(i => i.CartItemId == cartItemId);
+            if (item != null && newQty > 0)
             {
                 Console.WriteLine($"{item.Name}: {item.Quantity} -> {newQty}");
                 item.Quantity = newQty;
             }
+            else if (item != null && newQty <= 0)
+            {
+                RemoveItem(cartItemId);
+            }
         }
 
-        public void ApplyDiscount(string id, decimal percent)
+        public void ApplyDiscount(string cartItemId, decimal percent)
         {
-            var item = items.FirstOrDefault(i => i.Id == id); // находим товар по id
+            var item = items.FirstOrDefault(i => i.CartItemId == cartItemId);
             if (item != null)
             {
-                Console.WriteLine($"Скидка {percent}% на {item.Name}");
-                item.DiscountPercent = percent;
+                // применяем скидку к текущей цене
+                item.CurrentPrice = item.CurrentPrice * (1 - percent / 100);
+
+                // пересчитываем общий процент скидки от исходной цены
+                decimal totalDiscountPercent = (1 - item.CurrentPrice / item.OriginalPrice) * 100;
+                item.DiscountPercent = Math.Round(totalDiscountPercent, 2);
+
+                Console.WriteLine($"Скидка {percent}% на {item.Name} → цена: {item.CurrentPrice:C} (общая скидка {item.DiscountPercent}%)");
             }
         }
 
         public void Show()
         {
             Console.WriteLine("\nКорзина:");
-            if (!items.Any()) // если корзина пуста
+            if (!items.Any())
                 Console.WriteLine("Корзина пуста");
             else
             {
                 foreach (var i in items)
-                    Console.WriteLine($"{i.Name} | {i.Quantity} шт | {i.Price:C} | скидка {i.DiscountPercent}% | итог: {i.Total:C}");
-                Console.WriteLine($"Общая сумма: {items.Sum(i => i.Total):C}"); // выводим общую сумму всех товаров в корзине
+                    Console.WriteLine($"{i.Name} | {i.Quantity} шт | {i.OriginalPrice:C} | скидка {i.DiscountPercent}% | цена: {i.CurrentPrice:C} | итог: {i.Total:C}");
+                Console.WriteLine($"Общая сумма: {items.Sum(i => i.Total):C}");
             }
             Console.WriteLine();
         }

@@ -14,7 +14,7 @@
     {
       "Type": "ShieldWall",
       "FighterNumber": 2,
-      "Health": 66,
+      "Health": 64,
       "Attack": 0,
       "Defence": 50,
       "Cost": 55
@@ -108,7 +108,7 @@
     {
       "Type": "StrongFighter",
       "FighterNumber": 7,
-      "Health": 7,
+      "Health": 5,
       "Attack": 20,
       "Defence": 15,
       "Cost": 40
@@ -123,13 +123,13 @@
     }
   ],
   "TotalCost2": 220,
-  "SaveDate": "2026-04-19T14:53:18.6991023+03:00",
+  "SaveDate": "2026-04-22T15:47:26.7560788+03:00",
   "CurrentRound": 8,
   "AttackTurn": 1,
-  "Army1CurrentFighterIndex": 1,
+  "Army1CurrentFighterIndex": 2,
   "Army2CurrentFighterIndex": 1,
   "FirstAttackerIsArmy1": false,
-  "NeedNewRoundHeader": true,
+  "NeedNewRoundHeader": false,
   "Army1AliveOrder": [
     1,
     2,
@@ -140,5 +140,6 @@
     7
   ],
   "BattleLogName": "12 vs 23",
-  "MoveCount": 23
+  "MoveCount": 25,
+  "CurrentFormation": 0
 }

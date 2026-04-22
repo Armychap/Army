@@ -107,23 +107,27 @@ namespace ArmyBattle
             ConsoleMenu.ClearConsole();
 
             // Выводим финальный состав первой армии
+            Console.WriteLine();
             ConsoleMenu.PrintHeader("ИТОГОВЫЙ СОСТАВ АРМИЙ");
             army1.DisplayArmyInfo(true);
             Console.WriteLine();
-
-            // Выводим финальный состав второй армии
             army2.DisplayArmyInfo(true);
 
-            Console.WriteLine("\nНажмите Enter для начала битвы");
+            // ПРИМЕНЯЕМ НАСТРОЙКИ НАБЛЮДАТЕЛЕЙ
+            ObserverManager.ApplySettingsToArmies(army1, army2);
 
-            // Читаем нажатую клавишу
+            // ВЫБОР ПОСТРОЕНИЯ
+            Console.WriteLine("\nНастройка боевого построения:");
+            FormationType selectedFormation = AskFormationType();
+            Console.WriteLine($"Выбрано построение: {selectedFormation}");
+
+            Console.WriteLine("\nНажмите Enter для начала битвы");
             var key = Console.ReadKey();
 
-            // Если нажата клавиша Enter - начинаем битву
             if (key.Key == ConsoleKey.Enter)
             {
-                // Запускаем битву между вручную созданными армиями
-                _ = BattleMenu.StartBattle(army1, army2);
+                // ПЕРЕДАЁМ ВЫБРАННОЕ ПОСТРОЕНИЕ В БИТВУ
+                _ = BattleMenu.StartBattle(army1, army2, selectedFormation);
             }
 
             return (army1, army2);

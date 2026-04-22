@@ -57,7 +57,7 @@ namespace ArmyBattle.Services
         /// needNewRoundHeader: нужен ли новый заголовок раунда
         /// battleLogName: имя файла лога битвы
         /// </summary>
-        public void SaveArmies(IArmy army1, IArmy army2, string? saveName = null, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true, string? battleLogName = null, int moveCount = 0)
+        public void SaveArmies(IArmy army1, IArmy army2, string? saveName = null, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true, string? battleLogName = null, int moveCount = 0, FormationType currentFormation = FormationType.OneColumn)
         {
             try
             {
@@ -68,11 +68,11 @@ namespace ArmyBattle.Services
                 }
 
                 // Конвертируем армии в сериализуемый формат
-                var saveData = SerializeArmies(army1, army2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader, battleLogName, moveCount);
-                
+                var saveData = SerializeArmies(army1, army2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader, battleLogName, moveCount, currentFormation);
+
                 // Преобразуем объект в JSON строку с отступами для читаемости
                 string json = JsonSerializer.Serialize(saveData, new JsonSerializerOptions { WriteIndented = true });
-                
+
                 // Формируем полный путь: Saves/[имя].json
                 string filePath = Path.Combine(savesDirectory, $"{saveName}.json");
 
@@ -98,7 +98,7 @@ namespace ArmyBattle.Services
         /// needNewRoundHeader: заголовок раунда (out)
         /// Возвращает: true если загрузка успешна, false при ошибке
         /// </summary>
-        public bool LoadArmies(string filePath, out IArmy? army1, out IArmy? army2, out int currentRound, out int attackTurn, out bool firstAttackerIsArmy1, out bool needNewRoundHeader, out string? battleLogName, out int moveCount)
+        public bool LoadArmies(string filePath, out IArmy? army1, out IArmy? army2, out int currentRound, out int attackTurn, out bool firstAttackerIsArmy1, out bool needNewRoundHeader, out string? battleLogName, out int moveCount, out FormationType currentFormation)
         {
             // Инициализируем выходные параметры нулевыми значениями
             army1 = null;
@@ -109,35 +109,38 @@ namespace ArmyBattle.Services
             needNewRoundHeader = true;
             battleLogName = null;
             moveCount = 0;
+            currentFormation = FormationType.OneColumn;
 
             try
             {
                 // Читаем содержимое JSON файла
                 string json = File.ReadAllText(filePath);
-                
+
                 // Десериализуем JSON в объект ArmySaveData
                 var saveData = JsonSerializer.Deserialize<ArmySaveData>(json);
 
                 // Проверяем что данные корректно загружены
                 if (saveData == null)
                     return false;
+                    
+                currentFormation = saveData.CurrentFormation;
 
                 // Создаем первую армию с восстановленными параметрами
                 if (string.IsNullOrWhiteSpace(saveData.Army1Name))
                     return false;
-                    
+
                 army1 = new Army(saveData.Army1Name, (ConsoleColor)saveData.Army1Color);
-                
+
                 // Создаем вторую армию с восстановленными параметрами
                 if (string.IsNullOrWhiteSpace(saveData.Army2Name))
                     return false;
-                    
+
                 army2 = new Army(saveData.Army2Name, (ConsoleColor)saveData.Army2Color);
 
                 // Добавляем юнитов в первую армию из сохраненных данных
                 if (saveData.Army1Units != null)
                     DeserializeUnits(saveData.Army1Units, army1);
-                
+
                 // Добавляем юнитов во вторую армию из сохраненных данных
                 if (saveData.Army2Units != null)
                     DeserializeUnits(saveData.Army2Units, army2);
@@ -217,17 +220,17 @@ namespace ArmyBattle.Services
         {
             // Получаем все JSON файлы из папки Saves
             var files = Directory.GetFiles(savesDirectory, "*.json");
-            
+
             // Создаем массив результатов такого же размера, как количество файлов
             var result = new string[files.Length];
-            
+
             // Итерируемся по каждому файлу и извлекаем имя без расширения
             for (int i = 0; i < files.Length; i++)
             {
                 // Path.GetFileNameWithoutExtension удаляет расширение .json
                 result[i] = Path.GetFileNameWithoutExtension(files[i]);
             }
-            
+
             // Возвращаем массив имен сохранений
             return result;
         }
@@ -240,25 +243,25 @@ namespace ArmyBattle.Services
         {
             var allFiles = Directory.GetFiles(savesDirectory, "*.json");
             var unfinished = new List<string>();
-            
+
             foreach (var file in allFiles)
             {
                 try
                 {
                     string json = File.ReadAllText(file);
                     var saveData = JsonSerializer.Deserialize<ArmySaveData>(json);
-                    
+
                     if (saveData != null && !string.IsNullOrWhiteSpace(saveData.Army1Name) && !string.IsNullOrWhiteSpace(saveData.Army2Name))
                     {
                         // Создаем временные армии для проверки
                         var army1 = new Army(saveData.Army1Name, (ConsoleColor)saveData.Army1Color);
                         var army2 = new Army(saveData.Army2Name, (ConsoleColor)saveData.Army2Color);
-                        
+
                         if (saveData.Army1Units != null)
                             DeserializeUnits(saveData.Army1Units, army1);
                         if (saveData.Army2Units != null)
                             DeserializeUnits(saveData.Army2Units, army2);
-                        
+
                         // Если обе армии имеют живых юнитов, добавляем в список
                         if (army1.HasAliveUnits() && army2.HasAliveUnits())
                         {
@@ -271,7 +274,7 @@ namespace ArmyBattle.Services
                     // Пропускаем поврежденные файлы
                 }
             }
-            
+
             return unfinished.ToArray();
         }
 
@@ -295,7 +298,7 @@ namespace ArmyBattle.Services
         /// army2: вторая армия
         /// Возвращает: объект ArmySaveData готовый к JSON сериализации
         /// </summary>
-        public ArmySaveData SerializeArmies(IArmy army1, IArmy army2, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true, string? battleLogName = null, int moveCount = 0)
+        public ArmySaveData SerializeArmies(IArmy army1, IArmy army2, int currentRound = 1, int attackTurn = 0, bool firstAttackerIsArmy1 = false, bool needNewRoundHeader = true, string? battleLogName = null, int moveCount = 0, FormationType currentFormation = FormationType.OneColumn)
         {
             // Создаем новый объект для сохранения данных армий
             return new ArmySaveData
@@ -303,33 +306,35 @@ namespace ArmyBattle.Services
                 // === ПЕРВАЯ АРМИЯ ===
                 // Сохраняем название первой армии
                 Army1Name = army1.Name,
-                
+
                 // Сохраняем цвет для отображения первой армии в консоли
                 Army1Color = (int)army1.Color,
-                
+
                 // Сериализуем список юнитов первой армии
                 Army1Units = SerializeUnits(army1.Units),
-                
+
                 // Сохраняем общую стоимость всех юнитов первой армии
                 TotalCost1 = army1.TotalCost,
 
                 // === ВТОРАЯ АРМИЯ ===
                 // Сохраняем название второй армии
                 Army2Name = army2.Name,
-                
+
                 // Сохраняем цвет для отображения второй армии в консоли
                 Army2Color = (int)army2.Color,
-                
+
                 // Сериализуем список юнитов второй армии
                 Army2Units = SerializeUnits(army2.Units),
-                
+
                 // Сохраняем общую стоимость всех юнитов второй армии
                 TotalCost2 = army2.TotalCost,
+
+                CurrentFormation = currentFormation,
 
                 // === МЕТАДАННЫЕ ===
                 // Сохраняем дату и время сохранения для истории
                 SaveDate = DateTime.Now,
-                
+
                 // Сохраняем состояние битвы
                 CurrentRound = currentRound,
                 AttackTurn = attackTurn,
@@ -359,7 +364,7 @@ namespace ArmyBattle.Services
             {
                 // Создаем пустой список для результатов
                 var result = new List<UnitSaveData>();
-                
+
                 // Итерируемся по каждому юниту в списке
                 foreach (var unit in units)
                 {
@@ -371,19 +376,19 @@ namespace ArmyBattle.Services
                             // Сохраняем тип юнита (имя класса: WeakFighter, Archer, StrongFighter)
                             // Используем GetRootType() чтобы сохранить реальный тип, не прокси
                             Type = unit.GetRootType().Name,
-                            
+
                             // Сохраняем номер боя для идентификации внутри армии
                             FighterNumber = unit.FighterNumber,
-                            
+
                             // Сохраняем текущее здоровье юнита (может быть повреждено в бою)
                             Health = unit.Health,
-                            
+
                             // Сохраняем параметр атаки юнита
                             Attack = unit.Attack,
-                            
+
                             // Сохраняем параметр защиты юнита
                             Defence = unit.Defence,
-                            
+
                             // Сохраняем стоимость юнита для подсчета бюджета
                             Cost = unit.Cost
                         });
@@ -393,7 +398,7 @@ namespace ArmyBattle.Services
                         Console.WriteLine($"\nОшибка при сериализации юнита: {unitEx.Message}");
                     }
                 }
-                
+
                 // Возвращаем заполненный список сохраненных юнитов
                 return result;
             }
@@ -421,13 +426,13 @@ namespace ArmyBattle.Services
                 {
                     // Если тип был "WeakFighter" создаем слабого бойца
                     nameof(WeakFighter) => new WeakFighter(unitData.FighterNumber),
-                    
+
                     // Если тип был "Archer" создаем лучника
                     nameof(Archer) => new Archer(unitData.FighterNumber),
-                    
+
                     // Если тип был "StrongFighter" создаем сильного бойца
                     nameof(StrongFighter) => new StrongFighter(unitData.FighterNumber),
-                    
+
                     // Если тип был "Healer" создаем лекаря
                     nameof(Healer) => new Healer(unitData.FighterNumber),
 
@@ -436,7 +441,7 @@ namespace ArmyBattle.Services
 
                     // Если тип был "ShieldWall" создаем стену щитов
                     nameof(ShieldWall) => new ShieldWall(unitData.FighterNumber),
-                    
+
                     // Если тип неизвестен выбрасываем исключение с описанием ошибки
                     _ => throw new Exception($"Неизвестный тип юнита: {unitData.Type}")
                 };
@@ -444,7 +449,7 @@ namespace ArmyBattle.Services
                 // Восстанавливаем здоровье юнита из сохраненного значения
                 // (это важно если юнит был поврежден в предыдущем бою)
                 unit.Health = unitData.Health;
-                
+
                 army.AddUnit(unit);
             }
         }

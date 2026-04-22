@@ -225,5 +225,21 @@ namespace ArmyBattle.Models
             }
             ShuffleAliveFighters();
         }
+        /// <summary>
+        /// Обновляет список живых бойцов без перемешивания (сохраняет порядок)
+        /// </summary>
+        public void RefreshAliveFightersPreserveOrder()
+        {
+            AliveFightersInBattleOrder.Clear();
+            foreach (var unit in Units)
+            {
+                if (unit.IsAlive)
+                {
+                    AliveFightersInBattleOrder.Add(unit);
+                }
+            }
+            // НЕ вызываем ShuffleAliveFighters() - сохраняем порядок
+            CurrentFighterIndex = 0;
+        }
     }
 }
