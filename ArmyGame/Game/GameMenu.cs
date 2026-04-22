@@ -130,7 +130,7 @@ namespace ArmyBattle
             if (key.Key == ConsoleKey.Enter)
             {
                 // Запускаем битву и получаем информацию о результате
-                bool battleFinished = BattleMenu.StartBattle(_lastArmy1, _lastArmy2);
+                bool battleFinished = BattleMenu.StartBattle(_lastArmy1, _lastArmy2, selectedFormation);
 
                 if (battleFinished)
                 {
@@ -245,7 +245,7 @@ namespace ArmyBattle
                         var save = unfinished[idx - 1];
                         string? path = armyManager?.GetSavePath(save);
 
-                        if (!string.IsNullOrWhiteSpace(path) && armyManager?.LoadArmies(path, out IArmy? army1, out IArmy? army2, out int round, out int attackTurn, out bool firstAtt, out bool needHeader, out string? battleLogName, out int moveCount) == true && army1 != null && army2 != null)
+                        if (!string.IsNullOrWhiteSpace(path) && armyManager?.LoadArmies(path, out IArmy? army1, out IArmy? army2, out int round, out int attackTurn, out bool firstAtt, out bool needHeader, out string? battleLogName, out int moveCount, out FormationType currentFormation) == true && army1 != null && army2 != null)
                         {
                             // Выводим лог предыдущих ходов битвы
                             // Используем battleLogName для поиска логов, если он есть, иначе используем имя сохранения
@@ -260,7 +260,7 @@ namespace ArmyBattle
                                 ConsoleMenu.WaitForKey("\nНажмите любую клавишу для продолжения битвы...");
                             }
 
-                            BattleMenu.ContinueBattle(army1, army2, round, attackTurn, firstAtt, needHeader, save, battleLogName ?? save, moveCount);
+                            BattleMenu.ContinueBattle(army1, army2, round, attackTurn, firstAtt, needHeader, save, battleLogName ?? save, moveCount, currentFormation);
                             return;
                         }
                         else

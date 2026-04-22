@@ -2,13 +2,14 @@ using System;
 using System.Linq;
 using System.Threading;
 using ArmyBattle.Models;
+using ArmyBattle.Game.Formations;
 
 namespace ArmyBattle.Game
 {
     /// <summary>
     /// Логика проведения боя между двумя армиями.
-    ///  занимается только пошаговым выполнением поединка
-    ///принимает IArmy, IUnit, не зависит от конкретных реализаций
+    /// занимается только пошаговым выполнением поединка
+    /// принимает IArmy, IUnit, не зависит от конкретных реализаций
     /// </summary>
     public class BattleEngine
     {
@@ -40,6 +41,12 @@ namespace ArmyBattle.Game
         private List<IUnit> army1BackupQueue = new();
         private List<IUnit> army2BackupQueue = new();
 
+        // Стратегия текущего построения
+        private IFormationStrategy? _currentStrategy;
+        private IUnit? _lastDisplayedFighter1;
+        private IUnit? _lastDisplayedFighter2;
+        private bool _needDisplayPair = true;
+
         public BattleEngine(IArmy army1, IArmy army2, int speed = 400)
         {
             this.army1 = army1;
@@ -67,6 +74,9 @@ namespace ArmyBattle.Game
         {
             get
             {
+                if (_currentStrategy != null)
+                    return _currentStrategy.IsCombatActive(this);
+
                 if (currentFormation == FormationType.OneColumn)
                     return army1.HasAliveUnits() && army2.HasAliveUnits();
                 else
@@ -96,89 +106,103 @@ namespace ArmyBattle.Game
 
         private void DisplayRoundHeader()
         {
-            if (currentFormation == FormationType.OneColumn)
+            if (_currentStrategy != null)
             {
-                Console.WriteLine();
-                Console.Write($"РАУНД {round}: ");
-                Console.ForegroundColor = army1.Color;
-                Console.Write($"{army1.Name} {currentFighter1?.FighterNumber}");
-                Console.ResetColor();
-                Console.Write($" ({currentFighter1?.PowerLevel}) vs ");
-                Console.ForegroundColor = army2.Color;
-                Console.Write($"{army2.Name} {currentFighter2?.FighterNumber}");
-                Console.ResetColor();
-                Console.WriteLine($" ({currentFighter2?.PowerLevel})");
-                Console.WriteLine(new string('=', 40));
+                _currentStrategy.DisplayRoundHeader(this, round);
             }
             else
             {
-                Console.WriteLine($"\nРАУНД {round} (ТРИ КОЛОННЫ)");
-                Console.WriteLine(new string('═', 40));
-                for (int col = 0; col < 3; col++)
+                // Старая логика как fallback
+                if (currentFormation == FormationType.OneColumn)
                 {
-                    var f1 = currentFightersArmy1[col];
-                    var f2 = currentFightersArmy2[col];
-                    if (f1 != null && f2 != null && f1.IsAlive && f2.IsAlive)
-                    {
-                        Console.ForegroundColor = army1.Color;
-                        Console.Write($"К{col + 1}: {f1.FighterNumber}({f1.PowerLevel.Substring(0, 3)}) ");
-                        Console.ResetColor();
-                        Console.Write(" vs ");
-                        Console.ForegroundColor = army2.Color;
-                        Console.Write($"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})");
-                        Console.ResetColor();
-                        Console.WriteLine();
-                    }
+                    Console.WriteLine();
+                    Console.Write($"РАУНД {round}: ");
+                    Console.ForegroundColor = army1.Color;
+                    Console.Write($"{army1.Name} {currentFighter1?.FighterNumber}");
+                    Console.ResetColor();
+                    Console.Write($" ({currentFighter1?.PowerLevel}) vs ");
+                    Console.ForegroundColor = army2.Color;
+                    Console.Write($"{army2.Name} {currentFighter2?.FighterNumber}");
+                    Console.ResetColor();
+                    Console.WriteLine($" ({currentFighter2?.PowerLevel})");
                 }
-                Console.WriteLine(new string('═', 40) + "\n");
+                else
+                {
+                    Console.WriteLine($"\nРАУНД {round} (Три колонны)");
+                    for (int col = 0; col < 3; col++)
+                    {
+                        var f1 = currentFightersArmy1[col];
+                        var f2 = currentFightersArmy2[col];
+                        if (f1 != null && f2 != null && f1.IsAlive && f2.IsAlive)
+                        {
+                            Console.ForegroundColor = army1.Color;
+                            Console.Write($"К{col + 1}: {f1.FighterNumber}({f1.PowerLevel.Substring(0, 3)}) ");
+                            Console.ResetColor();
+                            Console.Write(" vs ");
+                            Console.ForegroundColor = army2.Color;
+                            Console.Write($"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})");
+                            Console.ResetColor();
+                            Console.WriteLine();
+                        }
+                    }
+                    Console.WriteLine(new string('═', 40) + "\n");
+                }
             }
         }
 
         public void DisplayBattleOrder()
         {
-            if (currentFormation == FormationType.OneColumn)
+            if (_currentStrategy != null)
             {
-                Console.WriteLine("Порядок боя");
-
-                string FormatUnit(IUnit unit)
-                {
-                    string shortType = unit.PowerLevel.ToLowerInvariant() switch
-                    {
-                        "слабый" => "слаб",
-                        "маг" => "маг",
-                        "стена" => "стен",
-                        "гуляй город" => "стен",
-                        "лучник" => "луч",
-                        "лекарь" => "лек",
-                        "сильный" => "сил",
-                        _ => unit.PowerLevel.Length <= 4 ? unit.PowerLevel.ToLowerInvariant() : unit.PowerLevel.Substring(0, 4).ToLowerInvariant()
-                    };
-                    return $"{unit.FighterNumber} ({shortType})";
-                }
-
-                var order1 = string.Join(" -> ", army1.AliveFightersInBattleOrder.Select(FormatUnit));
-                var order2 = string.Join(" -> ", army2.AliveFightersInBattleOrder.Select(FormatUnit));
-
-                Console.WriteLine($"{army1.Name}: {order1}");
-                Console.WriteLine($"{army2.Name}: {order2}");
-                Console.WriteLine();
+                _currentStrategy.DisplayBattleOrder(this);
             }
             else
             {
-                Console.WriteLine("Порядок боя");
-                for (int col = 0; col < 3; col++)
+                // Старая логика как fallback
+                if (currentFormation == FormationType.OneColumn)
                 {
-                    var f1 = currentFightersArmy1[col];
-                    var f2 = currentFightersArmy2[col];
-                    Console.Write($"Колонна {col + 1}: ");
-                    Console.Write(f1 != null ? $"{f1.FighterNumber}({f1.PowerLevel.Substring(0, 3)})" : "Пусто");
-                    Console.Write("  vs  ");
-                    Console.Write(f2 != null ? $"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})" : "Пусто");
+                    Console.WriteLine("Порядок боя");
+
+                    string FormatUnit(IUnit unit)
+                    {
+                        string shortType = unit.PowerLevel.ToLowerInvariant() switch
+                        {
+                            "слабый" => "слаб",
+                            "маг" => "маг",
+                            "стена" => "стен",
+                            "гуляй город" => "стен",
+                            "лучник" => "луч",
+                            "лекарь" => "лек",
+                            "сильный" => "сил",
+                            _ => unit.PowerLevel.Length <= 4 ? unit.PowerLevel.ToLowerInvariant() : unit.PowerLevel.Substring(0, 4).ToLowerInvariant()
+                        };
+                        return $"{unit.FighterNumber} ({shortType})";
+                    }
+
+                    var order1 = string.Join(" -> ", army1.AliveFightersInBattleOrder.Select(FormatUnit));
+                    var order2 = string.Join(" -> ", army2.AliveFightersInBattleOrder.Select(FormatUnit));
+
+                    Console.WriteLine($"{army1.Name}: {order1}");
+                    Console.WriteLine($"{army2.Name}: {order2}");
                     Console.WriteLine();
                 }
-                Console.WriteLine($"Резерв {army1.Name}: {string.Join("→", army1BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
-                Console.WriteLine($"Резерв {army2.Name}: {string.Join("←", army2BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
-                Console.WriteLine();
+                else
+                {
+                    Console.WriteLine($"Порядок боя {army1.Name} vs {army2.Name}");
+                    for (int col = 0; col < 3; col++)
+                    {
+                        var f1 = currentFightersArmy1[col];
+                        var f2 = currentFightersArmy2[col];
+                        Console.Write($"Колонна {col + 1}: ");
+                        Console.Write(f1 != null ? $"{f1.FighterNumber}({f1.PowerLevel.Substring(0, 3)})" : "Пусто");
+                        Console.Write("  vs  ");
+                        Console.Write(f2 != null ? $"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})" : "Пусто");
+                        Console.WriteLine();
+                    }
+                    Console.WriteLine($"Резерв {army1.Name}: {string.Join("→", army1BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
+                    Console.WriteLine($"Резерв {army2.Name}: {string.Join("←", army2BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
+                    Console.WriteLine();
+                }
             }
         }
 
@@ -216,12 +240,24 @@ namespace ArmyBattle.Game
                     Console.WriteLine("Патовая ситуация: слишком много ходов без смертей. Битва объявлена ничьей.");
                 }
 
-                // Раунд продолжается, так как никто не умер
                 needNewRoundHeader = false;
-
-                // Пропускаем атаку, продолжаем с другим боецом
                 attackTurn = 1 - attackTurn;
                 return;
+            }
+
+            // Выводим текущую пару если нужно
+            if (_needDisplayPair && attacker.IsAlive && defender.IsAlive)
+            {
+                Console.WriteLine();
+                Console.ForegroundColor = attackingArmy.Color;
+                Console.Write($"{attacker.GetDisplayName(attackingArmy.Name)} ({attacker.PowerLevel})");
+                Console.ResetColor();
+                Console.Write(" vs ");
+                Console.ForegroundColor = defendingArmy.Color;
+                Console.Write($"{defender.GetDisplayName(defendingArmy.Name)} ({defender.PowerLevel})");
+                Console.ResetColor();
+                Console.WriteLine();
+                _needDisplayPair = false;
             }
 
             Console.ForegroundColor = attackingArmy.Color;
@@ -253,18 +289,37 @@ namespace ArmyBattle.Game
                 Console.WriteLine();
 
                 defendingArmy?.RemoveDeadFighter(defender);
+
+                // Сохраняем старого бойца для сравнения
+                var oldDefender = defender;
                 defender = defendingArmy.GetNextFighterInBattleOrder();
 
                 noLethalActions = 0;
                 noHealthChangeCount = 0;
 
-                // Конец текущего раунда (переход на новый после смерти бойца)
-                needNewRoundHeader = true;
+                // Если defender изменился (пришёл новый боец), нужно показать новую пару
+                if (oldDefender != defender)
+                {
+                    _needDisplayPair = true;
+
+                    // Если новый defender есть и attacker жив, показываем новую пару
+                    if (defender != null && attacker.IsAlive)
+                    {
+                        Console.WriteLine();
+                        Console.ForegroundColor = attackingArmy.Color;
+                        Console.Write($"{attacker.GetDisplayName(attackingArmy.Name)} ({attacker.PowerLevel})");
+                        Console.ResetColor();
+                        Console.Write(" vs ");
+                        Console.ForegroundColor = defendingArmy.Color;
+                        Console.Write($"{defender.GetDisplayName(defendingArmy.Name)} ({defender.PowerLevel})");
+                        Console.ResetColor();
+                        Console.WriteLine();
+                        _needDisplayPair = false;
+                    }
+                }
             }
             else
             {
-                // Раунд продолжается
-                needNewRoundHeader = false;
                 noLethalActions++;
                 if (noLethalActions >= maxNoLethalActions)
                 {
@@ -367,18 +422,26 @@ namespace ArmyBattle.Game
                 return;
 
             currentFormation = formation;
+            SetFormationStrategy(formation);
 
-            if (formation == FormationType.ThreeColumns)
+            if (_currentStrategy != null)
             {
-                InitializeThreeColumnBattle();
+                _currentStrategy.Initialize(this);
             }
             else
             {
-                // Оригинальная логика для одной колонны
-                army1.ShuffleAliveFighters();
-                army2.ShuffleAliveFighters();
-                currentFighter1 = army1.GetNextFighterInBattleOrder();
-                currentFighter2 = army2.GetNextFighterInBattleOrder();
+                // Fallback для обратной совместимости
+                if (formation == FormationType.ThreeColumns)
+                {
+                    InitializeThreeColumnBattle();
+                }
+                else
+                {
+                    army1.ShuffleAliveFighters();
+                    army2.ShuffleAliveFighters();
+                    currentFighter1 = army1.GetNextFighterInBattleOrder();
+                    currentFighter2 = army2.GetNextFighterInBattleOrder();
+                }
             }
 
             round = 0;
@@ -387,6 +450,11 @@ namespace ArmyBattle.Game
             needNewRoundHeader = true;
             attackTurn = 0;
             battleInitialized = true;
+
+            // Сброс флагов отображения пар
+            _needDisplayPair = true;
+            _lastDisplayedFighter1 = null;
+            _lastDisplayedFighter2 = null;
         }
 
         // Установить состояние битвы для продолжения
@@ -462,6 +530,8 @@ namespace ArmyBattle.Game
             if (!battleInitialized)
             {
                 InitializeBattle();
+                // При инициализации показываем первую пару
+                _needDisplayPair = true;
             }
 
             if (stalemateReached)
@@ -480,18 +550,10 @@ namespace ArmyBattle.Game
                 if (!HasActiveColumnPair()) return false;
             }
 
-            if (needNewRoundHeader)
-            {
-                round++;
-                DisplayRoundHeader();
-                firstAttackerIsArmy1 = random.Next(2) == 0;
-                attackTurn = 0;
-            }
-
             moveCount++;
             Console.WriteLine($"Ход {moveCount}");
 
-            // === ЛОГИКА БАФФОВ (из оригинального кода) ===
+            // === ЛОГИКА БАФФОВ ===
             var army1StrongFighters = army1.Units
                 .Where(u => u is StrongFighter sf && sf.IsAlive && sf.Army != null && sf != currentFighter1 && sf != currentFighter2 && CanEquipBuff(sf, u.Army))
                 .Cast<StrongFighter>()
@@ -512,7 +574,7 @@ namespace ArmyBattle.Game
                 EquipBuff(chosen);
             }
 
-            // === ПРОВЕРКА ИЗМЕНЕНИЯ ЗДОРОВЬЯ (оригинальная логика) ===
+            // === ПРОВЕРКА ИЗМЕНЕНИЯ ЗДОРОВЬЯ ===
             allUnitsHealthBefore.Clear();
             foreach (var unit in army1.Units.Concat(army2.Units).Where(u => u.IsAlive))
             {
@@ -521,20 +583,26 @@ namespace ArmyBattle.Game
 
             bool anyAction = false;
 
-            if (currentFormation == FormationType.OneColumn)
+            if (_currentStrategy != null)
             {
-                // === ОРИГИНАЛЬНАЯ ЛОГИКА 1-на-1 ===
-                bool currentAttackerIsArmy1 = attackTurn == 0 ? firstAttackerIsArmy1 : !firstAttackerIsArmy1;
-                if (currentAttackerIsArmy1)
-                    PerformAttack(army1, army2, ref currentFighter1, ref currentFighter2);
-                else
-                    PerformAttack(army2, army1, ref currentFighter2, ref currentFighter1);
-                anyAction = true;
+                anyAction = _currentStrategy.ProcessMove(this);
             }
             else
             {
-                // === НОВАЯ ЛОГИКА 3-на-3 ===
-                anyAction = ProcessThreeColumnMove();
+                // Fallback для обратной совместимости
+                if (currentFormation == FormationType.OneColumn)
+                {
+                    bool currentAttackerIsArmy1 = attackTurn == 0 ? firstAttackerIsArmy1 : !firstAttackerIsArmy1;
+                    if (currentAttackerIsArmy1)
+                        PerformAttack(army1, army2, ref currentFighter1, ref currentFighter2);
+                    else
+                        PerformAttack(army2, army1, ref currentFighter2, ref currentFighter1);
+                    anyAction = true;
+                }
+                else
+                {
+                    anyAction = ProcessThreeColumnMove();
+                }
             }
 
             // Проверка специальных способностей
@@ -543,7 +611,7 @@ namespace ArmyBattle.Game
             else if (currentFormation == FormationType.ThreeColumns)
                 CheckSpecialAbilitiesThreeColumns();
 
-            // === ПРОВЕРКА СТАГНАЦИИ (оригинальная логика) ===
+            // === ПРОВЕРКА СТАГНАЦИИ ===
             bool anyHealthChanged = false;
             foreach (var unit in army1.Units.Concat(army2.Units).Where(u => u.IsAlive))
             {
@@ -573,10 +641,9 @@ namespace ArmyBattle.Game
             return anyAction;
         }
 
-
         // === ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ДЛЯ ТРЁХ КОЛОНН ===
 
-        private bool HasActiveColumnPair()
+        public bool HasActiveColumnPair()
         {
             for (int col = 0; col < 3; col++)
             {
@@ -586,7 +653,7 @@ namespace ArmyBattle.Game
             return false;
         }
 
-        private bool ProcessThreeColumnMove()
+        public bool ProcessThreeColumnMove()
         {
             bool anyAction = false;
 
@@ -636,7 +703,6 @@ namespace ArmyBattle.Game
                 Console.ResetColor();
                 Console.WriteLine(" пропускает ход (нет атаки)");
                 noLethalActions++;
-                // noLethalActions проверка на стагнацию уже есть в основном цикле
                 needNewRoundHeader = false;
                 attackTurn = 1 - attackTurn;
                 return;
@@ -655,8 +721,6 @@ namespace ArmyBattle.Game
             attacker.AttackUnit(defender);
             int damage = healthBefore - defender.Health;
             Console.WriteLine($"Урон: {damage}");
-
-            // Упрощённый вывод здоровья
             Console.WriteLine($"Здоровье {defender.FighterNumber}: {Math.Max(0, defender.Health)}/{defender.MaxHealth}");
 
             if (!defender.IsAlive)
@@ -671,11 +735,8 @@ namespace ArmyBattle.Game
                 Console.ResetColor();
                 Console.WriteLine();
 
-                // Заменяем погибшего из общего резерва
                 bool isArmy1Dead = defendingArmy == army1;
                 ReplaceDeadFighterInColumn(column, defendingArmy == army1);
-
-                // Обновляем ссылку для продолжения цикла
                 defender = isArmy1Dead ? currentFightersArmy1[column] : currentFightersArmy2[column];
 
                 noLethalActions = 0;
@@ -721,55 +782,13 @@ namespace ArmyBattle.Game
                 var f2 = currentFightersArmy2[col];
                 if (f1?.IsAlive == true && f2?.IsAlive == true)
                 {
-                    // Временная установка для совместимости с существующей логикой
                     var oldF1 = currentFighter1; var oldF2 = currentFighter2;
                     currentFighter1 = f1; currentFighter2 = f2;
-
                     CheckAndExecuteSpecialAbilities();
-
                     currentFighter1 = oldF1; currentFighter2 = oldF2;
                 }
             }
         }
-
-        /// <summary>
-        /// Вывод здоровья для одного бойца (упрощённая версия для колонн)
-        /// </summary>
-        private void DisplayHealthInfoSingle(IUnit unit)
-        {
-            Console.WriteLine($"Здоровье {unit.FighterNumber}: {Math.Max(0, unit.Health)}/{unit.MaxHealth}");
-            if (unit is StrongFighter sf && sf.Buffs.Count > 0)
-            {
-                Console.WriteLine($"Бафы {sf.FighterNumber}: {string.Join(", ", sf.Buffs.Select(b => b.Name))}");
-            }
-        }
-
-        /// <summary>
-        /// Применение баффов перед ходом (адаптировано для трёх колонн)
-        /// </summary>
-        private void ApplyBuffsBeforeMove()
-        {
-            var strongFighters = army1.Units.Concat(army2.Units)
-                .Where(u => u is StrongFighter sf && sf.IsAlive && CanEquipBuffForThreeColumns(sf))
-                .Cast<StrongFighter>().ToList();
-
-            foreach (var sf in strongFighters.Take(2))
-            { // Макс 2 баффа за ход
-                EquipBuff(sf);
-            }
-        }
-
-        private bool CanEquipBuffForThreeColumns(StrongFighter sf)
-        {
-            // Упрощённая проверка: можно надеть бафф, если боец не в активном бою
-            for (int col = 0; col < 3; col++)
-            {
-                if (currentFightersArmy1[col] == sf || currentFightersArmy2[col] == sf)
-                    return false;
-            }
-            return true;
-        }
-
 
         // Выполнить все ходы до конца битвы
         public void DoAllMoves()
@@ -829,7 +848,6 @@ namespace ArmyBattle.Game
 
         private void ExecuteSpecialAbilitiesForArmy(IArmy attackingArmy, IArmy defendingArmy, Type? unitType = null)
         {
-            // Создаём копию списка, чтобы избежать ошибки при изменении коллекции во время итерации
             var unitsCopy = attackingArmy.Units.ToList();
             foreach (var unit in unitsCopy)
             {
@@ -839,7 +857,6 @@ namespace ArmyBattle.Game
                 if (unitType != null && unit.GetRootType() != unitType)
                     continue;
 
-                // Бойцы, которые участвовали в раунде, не могут использовать специальные способности
                 if (unit == currentFighter1 || unit == currentFighter2)
                     continue;
 
@@ -850,9 +867,9 @@ namespace ArmyBattle.Game
                 bool isHealing = realUnit is Healer;
                 bool isCloning = realUnit is Wizard;
                 IUnit? target;
+
                 if (realUnit is Archer)
                 {
-                    // Лучник может стрелять в любого противника в пределах дальности
                     int range = random.Next(1, defendingArmy.AliveCount() + 1);
                     var possibleTargets = defendingArmy.AliveFightersInBattleOrder.Where((u, index) => index < range && u.IsAlive).ToList();
                     if (possibleTargets.Count == 0) continue;
@@ -860,18 +877,15 @@ namespace ArmyBattle.Game
                 }
                 else if (isCloning)
                 {
-                    // Маг клонирует случайного союзника (кроме лекаря, тяжелого бойца, себя и другого мага)
                     var possibleTargets = attackingArmy.Units.Where(u => u.IsAlive && u != unit && !u.Is<Healer>() && !u.Is<StrongFighter>() && !u.Is<Wizard>()).ToList();
                     if (possibleTargets.Count == 0) continue;
                     target = possibleTargets[random.Next(possibleTargets.Count)];
                 }
                 else if (isHealing)
                 {
-                    // Лекарь лечит случайного союзника, кроме StrongFighter.
                     var possibleTargets = attackingArmy.Units.Where(u => u.IsAlive && !u.Is<StrongFighter>()).ToList();
                     if (possibleTargets.Count == 0) continue;
 
-                    // Попробуем выбрать другого союзника, но если никого нет, может лечить себя.
                     var filtered = possibleTargets.Where(u => u != unit).ToList();
                     if (filtered.Count > 0)
                     {
@@ -879,7 +893,7 @@ namespace ArmyBattle.Game
                     }
                     else
                     {
-                        target = unit; // себе
+                        target = unit;
                     }
                 }
                 else
@@ -893,12 +907,10 @@ namespace ArmyBattle.Game
                 {
                     int healthBefore = (isHealing || isCloning) ? 0 : (target?.Health ?? 0);
 
-                    // Для мага сначала выполняем способность, чтобы узнать, кого он клонирует
                     if (isCloning)
                     {
                         unit.UseSpecialAbility(target);
                     }
-                    // Выполняем способность для лучников и лекарей ДО вывода сообщение о урона
                     else if (realUnit is Archer)
                     {
                         unit.UseSpecialAbility(target);
@@ -906,17 +918,12 @@ namespace ArmyBattle.Game
 
                     ConsoleColor abilityColor = GetAbilityColor(realUnit.GetType());
 
-                    if (isHealing)
-                    {
-                        // Вывод лечения будет после выполнения способности
-                    }
-                    else
+                    if (!isHealing)
                     {
                         string unitTypeName = realUnit is Archer ? "лучник" : "маг";
 
                         if (realUnit is Wizard)
                         {
-                            // Для мага показываем, кого он клонирует
                             if (unit.SpecialAbility is CloneAbility ca && ca.ChosenToClone != null)
                             {
                                 Console.ForegroundColor = abilityColor;
@@ -934,7 +941,6 @@ namespace ArmyBattle.Game
                             }
                             else
                             {
-                                // Если нет доступных кандидатов для клонирования, не выводим строку вообще.
                                 continue;
                             }
                         }
@@ -984,11 +990,9 @@ namespace ArmyBattle.Game
                             else
                                 currentFighter2 = army2.GetNextFighterInBattleOrder();
                             needNewRoundHeader = true;
-                            // Убираем return, чтобы продолжить выполнение других способностей
                         }
                     }
 
-                    // Выполняем способность для лекарей (после вывода сообщения о лучнике)
                     if (isHealing)
                     {
                         unit.UseSpecialAbility(target);
@@ -1022,11 +1026,11 @@ namespace ArmyBattle.Game
                 }
             }
         }
+
         /// <summary>
         /// Разделяет армии на 3 колонны для режима "Три колонны"
-        /// Бойцы распределяются по колоннам циклически: 0→кол1, 1→кол2, 2→кол3, 3→кол1...
         /// </summary>
-        private void InitializeThreeColumnBattle()
+        public void InitializeThreeColumnBattle()
         {
             currentFormation = FormationType.ThreeColumns;
             army1BackupQueue.Clear(); army2BackupQueue.Clear();
@@ -1044,70 +1048,419 @@ namespace ArmyBattle.Game
 
         /// <summary>
         /// Пересоздаёт боевой порядок при смене построения во время боя.
-        /// Сохраняет текущих бойцов и их здоровье, перераспределяет очереди.
         /// </summary>
         public void ReinitializeFormation(FormationType newFormation)
         {
             if (currentFormation == newFormation) return;
 
-            // Сохраняем текущих активных бойцов
-            var activeFighters1 = new List<IUnit>();
-            var activeFighters2 = new List<IUnit>();
+            currentFormation = newFormation;
+            SetFormationStrategy(newFormation);
 
-            if (currentFormation == FormationType.OneColumn)
+            if (_currentStrategy != null)
             {
-                if (currentFighter1?.IsAlive == true) activeFighters1.Add(currentFighter1);
-                if (currentFighter2?.IsAlive == true) activeFighters2.Add(currentFighter2);
+                _currentStrategy.Reinitialize(this);
             }
             else
             {
-                for (int i = 0; i < 3; i++)
+                // Fallback для обратной совместимости
+                var activeFighters1 = new List<IUnit>();
+                var activeFighters2 = new List<IUnit>();
+
+                if (currentFormation == FormationType.OneColumn)
                 {
-                    if (currentFightersArmy1[i]?.IsAlive == true) activeFighters1.Add(currentFightersArmy1[i]);
-                    if (currentFightersArmy2[i]?.IsAlive == true) activeFighters2.Add(currentFightersArmy2[i]);
+                    if (currentFighter1?.IsAlive == true) activeFighters1.Add(currentFighter1);
+                    if (currentFighter2?.IsAlive == true) activeFighters2.Add(currentFighter2);
                 }
-            }
+                else
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (currentFightersArmy1[i]?.IsAlive == true) activeFighters1.Add(currentFightersArmy1[i]);
+                        if (currentFightersArmy2[i]?.IsAlive == true) activeFighters2.Add(currentFightersArmy2[i]);
+                    }
+                }
 
-            // Очищаем структуры трёх колонн
-            army1BackupQueue.Clear(); army2BackupQueue.Clear();
-            for (int i = 0; i < 3; i++) { currentFightersArmy1[i] = null; currentFightersArmy2[i] = null; }
+                if (newFormation == FormationType.ThreeColumns || newFormation == FormationType.Wall)
+                {
+                    army1BackupQueue.Clear();
+                    army2BackupQueue.Clear();
+                    for (int i = 0; i < 3; i++)
+                    {
+                        currentFightersArmy1[i] = null;
+                        currentFightersArmy2[i] = null;
+                    }
 
-            currentFormation = newFormation;
+                    var allAlive1 = army1.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
+                    var allAlive2 = army2.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
 
-            if (newFormation == FormationType.ThreeColumns)
-            {
-                var allAlive1 = army1.Units.Where(u => u.IsAlive).ToList();
-                var allAlive2 = army2.Units.Where(u => u.IsAlive).ToList();
+                    for (int i = 0; i < Math.Min(3, allAlive1.Count); i++)
+                        currentFightersArmy1[i] = allAlive1[i];
+                    for (int i = 0; i < Math.Min(3, allAlive2.Count); i++)
+                        currentFightersArmy2[i] = allAlive2[i];
 
-                for (int i = 0; i < Math.Min(3, allAlive1.Count); i++) currentFightersArmy1[i] = allAlive1[i];
-                for (int i = 0; i < Math.Min(3, allAlive2.Count); i++) currentFightersArmy2[i] = allAlive2[i];
+                    army1BackupQueue.AddRange(allAlive1.Skip(3));
+                    army2BackupQueue.AddRange(allAlive2.Skip(3));
+                }
+                else
+                {
+                    army1.RefreshAliveFighters();
+                    army2.RefreshAliveFighters();
 
-                army1BackupQueue.AddRange(allAlive1.Skip(3));
-                army2BackupQueue.AddRange(allAlive2.Skip(3));
-            }
-            else // Возврат к одной колонне
-            {
-                army1.AliveFightersInBattleOrder.Clear();
-                foreach (var f in currentFightersArmy1) if (f?.IsAlive == true) army1.AliveFightersInBattleOrder.Add(f);
-                army1.AliveFightersInBattleOrder.AddRange(army1BackupQueue.Where(u => u.IsAlive));
-                army1BackupQueue.Clear();
+                    currentFighter1 = army1.AliveFightersInBattleOrder.FirstOrDefault();
+                    currentFighter2 = army2.AliveFightersInBattleOrder.FirstOrDefault();
 
-                army2.AliveFightersInBattleOrder.Clear();
-                foreach (var f in currentFightersArmy2) if (f?.IsAlive == true) army2.AliveFightersInBattleOrder.Add(f);
-                army2.AliveFightersInBattleOrder.AddRange(army2BackupQueue.Where(u => u.IsAlive));
-                army2BackupQueue.Clear();
+                    army1.CurrentFighterIndex = 0;
+                    army2.CurrentFighterIndex = 0;
 
-                // ✅ Исправлено: используем те же переменные activeFighters1/2, что объявлены выше
-                currentFighter1 = activeFighters1.FirstOrDefault() ?? army1.AliveFightersInBattleOrder.FirstOrDefault();
-                currentFighter2 = activeFighters2.FirstOrDefault() ?? army2.AliveFightersInBattleOrder.FirstOrDefault();
-
-                army1.CurrentFighterIndex = 0;
-                army2.CurrentFighterIndex = 0;
+                    army1BackupQueue.Clear();
+                    army2BackupQueue.Clear();
+                    for (int i = 0; i < 3; i++)
+                    {
+                        currentFightersArmy1[i] = null;
+                        currentFightersArmy2[i] = null;
+                    }
+                }
             }
 
             needNewRoundHeader = true;
         }
 
+        // === НОВЫЕ ПУБЛИЧНЫЕ МЕТОДЫ ДЛЯ СТРАТЕГИЙ ===
+
+        public IArmy GetArmy1() => army1;
+        public IArmy GetArmy2() => army2;
+        public IUnit? GetCurrentFighter1() => currentFighter1;
+        public IUnit? GetCurrentFighter2() => currentFighter2;
+        public void SetCurrentFighter1(IUnit? fighter) => currentFighter1 = fighter;
+        public void SetCurrentFighter2(IUnit? fighter) => currentFighter2 = fighter;
+        public Random GetRandom() => random;
+        public List<IUnit> GetArmy1BackupQueue() => army1BackupQueue;
+        public List<IUnit> GetArmy2BackupQueue() => army2BackupQueue;
+
+        public IUnit? GetCurrentFighterInColumn(int column, bool isArmy1)
+        {
+            return isArmy1 ? currentFightersArmy1[column] : currentFightersArmy2[column];
+        }
+
+        public bool ProcessOneColumnMove()
+        {
+            bool currentAttackerIsArmy1 = attackTurn == 0 ? firstAttackerIsArmy1 : !firstAttackerIsArmy1;
+            if (currentAttackerIsArmy1)
+                PerformAttack(army1, army2, ref currentFighter1, ref currentFighter2);
+            else
+                PerformAttack(army2, army1, ref currentFighter2, ref currentFighter1);
+            return true;
+        }
+
+        public void InitializeThreeColumns()
+        {
+            InitializeThreeColumnBattle();
+        }
+
+        public void ReinitializeThreeColumns()
+        {
+            army1BackupQueue.Clear();
+            army2BackupQueue.Clear();
+            for (int i = 0; i < 3; i++) { currentFightersArmy1[i] = null; currentFightersArmy2[i] = null; }
+
+            var alive1 = army1.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
+            var alive2 = army2.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
+
+            for (int i = 0; i < Math.Min(3, alive1.Count); i++) currentFightersArmy1[i] = alive1[i];
+            for (int i = 0; i < Math.Min(3, alive2.Count); i++) currentFightersArmy2[i] = alive2[i];
+
+            army1BackupQueue.AddRange(alive1.Skip(3));
+            army2BackupQueue.AddRange(alive2.Skip(3));
+        }
+
+        public void SetNeedRebuildPairs(bool value)
+        {
+            // Для WallStrategy - будет использоваться через стратегию
+        }
+
+        public void SetFormationStrategy(FormationType type)
+        {
+            currentFormation = type;
+            _currentStrategy = type switch
+            {
+                FormationType.OneColumn => new OneColumnStrategy(),
+                FormationType.ThreeColumns => new ThreeColumnsStrategy(),
+                FormationType.Wall => new WallStrategy(),
+                _ => new OneColumnStrategy()
+            };
+        }
+
+        public IFormationStrategy? GetCurrentStrategy() => _currentStrategy;
+
+        // Добавить в BattleEngine.cs
+
+        public ref IUnit? GetCurrentFighter1Ref()
+        {
+            return ref currentFighter1;
+        }
+
+        public ref IUnit? GetCurrentFighter2Ref()
+        {
+            return ref currentFighter2;
+        }
+
+        public void PerformOneColumnAttack(IArmy attackingArmy, IArmy defendingArmy,
+            ref IUnit attacker, ref IUnit defender)
+        {
+            PerformAttack(attackingArmy, defendingArmy, ref attacker, ref defender);
+        }
+
+        public void PerformAttackInColumnPublic(IArmy attackingArmy, IArmy defendingArmy,
+            ref IUnit? attacker, ref IUnit? defender, int column)
+        {
+            PerformAttackInColumn(attackingArmy, defendingArmy, ref attacker, ref defender, column);
+        }
+
+        public void UpdateCurrentFighterInColumn(int column, bool isArmy1, IUnit? fighter)
+        {
+            if (isArmy1)
+                currentFightersArmy1[column] = fighter;
+            else
+                currentFightersArmy2[column] = fighter;
+        }
+
+
+        // Добавить в BattleEngine.cs
+
+        /// <summary>
+        /// Проверяет специальные способности для бойцов, которые не участвовали в атаках
+        /// </summary>
+        /// <summary>
+        /// Проверяет специальные способности для бойцов, которые не участвовали в атаках
+        /// </summary>
+        public void CheckAndExecuteSpecialAbilitiesForNonAttackers(List<IUnit> fightersWhoAttacked)
+        {
+            Console.WriteLine();
+
+            //  СОЗДАЁМ КОПИЮ списка, чтобы избежать ошибки изменения коллекции
+            var army1UnitsCopy = army1.Units.ToList();
+            var army2UnitsCopy = army2.Units.ToList();
+
+            // Проверяем всех бойцов армии 1 (по копии)
+            foreach (var unit in army1UnitsCopy)
+            {
+                if (!unit.IsAlive) continue;
+                if (fightersWhoAttacked.Contains(unit)) continue;
+                if (unit.SpecialAbility == null) continue;
+
+                var oldF1 = currentFighter1;
+                var oldF2 = currentFighter2;
+                currentFighter1 = unit;
+
+                ExecuteSpecialAbilitiesForSingleUnit(unit, army1, army2);
+
+                currentFighter1 = oldF1;
+                currentFighter2 = oldF2;
+            }
+
+            // Проверяем всех бойцов армии 2 (по копии)
+            foreach (var unit in army2UnitsCopy)
+            {
+                if (!unit.IsAlive) continue;
+                if (fightersWhoAttacked.Contains(unit)) continue;
+                if (unit.SpecialAbility == null) continue;
+
+                var oldF1 = currentFighter1;
+                var oldF2 = currentFighter2;
+                currentFighter2 = unit;
+
+                ExecuteSpecialAbilitiesForSingleUnit(unit, army2, army1);
+
+                currentFighter1 = oldF1;
+                currentFighter2 = oldF2;
+            }
+
+            Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Выполняет специальную способность для одного юнита
+        /// </summary>
+        private void ExecuteSpecialAbilitiesForSingleUnit(IUnit unit, IArmy attackingArmy, IArmy defendingArmy)
+        {
+            var realUnit = unit.GetRootUnit();
+            bool isHealing = realUnit is Healer;
+            bool isCloning = realUnit is Wizard;
+            IUnit? target;
+
+            if (realUnit is Archer)
+            {
+                int range = random.Next(1, defendingArmy.AliveCount() + 1);
+                var possibleTargets = defendingArmy.AliveFightersInBattleOrder.Where((u, index) => index < range && u.IsAlive).ToList();
+                if (possibleTargets.Count == 0) return;
+                target = possibleTargets[random.Next(possibleTargets.Count)];
+            }
+            else if (isCloning)
+            {
+                var possibleTargets = attackingArmy.Units.Where(u => u.IsAlive && u != unit && !u.Is<Healer>() && !u.Is<StrongFighter>() && !u.Is<Wizard>()).ToList();
+                if (possibleTargets.Count == 0) return;
+                target = possibleTargets[random.Next(possibleTargets.Count)];
+            }
+            else if (isHealing)
+            {
+                var possibleTargets = attackingArmy.Units.Where(u => u.IsAlive && !u.Is<StrongFighter>()).ToList();
+                if (possibleTargets.Count == 0) return;
+
+                var filtered = possibleTargets.Where(u => u != unit).ToList();
+                target = filtered.Count > 0 ? filtered[random.Next(filtered.Count)] : unit;
+            }
+            else
+            {
+                target = attackingArmy == army1 ? currentFighter2 : currentFighter1;
+                if (target == null || !target.IsAlive) return;
+            }
+
+            if (unit.CanUseSpecialAbility(target))
+            {
+                int healthBefore = (isHealing || isCloning) ? 0 : (target?.Health ?? 0);
+
+                if (isCloning)
+                {
+                    unit.UseSpecialAbility(target);
+                }
+                else if (realUnit is Archer)
+                {
+                    unit.UseSpecialAbility(target);
+                }
+
+                ConsoleColor abilityColor = GetAbilityColor(realUnit.GetType());
+
+                if (!isHealing)
+                {
+                    string unitTypeName = realUnit is Archer ? "лучник" : "маг";
+
+                    if (realUnit is Wizard)
+                    {
+                        if (unit.SpecialAbility is CloneAbility ca && ca.ChosenToClone != null)
+                        {
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(unitTypeName + " ");
+                            Console.ForegroundColor = attackingArmy.Color;
+                            Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write(" клонирует ");
+                            Console.ForegroundColor = abilityColor;
+                            Console.Write($"({ca.ChosenToClone.PowerLevel}) ");
+                            Console.ForegroundColor = attackingArmy.Color;
+                            Console.Write(ca.ChosenToClone.GetDisplayName(attackingArmy.Name));
+                            Console.ResetColor();
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = abilityColor;
+                        Console.Write(unitTypeName + " ");
+                        Console.ForegroundColor = attackingArmy.Color;
+                        Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                        Console.ForegroundColor = abilityColor;
+                        Console.Write(" стреляет в ");
+                        Console.ForegroundColor = defendingArmy.Color;
+                        Console.Write(target?.GetDisplayName(defendingArmy.Name));
+                        Console.ResetColor();
+                        Console.WriteLine();
+                    }
+
+                    if (!(realUnit is Wizard))
+                    {
+                        int damage = healthBefore - (target?.Health ?? 0);
+                        Console.WriteLine($"Урон: {damage}");
+                        Console.Write($"Здоровье ");
+                        Console.ForegroundColor = defendingArmy.Color;
+                        Console.Write(target?.GetDisplayName(defendingArmy.Name));
+                        Console.ResetColor();
+                        Console.WriteLine($": {Math.Max(0, target?.Health ?? 0)}/{target?.MaxHealth ?? 0}");
+                    }
+
+                    if (!target?.IsAlive ?? false)
+                    {
+                        Console.ForegroundColor = abilityColor;
+                        Console.Write(unitTypeName + " ");
+                        Console.ForegroundColor = attackingArmy.Color;
+                        Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                        Console.ForegroundColor = abilityColor;
+                        Console.Write(" убивает ");
+                        Console.ForegroundColor = defendingArmy.Color;
+                        Console.Write(target?.GetDisplayName(defendingArmy.Name));
+                        Console.ForegroundColor = abilityColor;
+                        Console.Write(" специальной способностью!");
+                        Console.ResetColor();
+                        Console.WriteLine();
+
+                        defendingArmy.RemoveDeadFighter(target);
+                        needNewRoundHeader = true;
+                    }
+                }
+
+                if (isHealing)
+                {
+                    unit.UseSpecialAbility(target);
+                    if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
+                    {
+                        Console.ForegroundColor = abilityColor;
+                        Console.Write("лекарь ");
+                        Console.ForegroundColor = attackingArmy.Color;
+                        Console.Write(unit.GetDisplayName(attackingArmy.Name));
+                        Console.ForegroundColor = abilityColor;
+                        Console.Write(" лечит ");
+                        Console.ForegroundColor = attackingArmy.Color;
+                        Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));
+                        Console.ForegroundColor = abilityColor;
+                        Console.ResetColor();
+                        Console.WriteLine();
+
+                        Console.Write($"Здоровье ");
+                        Console.ForegroundColor = attackingArmy.Color;
+                        Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));
+                        Console.ResetColor();
+                        Console.WriteLine($": {sa.LastHealed.Health}/{sa.LastHealed.MaxHealth}");
+                    }
+                }
+
+                Console.WriteLine();
+            }
+        }
+
+        /// <summary>
+        /// Полностью восстанавливает состояние битвы из сохранения (без сброса)
+        /// </summary>
+        public void RestoreFromSave(FormationType formation, int currentRound, int attackTurn, bool firstAttackerIsArmy1, bool needNewRoundHeader, int moveCount)
+        {
+            this.round = currentRound;
+            this.attackTurn = attackTurn;
+            this.firstAttackerIsArmy1 = firstAttackerIsArmy1;
+            this.needNewRoundHeader = needNewRoundHeader;
+            this.moveCount = moveCount;
+
+            currentFormation = formation;
+            SetFormationStrategy(formation);
+
+            // Восстанавливаем специфичные для стратегии данные
+            if (_currentStrategy is OneColumnStrategy)
+            {
+                SetCurrentFightersForContinuation();
+            }
+            else if (_currentStrategy is ThreeColumnsStrategy)
+            {
+                InitializeThreeColumns();
+            }
+            else if (_currentStrategy is WallStrategy)
+            {
+                _currentStrategy.Reinitialize(this);
+            }
+
+            battleInitialized = true;
+            _needDisplayPair = true;
+        }
 
     }
 }
