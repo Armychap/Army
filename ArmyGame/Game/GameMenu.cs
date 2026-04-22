@@ -326,7 +326,7 @@ namespace ArmyBattle
         /// <summary>
         /// Настройка параметров прокси для юнитов
         /// </summary>
-        public static void ConfigureProxySettings()
+        public static void ConfigureObserverSettings()
         {
             bool exit = false;
             while (!exit)
@@ -357,13 +357,13 @@ namespace ArmyBattle
                         Console.ReadKey();
                         break;
                     case "3":
-                        ProxySettings.Reset();
+                        ObserverSettings.Reset();
                         ObserverManager.LoadSettings(_lastArmy1, _lastArmy2);
                         ConsoleMenu.ShowMessage("Настройки сброшены!");
                         Console.ReadKey();
                         break;
                     case "4":
-                        ProxySettings.Save();
+                        ObserverSettings.Save();
                         ConsoleMenu.ShowSuccess("Настройки сохранены!");
                         Console.ReadKey();
                         exit = true;

@@ -4,14 +4,14 @@ using System.Text.Json;
 
 namespace ArmyBattle.Services
 {
-    public class ProxySettings
+    public class ObserverSettings
     {
-        private const string SettingsFile = "proxysettings.json";
+        private const string SettingsFile = "observersettings.json";
 
         public bool EnableDamageLog { get; set; }
         public bool EnableDeathBeep { get; set; }
 
-        public static ProxySettings Current { get; private set; } = new ProxySettings();
+        public static ObserverSettings Current { get; private set; } = new ObserverSettings();
 
         public static void Load()
         {
@@ -20,7 +20,7 @@ namespace ArmyBattle.Services
                 if (File.Exists(SettingsFile))
                 {
                     string json = File.ReadAllText(SettingsFile);
-                    var settings = JsonSerializer.Deserialize<ProxySettings>(json);
+                    var settings = JsonSerializer.Deserialize<ObserverSettings>(json);
                     if (settings != null)
                         Current = settings;
                 }
@@ -47,7 +47,7 @@ namespace ArmyBattle.Services
 
         public static void Reset()
         {
-            Current = new ProxySettings();
+            Current = new ObserverSettings();
             Save();
         }
     }
