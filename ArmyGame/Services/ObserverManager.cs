@@ -59,7 +59,7 @@ namespace ArmyBattle.Services
         public static void SetDamageLogEnabled(bool enabled, IArmy? army1 = null, IArmy? army2 = null)
         {
             _damageLogEnabled = enabled;
-            ProxySettings.Current.EnableDamageLog = enabled;
+            ObserverSettings.Current.EnableDamageLog = enabled;
             
             if (army1 != null && army2 != null)
             {
@@ -73,7 +73,7 @@ namespace ArmyBattle.Services
         public static void SetDeathBeepEnabled(bool enabled, IArmy? army1 = null, IArmy? army2 = null)
         {
             _deathBeepEnabled = enabled;
-            ProxySettings.Current.EnableDeathBeep = enabled;
+            ObserverSettings.Current.EnableDeathBeep = enabled;
             
             if (army1 != null && army2 != null)
             {
@@ -96,8 +96,8 @@ namespace ArmyBattle.Services
         /// </summary>
         public static void LoadSettings(IArmy? army1 = null, IArmy? army2 = null)
         {
-            _damageLogEnabled = ProxySettings.Current.EnableDamageLog;
-            _deathBeepEnabled = ProxySettings.Current.EnableDeathBeep;
+            _damageLogEnabled = ObserverSettings.Current.EnableDamageLog;
+            _deathBeepEnabled = ObserverSettings.Current.EnableDeathBeep;
             
             if (army1 != null && army2 != null)
             {
