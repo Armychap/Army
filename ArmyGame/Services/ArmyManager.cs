@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text.Json;
 using ArmyBattle.Models;
 using ArmyBattle.Services;
+using ArmyBattle.Models.Decorators;
+
 
 namespace ArmyBattle.Services
 {
@@ -122,7 +124,7 @@ namespace ArmyBattle.Services
                 // Проверяем что данные корректно загружены
                 if (saveData == null)
                     return false;
-                    
+
                 currentFormation = saveData.CurrentFormation;
 
                 // Создаем первую армию с восстановленными параметрами
@@ -360,55 +362,44 @@ namespace ArmyBattle.Services
         /// </summary>
         private List<UnitSaveData> SerializeUnits(List<IUnit> units)
         {
-            try
+            var result = new List<UnitSaveData>();
+            foreach (var unit in units)
             {
-                // Создаем пустой список для результатов
-                var result = new List<UnitSaveData>();
+                // Разворачиваем декораторы перед сохранением
+                var realUnit = UnwrapDecorators(unit);
 
-                // Итерируемся по каждому юниту в списке
-                foreach (var unit in units)
+                result.Add(new UnitSaveData
                 {
-                    try
-                    {
-                        // Добавляем сохраненные данные юнита в результат
-                        result.Add(new UnitSaveData
-                        {
-                            // Сохраняем тип юнита (имя класса: WeakFighter, Archer, StrongFighter)
-                            // Используем GetRootType() чтобы сохранить реальный тип, не прокси
-                            Type = unit.GetRootType().Name,
-
-                            // Сохраняем номер боя для идентификации внутри армии
-                            FighterNumber = unit.FighterNumber,
-
-                            // Сохраняем текущее здоровье юнита (может быть повреждено в бою)
-                            Health = unit.Health,
-
-                            // Сохраняем параметр атаки юнита
-                            Attack = unit.Attack,
-
-                            // Сохраняем параметр защиты юнита
-                            Defence = unit.Defence,
-
-                            // Сохраняем стоимость юнита для подсчета бюджета
-                            Cost = unit.Cost
-                        });
-                    }
-                    catch (Exception unitEx)
-                    {
-                        Console.WriteLine($"\nОшибка при сериализации юнита: {unitEx.Message}");
-                    }
-                }
-
-                // Возвращаем заполненный список сохраненных юнитов
-                return result;
+                    Type = realUnit.GetRootType().Name,
+                    FighterNumber = realUnit.FighterNumber,
+                    Health = realUnit.Health,
+                    Attack = realUnit.Attack,
+                    Defence = realUnit.Defence,
+                    Cost = realUnit.Cost,
+                    // ДОПОЛНИТЕЛЬНО: сохраняем список баффов для восстановления
+                    AppliedBuffs = GetAppliedBuffTypes(unit)  // новый список
+                });
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"\nОшибка в SerializeUnits: {ex.Message}");
-                return new List<UnitSaveData>();
-            }
+            return result;
         }
 
+        // НОВЫЙ МЕТОД: собирает все типы баффов из декораторов
+        private List<string> GetAppliedBuffTypes(IUnit unit)
+        {
+            var buffs = new List<string>();
+            var current = unit;
+
+            while (current is BuffDecorator decorator)
+            {
+                if (decorator is HorseBuffDecorator) buffs.Add("Horse");
+                else if (decorator is ShieldBuffDecorator) buffs.Add("Shield");
+                else if (decorator is HelmetBuffDecorator) buffs.Add("Helmet");
+                else if (decorator is SpearBuffDecorator) buffs.Add("Spear");
+
+                current = decorator.GetInnerUnit();
+            }
+            return buffs;
+        }
         /// <summary>
         /// Восстанавливает юнитов из сохраненных данных и добавляет их в армию.
         /// Создает нужные типы юнитов и восстанавливает их характеристики.
@@ -450,9 +441,32 @@ namespace ArmyBattle.Services
                 // (это важно если юнит был поврежден в предыдущем бою)
                 unit.Health = unitData.Health;
 
-                army.AddUnit(unit);
+                IUnit finalUnit = unit;
+                if (unitData.AppliedBuffs != null)
+                {
+                    foreach (var buffType in unitData.AppliedBuffs)
+                    {
+                        finalUnit = BuffFactory.ApplyBuff(finalUnit, buffType);
+                    }
+                }
+
+                army.AddUnit(finalUnit);
             }
+
         }
+
+        private IUnit UnwrapDecorators(IUnit unit)
+        {
+            // Пытаемся привести к BuffDecorator
+            var decorator = unit as BuffDecorator;
+            if (decorator != null)
+            {
+                // Рекурсивно разворачиваем
+                return UnwrapDecorators(decorator.GetInnerUnit());
+            }
+            return unit;
+        }
+
     }
 }
 

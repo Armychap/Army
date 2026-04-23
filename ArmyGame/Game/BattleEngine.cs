@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using ArmyBattle.Models;
 using ArmyBattle.Game.Formations;
+using ArmyBattle.Models.Decorators;
+using ArmyBattle.Services;
 
 namespace ArmyBattle.Game
 {
@@ -31,7 +33,7 @@ namespace ArmyBattle.Game
         private int moveCount = 0;
         private int noHealthChangeCount = 0;
         private Dictionary<IUnit, int> allUnitsHealthBefore = new Dictionary<IUnit, int>();
-        private const int maxNoHealthChangeActions = 10;
+        private const int maxNoHealthChangeActions = 30;
         private FormationType currentFormation = FormationType.OneColumn;
 
         private IUnit?[] currentFightersArmy1 = new IUnit?[3];
@@ -210,15 +212,35 @@ namespace ArmyBattle.Game
         {
             Console.WriteLine($"Здоровье {currentFighter1?.FighterNumber}: {Math.Max(0, currentFighter1?.Health ?? 0)}/{currentFighter1?.MaxHealth ?? 0}");
             Console.WriteLine($"Здоровье {currentFighter2?.FighterNumber}: {Math.Max(0, currentFighter2?.Health ?? 0)}/{currentFighter2?.MaxHealth ?? 0}");
-            if (currentFighter1 is StrongFighter sf1 && sf1.Buffs.Count > 0)
-            {
-                Console.WriteLine($"Бафы {sf1.FighterNumber}: {string.Join(", ", sf1.Buffs.Select(b => b.Name))}");
-            }
-            if (currentFighter2 is StrongFighter sf2 && sf2.Buffs.Count > 0)
-            {
-                Console.WriteLine($"Бафы {sf2.FighterNumber}: {string.Join(", ", sf2.Buffs.Select(b => b.Name))}");
-            }
+            DisplayBuffsOnUnit(currentFighter1, army1);
+            DisplayBuffsOnUnit(currentFighter2, army2);
             Console.WriteLine();
+        }
+
+        private void DisplayBuffsOnUnit(IUnit? unit, IArmy army)
+        {
+            if (unit == null || !unit.IsAlive) return;
+
+            var buffNames = new List<string>();
+            var current = unit;
+            while (current is BuffDecorator decorator)
+            {
+                string buffName = decorator switch
+                {
+                    HorseBuffDecorator => "Конь",
+                    ShieldBuffDecorator => "Щит",
+                    HelmetBuffDecorator => "Шлем",
+                    SpearBuffDecorator => "Копье",
+                    _ => "?"
+                };
+                buffNames.Add(buffName);
+                current = decorator.GetInnerUnit();
+            }
+
+            if (buffNames.Any())
+            {
+                Console.WriteLine($"Бафы {unit.FighterNumber}: {string.Join(", ", buffNames)}");
+            }
         }
 
         // Выполняет один удар от attacker к defender, выводит сообщения и обновляет очередь.
@@ -331,39 +353,24 @@ namespace ArmyBattle.Game
             attackTurn = 1 - attackTurn;
         }
 
-        // Проверка, может ли сильный боец надеть баф (рядом слабый боец в порядке боя)
-        private bool CanEquipBuff(StrongFighter sf, IArmy army)
+        private void ReplaceUnitInArmy(IUnit oldUnit, IUnit newUnit)
         {
-            int index = army.AliveFightersInBattleOrder.IndexOf(sf);
-            if (index == -1) return false;
-            // Проверить слева
-            if (index > 0 && army.AliveFightersInBattleOrder[index - 1] is WeakFighter wf1 && wf1.IsAlive && wf1 != currentFighter1 && wf1 != currentFighter2) return true;
-            // Проверить справа
-            if (index < army.AliveFightersInBattleOrder.Count - 1 && army.AliveFightersInBattleOrder[index + 1] is WeakFighter wf2 && wf2.IsAlive && wf2 != currentFighter1 && wf2 != currentFighter2) return true;
-            return false;
-        }
+            var army = oldUnit.Army;
+            if (army == null) return;
 
-        // Надеть баф на сильного бойца
-        private void EquipBuff(StrongFighter sf)
-        {
-            // Рандомный выбор бафа
-            int choice = random.Next(1, 5); // 1-4
+            // Заменяем в общем списке
+            int index = army.Units.IndexOf(oldUnit);
+            if (index >= 0)
+                army.Units[index] = newUnit;
 
-            Buff? buff = choice switch
-            {
-                1 => Buffs.Horse,
-                2 => Buffs.Shield,
-                3 => Buffs.Helmet,
-                4 => Buffs.Spear,
-                _ => null
-            };
+            // Заменяем в порядке боя
+            int orderIndex = army.AliveFightersInBattleOrder.IndexOf(oldUnit);
+            if (orderIndex >= 0)
+                army.AliveFightersInBattleOrder[orderIndex] = newUnit;
 
-            if (buff != null)
-            {
-                sf.Buffs.Add(buff);
-                Console.WriteLine($"{sf.GetDisplayName(sf.Army?.Name ?? "")} надевает баф: {buff.Name} (+{buff.AttackBonus} атаки, +{buff.DefenceBonus} защиты)");
-                Console.WriteLine($"Атака {sf.EffectiveAttack}, Защита {sf.EffectiveDefence}, Здоровье {sf.Health}/{sf.MaxHealth}");
-            }
+            // Если это текущий боец - обновляем
+            if (currentFighter1 == oldUnit) currentFighter1 = newUnit;
+            if (currentFighter2 == oldUnit) currentFighter2 = newUnit;
         }
 
         // Завершение битвы и вывод результатов
@@ -395,24 +402,6 @@ namespace ArmyBattle.Game
                 Console.WriteLine($"ПОБЕДИТЕЛЬ: {army2.Name}!");
                 Console.ResetColor();
             }
-
-            DisplayBattleStats();
-        }
-
-        // Вывод статистики битвы
-        private void DisplayBattleStats()
-        {
-            Console.WriteLine("\nСТАТИСТИКА БИТВЫ:");
-
-            Console.WriteLine($"Всего раундов: {round}");
-            Console.WriteLine($"Всего ходов: {moveCount}");
-
-            // Статистика по армиям
-            Console.WriteLine($"\n{army1.Name}:");
-            Console.WriteLine($"Выжило бойцов: {army1.AliveCount()}/{army1.Units.Count}");
-
-            Console.WriteLine($"\n{army2.Name}:");
-            Console.WriteLine($"Выжило бойцов: {army2.AliveCount()}/{army2.Units.Count}");
         }
 
         // Инициализация без вывода текста
@@ -529,7 +518,15 @@ namespace ArmyBattle.Game
             // Проверка окончания битвы для всех режимов
             if (currentFormation == FormationType.OneColumn)
             {
-                if (!(army1.HasAliveUnits() && army2.HasAliveUnits())) return false;
+                bool alive1 = army1.HasAliveUnits();
+                bool alive2 = army2.HasAliveUnits();
+                if (!alive1 || !alive2)
+                {
+                    Console.WriteLine($"[DEBUG] Завершение: армия1 живых={alive1}, армия2 живых={alive2}");
+                    Console.WriteLine($"  {army1.Name}: {string.Join(", ", army1.Units.Where(u => u.IsAlive).Select(u => u.FighterNumber))}");
+                    Console.WriteLine($"  {army2.Name}: {string.Join(", ", army2.Units.Where(u => u.IsAlive).Select(u => u.FighterNumber))}");
+                    return false;
+                }
             }
             else if (currentFormation == FormationType.ThreeColumns)
             {
@@ -545,9 +542,10 @@ namespace ArmyBattle.Game
 
             // === ЛОГИКА БАФФОВ ===
             var army1StrongFighters = army1.Units
-                .Where(u => u is StrongFighter sf && sf.IsAlive && sf.Army != null && sf != currentFighter1 && sf != currentFighter2 && CanEquipBuff(sf, u.Army))
-                .Cast<StrongFighter>()
+                .Where(u => u.IsAlive && u != currentFighter1 && u != currentFighter2
+                            && IsStrongFighter(u) && CanEquipBuff(u, u.Army))
                 .ToList();
+
             if (army1StrongFighters.Any())
             {
                 var chosen = army1StrongFighters[random.Next(army1StrongFighters.Count)];
@@ -555,9 +553,10 @@ namespace ArmyBattle.Game
             }
 
             var army2StrongFighters = army2.Units
-                .Where(u => u is StrongFighter sf && sf.IsAlive && sf.Army != null && sf != currentFighter1 && sf != currentFighter2 && CanEquipBuff(sf, u.Army))
-                .Cast<StrongFighter>()
+                .Where(u => u.IsAlive && u != currentFighter1 && u != currentFighter2
+                            && IsStrongFighter(u) && CanEquipBuff(u, u.Army))
                 .ToList();
+
             if (army2StrongFighters.Any())
             {
                 var chosen = army2StrongFighters[random.Next(army2StrongFighters.Count)];
@@ -1019,21 +1018,35 @@ namespace ArmyBattle.Game
 
         /// <summary>
         /// Разделяет армии на 3 колонны для режима "Три колонны"
+        /// Теперь пары формируются последовательно, как в режиме "Стенка"
         /// </summary>
         public void InitializeThreeColumnBattle()
         {
             currentFormation = FormationType.ThreeColumns;
-            army1BackupQueue.Clear(); army2BackupQueue.Clear();
-            for (int i = 0; i < 3; i++) { currentFightersArmy1[i] = null; currentFightersArmy2[i] = null; }
+            army1BackupQueue.Clear();
+            army2BackupQueue.Clear();
+
+            for (int i = 0; i < 3; i++)
+            {
+                currentFightersArmy1[i] = null;
+                currentFightersArmy2[i] = null;
+            }
 
             var alive1 = army1.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
             var alive2 = army2.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
 
-            for (int i = 0; i < Math.Min(3, alive1.Count); i++) currentFightersArmy1[i] = alive1[i];
-            for (int i = 0; i < Math.Min(3, alive2.Count); i++) currentFightersArmy2[i] = alive2[i];
+            // Берем пары последовательно, как в стенке (первые N пар)
+            int pairsToTake = Math.Min(3, Math.Min(alive1.Count, alive2.Count));
 
-            army1BackupQueue.AddRange(alive1.Skip(3));
-            army2BackupQueue.AddRange(alive2.Skip(3));
+            for (int i = 0; i < pairsToTake; i++)
+            {
+                currentFightersArmy1[i] = alive1[i];
+                currentFightersArmy2[i] = alive2[i];
+            }
+
+            // Остальные уходят в резерв
+            army1BackupQueue.AddRange(alive1.Skip(pairsToTake));
+            army2BackupQueue.AddRange(alive2.Skip(pairsToTake));
         }
 
         /// <summary>
@@ -1151,16 +1164,27 @@ namespace ArmyBattle.Game
         {
             army1BackupQueue.Clear();
             army2BackupQueue.Clear();
-            for (int i = 0; i < 3; i++) { currentFightersArmy1[i] = null; currentFightersArmy2[i] = null; }
+
+            for (int i = 0; i < 3; i++)
+            {
+                currentFightersArmy1[i] = null;
+                currentFightersArmy2[i] = null;
+            }
 
             var alive1 = army1.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
             var alive2 = army2.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
 
-            for (int i = 0; i < Math.Min(3, alive1.Count); i++) currentFightersArmy1[i] = alive1[i];
-            for (int i = 0; i < Math.Min(3, alive2.Count); i++) currentFightersArmy2[i] = alive2[i];
+            // Берем пары последовательно
+            int pairsToTake = Math.Min(3, Math.Min(alive1.Count, alive2.Count));
 
-            army1BackupQueue.AddRange(alive1.Skip(3));
-            army2BackupQueue.AddRange(alive2.Skip(3));
+            for (int i = 0; i < pairsToTake; i++)
+            {
+                currentFightersArmy1[i] = alive1[i];
+                currentFightersArmy2[i] = alive2[i];
+            }
+
+            army1BackupQueue.AddRange(alive1.Skip(pairsToTake));
+            army2BackupQueue.AddRange(alive2.Skip(pairsToTake));
         }
 
         public void SetNeedRebuildPairs(bool value)
@@ -1450,6 +1474,62 @@ namespace ArmyBattle.Game
 
             battleInitialized = true;
             _needDisplayPair = true;
+        }
+
+        /// <summary>
+        /// Проверяет, является ли юнит сильным бойцом (разворачивая декораторы)
+        /// </summary>
+        private bool IsStrongFighter(IUnit unit)
+        {
+            var realUnit = UnwrapToStrongFighter(unit);
+            return realUnit != null;
+        }
+
+        /// <summary>
+        /// Разворачивает декораторы до StrongFighter
+        /// </summary>
+        private IUnit? UnwrapToStrongFighter(IUnit unit)
+        {
+            while (unit is BuffDecorator decorator)
+            {
+                unit = decorator.GetInnerUnit();
+            }
+            return unit is StrongFighter ? unit : null;
+        }
+
+        /// <summary>
+        /// Проверка, может ли боец надеть баф (рядом слабый боец в порядке боя)
+        /// </summary>
+        private bool CanEquipBuff(IUnit unit, IArmy army)
+        {
+            var realUnit = UnwrapToStrongFighter(unit);
+            if (realUnit == null) return false;
+
+            int index = army.AliveFightersInBattleOrder.IndexOf(unit);
+            if (index == -1) return false;
+
+            // Проверить слева
+            if (index > 0 && army.AliveFightersInBattleOrder[index - 1] is WeakFighter wf1 && wf1.IsAlive
+                && wf1 != currentFighter1 && wf1 != currentFighter2)
+                return true;
+
+            // Проверить справа
+            if (index < army.AliveFightersInBattleOrder.Count - 1
+                && army.AliveFightersInBattleOrder[index + 1] is WeakFighter wf2 && wf2.IsAlive
+                && wf2 != currentFighter1 && wf2 != currentFighter2)
+                return true;
+
+            return false;
+        }
+
+        // Перегруженный метод EquipBuff для IUnit
+        private void EquipBuff(IUnit unit)
+        {
+            IUnit buffedUnit = BuffFactory.ApplyRandomBuff(unit);
+            ReplaceUnitInArmy(unit, buffedUnit);
+
+            Console.WriteLine($"{buffedUnit.GetDisplayName(buffedUnit.Army?.Name ?? "")} надевает бафф!");
+            Console.WriteLine($"Атака {buffedUnit.EffectiveAttack}, Защита {buffedUnit.EffectiveDefence}");
         }
 
     }

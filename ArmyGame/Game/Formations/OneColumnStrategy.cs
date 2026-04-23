@@ -14,8 +14,6 @@ namespace ArmyBattle.Game.Formations
 
         public void Initialize(BattleEngine battle)
         {
-            battle.GetArmy1().ShuffleAliveFighters();
-            battle.GetArmy2().ShuffleAliveFighters();
             battle.SetCurrentFighter1(battle.GetArmy1().GetNextFighterInBattleOrder());
             battle.SetCurrentFighter2(battle.GetArmy2().GetNextFighterInBattleOrder());
         }
@@ -56,7 +54,7 @@ namespace ArmyBattle.Game.Formations
             Console.WriteLine($"{battle.GetArmy1().Name}: {order1}");
             Console.WriteLine($"{battle.GetArmy2().Name}: {order2}");
             Console.WriteLine();
-            
+
             // Показываем текущую пару
             if (battle.GetCurrentFighter1()?.IsAlive == true && battle.GetCurrentFighter2()?.IsAlive == true)
             {
@@ -75,58 +73,58 @@ namespace ArmyBattle.Game.Formations
         public bool ProcessMove(BattleEngine battle)
         {
             bool anyAction = false;
-            
+
             // Получаем текущих бойцов
             var fighter1 = battle.GetCurrentFighter1();
             var fighter2 = battle.GetCurrentFighter2();
-            
+
             // Если первый боец мёртв или null - берём следующего
             if (fighter1?.IsAlive != true)
             {
                 fighter1 = battle.GetArmy1().GetNextFighterInBattleOrder();
                 battle.SetCurrentFighter1(fighter1);
             }
-            
+
             // Если второй боец мёртв или null - берём следующего
             if (fighter2?.IsAlive != true)
             {
                 fighter2 = battle.GetArmy2().GetNextFighterInBattleOrder();
                 battle.SetCurrentFighter2(fighter2);
             }
-            
+
             // Если оба живы - проводим атаку
             if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
             {
                 // Первый удар
-                battle.PerformOneColumnAttack(battle.GetArmy1(), battle.GetArmy2(), 
+                battle.PerformOneColumnAttack(battle.GetArmy1(), battle.GetArmy2(),
                     ref fighter1, ref fighter2);
                 anyAction = true;
-                
+
                 // Проверяем, живы ли оба после первого удара
                 if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
                 {
                     // Второй удар
-                    battle.PerformOneColumnAttack(battle.GetArmy2(), battle.GetArmy1(), 
+                    battle.PerformOneColumnAttack(battle.GetArmy2(), battle.GetArmy1(),
                         ref fighter2, ref fighter1);
                     anyAction = true;
                 }
-                
+
                 // Если кто-то умер, берём следующего бойца
                 if (fighter1?.IsAlive != true)
                 {
                     fighter1 = battle.GetArmy1().GetNextFighterInBattleOrder();
                 }
-                
+
                 if (fighter2?.IsAlive != true)
                 {
                     fighter2 = battle.GetArmy2().GetNextFighterInBattleOrder();
                 }
-                
+
                 // Обновляем текущих бойцов в battle
                 battle.SetCurrentFighter1(fighter1);
                 battle.SetCurrentFighter2(fighter2);
             }
-            
+
             return anyAction;
         }
 
