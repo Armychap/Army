@@ -27,7 +27,7 @@ namespace ArmyBattle.Services
         private static void ApplyToArmy(IArmy army)
         {
             if (army?.Units == null) return;
-            
+
             foreach (var unit in army.Units)
             {
                 ApplyToUnit(unit);
@@ -38,14 +38,14 @@ namespace ArmyBattle.Services
         {
             // Очищаем старых наблюдателей
             unit.ClearObservers();
-            
+
             // Добавляем новых в соответствии с настройками
             if (_damageLogEnabled)
             {
                 _damageLogObserver ??= new DamageLogObserver(true);
                 unit.AttachObserver(_damageLogObserver);
             }
-            
+
             if (_deathBeepEnabled)
             {
                 _deathBeepObserver ??= new DeathBeepObserver(true);
@@ -60,7 +60,7 @@ namespace ArmyBattle.Services
         {
             _damageLogEnabled = enabled;
             ObserverSettings.Current.EnableDamageLog = enabled;
-            
+
             if (army1 != null && army2 != null)
             {
                 ApplySettingsToArmies(army1, army2);
@@ -74,7 +74,7 @@ namespace ArmyBattle.Services
         {
             _deathBeepEnabled = enabled;
             ObserverSettings.Current.EnableDeathBeep = enabled;
-            
+
             if (army1 != null && army2 != null)
             {
                 ApplySettingsToArmies(army1, army2);
@@ -92,17 +92,19 @@ namespace ArmyBattle.Services
         public static bool IsDeathBeepEnabled() => _deathBeepEnabled;
 
         /// <summary>
-        /// Загрузить настройки из ProxySettings
+        /// Загрузить настройки из ObserverSettings
         /// </summary>
         public static void LoadSettings(IArmy? army1 = null, IArmy? army2 = null)
         {
             _damageLogEnabled = ObserverSettings.Current.EnableDamageLog;
             _deathBeepEnabled = ObserverSettings.Current.EnableDeathBeep;
-            
+
+            // Применяем настройки только если армии не null
             if (army1 != null && army2 != null)
             {
                 ApplySettingsToArmies(army1, army2);
             }
         }
+        
     }
 }

@@ -127,7 +127,7 @@ namespace ArmyBattle
             if (key.Key == ConsoleKey.Enter)
             {
                 // ПЕРЕДАЁМ ВЫБРАННОЕ ПОСТРОЕНИЕ В БИТВУ
-                _ = BattleMenu.StartBattle(army1, army2, selectedFormation);
+                BattleMenu.StartBattle(army1, army2, selectedFormation);
             }
 
             return (army1, army2);

@@ -428,21 +428,7 @@ namespace ArmyBattle.Game
             {
                 _currentStrategy.Initialize(this);
             }
-            else
-            {
-                // Fallback для обратной совместимости
-                if (formation == FormationType.ThreeColumns)
-                {
-                    InitializeThreeColumnBattle();
-                }
-                else
-                {
-                    army1.ShuffleAliveFighters();
-                    army2.ShuffleAliveFighters();
-                    currentFighter1 = army1.GetNextFighterInBattleOrder();
-                    currentFighter2 = army2.GetNextFighterInBattleOrder();
-                }
-            }
+            // Убираем else блок, так как стратегия уже создана в SetFormationStrategy
 
             round = 0;
             moveCount = 0;
@@ -451,7 +437,6 @@ namespace ArmyBattle.Game
             attackTurn = 0;
             battleInitialized = true;
 
-            // Сброс флагов отображения пар
             _needDisplayPair = true;
             _lastDisplayedFighter1 = null;
             _lastDisplayedFighter2 = null;
@@ -541,13 +526,18 @@ namespace ArmyBattle.Game
             }
 
             // Проверка окончания битвы для обоих режимов
+            // Проверка окончания битвы для всех режимов
             if (currentFormation == FormationType.OneColumn)
             {
                 if (!(army1.HasAliveUnits() && army2.HasAliveUnits())) return false;
             }
-            else
+            else if (currentFormation == FormationType.ThreeColumns)
             {
                 if (!HasActiveColumnPair()) return false;
+            }
+            else // Wall
+            {
+                if (_currentStrategy != null && !_currentStrategy.IsCombatActive(this)) return false;
             }
 
             moveCount++;
