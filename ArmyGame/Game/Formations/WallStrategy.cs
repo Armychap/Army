@@ -26,7 +26,8 @@ namespace ArmyBattle.Game.Formations
 
         public bool IsCombatActive(BattleEngine battle)
         {
-            return _pairs.Any(p => p.attacker?.IsAlive == true && p.defender?.IsAlive == true);
+            bool hasActive = _pairs.Any(p => p.attacker?.IsAlive == true && p.defender?.IsAlive == true);
+            return hasActive;
         }
 
         public void DisplayRoundHeader(BattleEngine battle, int round)
@@ -173,7 +174,7 @@ namespace ArmyBattle.Game.Formations
                 battle.CheckAndExecuteSpecialAbilitiesForNonAttackers(_fightersWhoAttacked);
             }
 
-            return anyAction && IsCombatActive(battle);
+            return anyAction;
         }
 
         private void PerformWallAttack(BattleEngine battle, IArmy attackingArmy, IArmy defendingArmy,

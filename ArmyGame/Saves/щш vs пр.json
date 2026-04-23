@@ -1,0 +1,2207 @@
+{
+  "Army1Name": "\u0449\u0448",
+  "Army1Prefix": null,
+  "Army1Color": 12,
+  "Army1Units": [
+    {
+      "Type": "Wizard",
+      "FighterNumber": 1,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 108,
+      "Health": 7,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 113,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 121,
+      "Health": 16,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 2,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 131,
+      "Health": 17,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 3,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 125,
+      "Health": 9,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 130,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 119,
+      "Health": 2,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 4,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 124,
+      "Health": 1,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 5,
+      "Health": 10,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 129,
+      "Health": 9,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 105,
+      "Health": 1,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 104,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 111,
+      "Health": 17,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 6,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 7,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 8,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 122,
+      "Health": 9,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 132,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 9,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 109,
+      "Health": 2,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 127,
+      "Health": 2,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 10,
+      "Health": 6,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 11,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 126,
+      "Health": 11,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 12,
+      "Health": 5,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 115,
+      "Health": 14,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 13,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 14,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 15,
+      "Health": 6,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 114,
+      "Health": 14,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 110,
+      "Health": 8,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 120,
+      "Health": 9,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 106,
+      "Health": 4,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 112,
+      "Health": 16,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 16,
+      "Health": 14,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 17,
+      "Health": 17,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 18,
+      "Health": 10,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 19,
+      "Health": 16,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 20,
+      "Health": 66,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 21,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 22,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 23,
+      "Health": 16,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 24,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 25,
+      "Health": 24,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 26,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 27,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 28,
+      "Health": 21,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 29,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 30,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 31,
+      "Health": 19,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 123,
+      "Health": 0,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 32,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 33,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 34,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 35,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 36,
+      "Health": 11,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 37,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 38,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 39,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 40,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 133,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 41,
+      "Health": 23,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 117,
+      "Health": -7,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 128,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 42,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 43,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 44,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 107,
+      "Health": -8,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 45,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 134,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 46,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 47,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 48,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 49,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 50,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 118,
+      "Health": 7,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 51,
+      "Health": 15,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 52,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 53,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 54,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 55,
+      "Health": 2,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 56,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 57,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 58,
+      "Health": 19,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 59,
+      "Health": 52,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 116,
+      "Health": 8,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 60,
+      "Health": -5,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 61,
+      "Health": 10,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 62,
+      "Health": 2,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 63,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 64,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 65,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 66,
+      "Health": 14,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 67,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 68,
+      "Health": 19,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 69,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 70,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 71,
+      "Health": 15,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 72,
+      "Health": 23,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 73,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 74,
+      "Health": 1,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 75,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 76,
+      "Health": 12,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 77,
+      "Health": 9,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 78,
+      "Health": 17,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 79,
+      "Health": 55,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 80,
+      "Health": 10,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 81,
+      "Health": -13,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 82,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 83,
+      "Health": 6,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 84,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 85,
+      "Health": 24,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 86,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 87,
+      "Health": 17,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 88,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 89,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 90,
+      "Health": 58,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 91,
+      "Health": 9,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 92,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 93,
+      "Health": 54,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 94,
+      "Health": 55,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 95,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 96,
+      "Health": 10,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 97,
+      "Health": 5,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 98,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 99,
+      "Health": -3,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 100,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 101,
+      "Health": 68,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 102,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 103,
+      "Health": -3,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    }
+  ],
+  "TotalCost1": 3775,
+  "Army2Name": "\u043F\u0440",
+  "Army2Prefix": null,
+  "Army2Color": 9,
+  "Army2Units": [
+    {
+      "Type": "Archer",
+      "FighterNumber": 105,
+      "Health": 1,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 1,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 97,
+      "Health": -2,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 2,
+      "Health": 19,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 101,
+      "Health": -7,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 3,
+      "Health": 68,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 109,
+      "Health": -2,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 108,
+      "Health": 16,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 4,
+      "Health": -8,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 5,
+      "Health": 68,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 99,
+      "Health": -7,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 6,
+      "Health": 12,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 7,
+      "Health": 11,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 8,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 9,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 10,
+      "Health": 54,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 11,
+      "Health": 13,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 12,
+      "Health": 57,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 13,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 14,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 15,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 16,
+      "Health": -3,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 17,
+      "Health": -1,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 18,
+      "Health": 19,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 19,
+      "Health": -1,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 106,
+      "Health": 16,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 102,
+      "Health": 17,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 104,
+      "Health": 0,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 20,
+      "Health": 66,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 107,
+      "Health": -2,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 21,
+      "Health": 7,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 22,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 23,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 24,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 25,
+      "Health": 53,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 26,
+      "Health": 3,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 27,
+      "Health": 5,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 28,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 29,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 30,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 98,
+      "Health": 0,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 31,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 32,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 33,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 34,
+      "Health": 15,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 35,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 36,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 37,
+      "Health": 57,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 38,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 39,
+      "Health": 19,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 40,
+      "Health": 12,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 41,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 42,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 43,
+      "Health": 12,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 103,
+      "Health": 5,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 44,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 45,
+      "Health": 15,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 46,
+      "Health": 7,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 47,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 48,
+      "Health": -2,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 49,
+      "Health": 12,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 50,
+      "Health": 55,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 51,
+      "Health": 12,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 52,
+      "Health": 0,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 53,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 54,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 55,
+      "Health": -8,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 56,
+      "Health": 2,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 100,
+      "Health": 0,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 57,
+      "Health": 0,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 58,
+      "Health": 57,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 59,
+      "Health": 65,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 60,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 61,
+      "Health": 16,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 111,
+      "Health": 5,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 62,
+      "Health": 24,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 63,
+      "Health": 20,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 64,
+      "Health": 64,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 65,
+      "Health": 67,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 66,
+      "Health": 67,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 67,
+      "Health": 0,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 112,
+      "Health": 5,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 68,
+      "Health": -3,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 69,
+      "Health": 0,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 70,
+      "Health": -5,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 71,
+      "Health": -5,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 110,
+      "Health": -2,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 72,
+      "Health": 13,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 73,
+      "Health": 12,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 74,
+      "Health": 58,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 75,
+      "Health": -1,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 76,
+      "Health": 58,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 77,
+      "Health": 57,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 78,
+      "Health": -8,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 79,
+      "Health": 5,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 80,
+      "Health": 54,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 81,
+      "Health": 57,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 82,
+      "Health": 4,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 83,
+      "Health": 5,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 84,
+      "Health": 59,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 85,
+      "Health": -5,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 86,
+      "Health": 3,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 87,
+      "Health": 19,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 88,
+      "Health": -5,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 89,
+      "Health": 21,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 90,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 91,
+      "Health": 57,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 92,
+      "Health": 7,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 93,
+      "Health": 13,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 94,
+      "Health": -1,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 95,
+      "Health": 13,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 96,
+      "Health": -1,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15
+    }
+  ],
+  "TotalCost2": 3385,
+  "SaveDate": "2026-04-23T09:07:24.5774829+03:00",
+  "CurrentRound": 0,
+  "AttackTurn": 0,
+  "Army1CurrentFighterIndex": 4,
+  "Army2CurrentFighterIndex": 16,
+  "FirstAttackerIsArmy1": false,
+  "NeedNewRoundHeader": true,
+  "Army1AliveOrder": [
+    51,
+    106,
+    46,
+    126,
+    67,
+    68,
+    129,
+    41,
+    69,
+    118,
+    127,
+    134,
+    71,
+    121,
+    72,
+    36,
+    109,
+    119,
+    31,
+    25,
+    84,
+    108,
+    110,
+    85,
+    133,
+    112,
+    28,
+    12,
+    6,
+    98,
+    122,
+    91,
+    95,
+    104,
+    61,
+    62,
+    63,
+    64,
+    96,
+    100,
+    124,
+    65,
+    66,
+    130,
+    132,
+    59,
+    97,
+    70,
+    101,
+    89,
+    116,
+    73,
+    111,
+    90,
+    88,
+    87,
+    105,
+    125,
+    86,
+    92,
+    131,
+    83,
+    82,
+    115,
+    94,
+    128,
+    80,
+    58,
+    120,
+    78,
+    77,
+    93,
+    76,
+    75,
+    74,
+    113,
+    79,
+    57,
+    52,
+    55,
+    23,
+    22,
+    21,
+    20,
+    19,
+    18,
+    114,
+    17,
+    16,
+    15,
+    24,
+    14,
+    11,
+    10,
+    9,
+    8,
+    7,
+    5,
+    4,
+    3,
+    2,
+    13,
+    56,
+    26,
+    29,
+    54,
+    53,
+    102,
+    50,
+    49,
+    48,
+    47,
+    45,
+    44,
+    27,
+    43,
+    40,
+    39,
+    38,
+    37,
+    35,
+    34,
+    33,
+    32,
+    30,
+    42,
+    1
+  ],
+  "Army2AliveOrder": [
+    112,
+    103,
+    26,
+    21,
+    63,
+    18,
+    34,
+    43,
+    111,
+    62,
+    87,
+    2,
+    90,
+    49,
+    6,
+    92,
+    61,
+    56,
+    65,
+    60,
+    64,
+    58,
+    59,
+    66,
+    76,
+    72,
+    93,
+    91,
+    89,
+    86,
+    84,
+    83,
+    82,
+    81,
+    80,
+    79,
+    77,
+    74,
+    73,
+    54,
+    51,
+    105,
+    24,
+    23,
+    22,
+    20,
+    15,
+    14,
+    13,
+    12,
+    11,
+    10,
+    9,
+    8,
+    7,
+    5,
+    3,
+    25,
+    102,
+    27,
+    28,
+    29,
+    50,
+    106,
+    95,
+    47,
+    46,
+    45,
+    44,
+    42,
+    108,
+    41,
+    53,
+    40,
+    38,
+    37,
+    36,
+    35,
+    33,
+    32,
+    31,
+    30,
+    39,
+    1
+  ],
+  "BattleLogName": "\u0449\u0448 vs \u043F\u0440",
+  "MoveCount": 5,
+  "CurrentFormation": 0
+}

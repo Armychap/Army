@@ -6,13 +6,13 @@ using ArmyBattle.UI;
 
 namespace ArmyBattle
 {
-    public enum FormationType 
-    { 
+    public enum FormationType
+    {
         OneColumn,    // Одна колонна
         ThreeColumns, // Три колонны
         Wall          // Стенка
     }
-    
+
     /// <summary>
     /// Класс для обработки главного меню игры
     /// </summary>
@@ -136,6 +136,8 @@ namespace ArmyBattle
                 {
                     ConsoleMenu.ShowSuccess("Битва завершена. Результат сохранен в историю.");
                     Console.ReadKey();
+                    while (Console.KeyAvailable)
+                        Console.ReadKey(true);
                 }
             }
         }
