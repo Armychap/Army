@@ -4,23 +4,22 @@ using System.Linq;
 
 namespace ShoppingCartCommandPattern
 {
-    // Интерфейс команды: все команды должны выполнять действие и отменять его
     public interface ICommand
     {
-        void Execute();
-        void Undo();
-        string Description { get; }
+        void Execute(); // выполнить действие
+        void Undo();    // отменить действие
+        string Description { get; } // описание команды для логирования
     }
 
-    // добавление товара в корзину
+    // Команда для добавления товара в корзину
     public class AddToCartCommand : ICommand
     {
-        private ShoppingCart cart;
-        private Product product;
-        private int quantity;
-        private string? createdCartItemId;
-        private bool wasExisting;
-        private int oldQuantity;
+        private ShoppingCart cart;      // ссылка на корзину (получатель)
+        private Product product;        // добавляемый товар
+        private int quantity;           // количество
+        private string? createdCartItemId; // ID созданной позиции (если товар добавлялся впервые)
+        private bool wasExisting;       // был ли товар уже в корзине до выполнения
+        private int oldQuantity;        // старое количество (если товар уже был)
         
         public string Description => $"Добавить {product.Name} x{quantity}";
 
@@ -31,12 +30,15 @@ namespace ShoppingCartCommandPattern
             this.quantity = quantity;
         }
 
+        // Выполняет добавление товара в корзину
         public void Execute()
         {
+            // Запоминаем состояние до выполнения
             wasExisting = cart.HasProduct(product.ProductId);
             
             if (wasExisting)
             {
+                // Если товар уже был - запоминаем его ID и текущее количество
                 var existingItem = cart.GetCartItemByProductId(product.ProductId);
                 if (existingItem != null)
                 {
@@ -45,17 +47,21 @@ namespace ShoppingCartCommandPattern
                 }
             }
             
+            // Выполняем основное действие
             cart.AddItem(product, quantity);
         }
         
+        // Отменяет добавление товара
         public void Undo()
         {
             if (wasExisting && createdCartItemId != null)
             {
+                // Если товар уже был - возвращаем старое количество
                 cart.ChangeQuantity(createdCartItemId, oldQuantity);
             }
             else if (!wasExisting)
             {
+                // Если товар был добавлен впервые - полностью удаляем позицию
                 var addedItem = cart.GetCartItemByProductId(product.ProductId);
                 if (addedItem != null)
                 {
@@ -65,12 +71,12 @@ namespace ShoppingCartCommandPattern
         }
     }
 
-    // удаление товара из корзины
+    // Команда для удаления товара из корзины
     public class RemoveFromCartCommand : ICommand
     {
-        private ShoppingCart cart;
-        private string cartItemId;
-        private CartItem? removedItem;
+        private ShoppingCart cart;      // ссылка на корзину
+        private string cartItemId;      // ID позиции для удаления
+        private CartItem? removedItem;  // сохраненная копия удаляемой позиции (для отмены)
         public string Description => $"Удалить позицию {cartItemId}";
 
         public RemoveFromCartCommand(ShoppingCart cart, string cartItemId)
@@ -79,17 +85,20 @@ namespace ShoppingCartCommandPattern
             this.cartItemId = cartItemId;
         }
 
+        // Выполняет удаление (предварительно сохраняя копию удаляемого объекта)
         public void Execute()
         {
-            removedItem = cart.GetCartItem(cartItemId)?.Clone();
+            removedItem = cart.GetCartItem(cartItemId)?.Clone(); // сохраняем копию
             if (removedItem != null)
                 cart.RemoveItem(cartItemId);
         }
 
+        // Отменяет удаление - восстанавливает позицию с сохраненными параметрами
         public void Undo()
         {
             if (removedItem != null)
             {
+                // Создаем товар из сохраненных данных
                 var product = new Product
                 {
                     ProductId = removedItem.ProductId,
@@ -98,6 +107,7 @@ namespace ShoppingCartCommandPattern
                 };
                 cart.AddItem(product, removedItem.Quantity);
                 
+                // Восстанавливаем цену и скидку, если они были
                 var restoredItem = cart.GetCartItemByProductId(removedItem.ProductId);
                 if (restoredItem != null && removedItem.DiscountPercent > 0)
                 {
@@ -108,13 +118,13 @@ namespace ShoppingCartCommandPattern
         }
     }
 
-    // изменение количества товара
+    // Команда для изменения количества товара
     public class ChangeQuantityCommand : ICommand
     {
-        private ShoppingCart cart;
-        private string cartItemId;
-        private int newQuantity;
-        private int oldQuantity;
+        private ShoppingCart cart;      // ссылка на корзину
+        private string cartItemId;      // ID позиции
+        private int newQuantity;        // новое количество
+        private int oldQuantity;        // старое количество (сохраняется при выполнении)
         
         public string Description => $"Изменить кол-во позиции {cartItemId} с {oldQuantity} на {newQuantity}";
 
@@ -125,30 +135,33 @@ namespace ShoppingCartCommandPattern
             this.newQuantity = newQuantity;
         }
 
+        // Выполняет изменение количества (запоминает старое значение)
         public void Execute()
         {
             var item = cart.GetCartItem(cartItemId);
             if (item != null)
             {
-                oldQuantity = item.Quantity;
+                oldQuantity = item.Quantity; // сохраняем старое количество
                 cart.ChangeQuantity(cartItemId, newQuantity);
             }
         }
         
+        // Отменяет изменение - возвращает старое количество
         public void Undo()
         {
             cart.ChangeQuantity(cartItemId, oldQuantity);
         }
     }
 
-    // применение скидки к товару - скидки применяются последовательно к текущей цене
+    // Команда для применения скидки к товару
+    // Скидки применяются последовательно к текущей цене
     public class ApplyDiscountCommand : ICommand
     {
-        private ShoppingCart cart;
-        private string cartItemId;
-        private decimal discountPercent;
-        private decimal oldCurrentPrice;
-        private decimal oldDiscountPercent;
+        private ShoppingCart cart;          // ссылка на корзину
+        private string cartItemId;          // ID позиции
+        private decimal discountPercent;    // процент скидки для применения
+        private decimal oldCurrentPrice;    // сохраненная цена до применения скидки
+        private decimal oldDiscountPercent; // сохраненный процент скидки до применения
         
         public string Description => $"Скидка {discountPercent}% на позицию {cartItemId}";
 
@@ -159,22 +172,26 @@ namespace ShoppingCartCommandPattern
             this.discountPercent = discountPercent;
         }
 
+        // Выполняет применение скидки (сохраняет состояние до изменения)
         public void Execute()
         {
             var item = cart.GetCartItem(cartItemId);
             if (item != null)
             {
+                // Сохраняем текущее состояние перед применением скидки
                 oldCurrentPrice = item.CurrentPrice;
                 oldDiscountPercent = item.DiscountPercent;
                 cart.ApplyDiscount(cartItemId, discountPercent);
             }
         }
         
+        // Отменяет скидку - полностью восстанавливает цену и процент скидки
         public void Undo()
         {
             var item = cart.GetCartItem(cartItemId);
             if (item != null)
             {
+                // Возвращаем сохраненные цену и процент скидки
                 item.CurrentPrice = oldCurrentPrice;
                 item.DiscountPercent = oldDiscountPercent;
                 Console.WriteLine($"Восстановлена цена {item.Name}: {item.CurrentPrice:C} (скидка {item.DiscountPercent}%)");
@@ -182,11 +199,12 @@ namespace ShoppingCartCommandPattern
         }
     }
 
-    // компонуем несколько команд в одну логическую операцию
+    // Составная команда (макрокоманда) - объединяет несколько команд в одну
+    // Позволяет применять промокод, который включает несколько скидок
     public class ApplyPromoCodeCommand : ICommand
     {
-        private List<ICommand> commands = new List<ICommand>();
-        private string promoCode;
+        private List<ICommand> commands = new List<ICommand>(); // список вложенных команд
+        private string promoCode;                               // название промокода
         public string Description => $"Промокод {promoCode} ({commands.Count} скидок)";
 
         public ApplyPromoCodeCommand(string promoCode, List<ICommand> commands)
@@ -195,18 +213,20 @@ namespace ShoppingCartCommandPattern
             this.commands = commands;
         }
 
+        // Выполняет все вложенные команды последовательно
         public void Execute()
         {
             Console.WriteLine($"Применяем промокод: {promoCode}");
             foreach (var cmd in commands)
-                cmd.Execute();
+                cmd.Execute(); // каждая команда сама заботится о сохранении своего состояния
         }
 
+        // Отменяет все вложенные команды в обратном порядке
         public void Undo()
         {
             Console.WriteLine($"Отменяем промокод: {promoCode}");
             foreach (var cmd in commands)
-                cmd.Undo();
+                cmd.Undo(); // отменяем каждую команду
         }
     }
 }
