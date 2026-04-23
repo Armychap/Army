@@ -32,7 +32,7 @@ namespace Observer
     }
 
     // Аргументы события обновления биржевых данных
-    public class StockUpdateEventArgs : EventArgs
+    public class StockUpdateEventArgs
     {
         public StockData StockData { get; }
         public StockUpdateType UpdateType { get; }

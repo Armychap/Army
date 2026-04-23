@@ -23,13 +23,9 @@ namespace Observer
         {
             if (!_verbose) return;
 
-            var emoji = e.UpdateType == StockUpdateType.PriceChanged
-                ? (e.IsIncrease ? "UP" : "DOWN")
-                : "NEW";
-
             var message = e.UpdateType == StockUpdateType.PriceChanged
-                ? $"{emoji} [Трейдер {_name}] {e.StockData.Symbol}: {e.OldValue:F2}$ -> {e.NewValue:F2}$ ({(e.ChangePercent >= 0 ? "+" : "")}{e.ChangePercent:F2}%)"
-                : $"{emoji} [Трейдер {_name}] {e.StockData.Symbol}: объём {e.OldValue:F0} -> {e.NewValue:F0}";
+                ? $"[Трейдер {_name}] {e.StockData.Symbol}: {e.OldValue:F2}$ -> {e.NewValue:F2}$ ({(e.ChangePercent >= 0 ? "+" : "")}{e.ChangePercent:F2}%)"
+                : $"[Трейдер {_name}] {e.StockData.Symbol}: объём {e.OldValue:F0} -> {e.NewValue:F0}";
 
             Console.WriteLine(message);
         }
@@ -62,7 +58,7 @@ namespace Observer
     // Логгер
     public class Logger : IStockObserver
     {
-        private readonly List<string> _logBuffer = new();
+        private readonly List<string> _logBuffer = new List<string>();
         private readonly bool _consoleOutput;
 
         public Logger(bool consoleOutput = true)
@@ -128,11 +124,9 @@ namespace Observer
             }
             else if (absChangePercent >= PriceChangeAlertThreshold)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"[ПРЕДУПРЕЖДЕНИЕ] {e.StockData.Symbol}: " +
                                  $"{(e.IsIncrease ? "рост" : "падение")} на {absChangePercent:F2}% " +
                                  $"({e.OldValue:F2}$ -> {e.NewValue:F2}$)");
-                Console.ResetColor();
             }
         }
 
@@ -144,9 +138,7 @@ namespace Observer
 
             if (multiplier >= VolumeSpikeMultiplier)
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"[АНОМАЛЬНЫЙ ОБЪЁМ] {e.StockData.Symbol}: всплеск в {multiplier:F1} раз!");
-                Console.ResetColor();
                 Console.WriteLine($"Объём: {e.OldValue:F0} -> {e.NewValue:F0}");
             }
         }

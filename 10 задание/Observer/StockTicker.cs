@@ -10,8 +10,8 @@ namespace Observer
     // Издатель (управляет состоянием акций и списком подписчиков)
     public class StockTicker : IStockSubject
     {
-        private readonly List<IStockObserver> _observers = new();
-        private readonly Dictionary<string, StockData> _stocks = new();
+        private readonly List<IStockObserver> _observers = new List<IStockObserver>();
+        private readonly Dictionary<string, StockData> _stocks = new Dictionary<string, StockData>();
 
         public void Attach(IStockObserver observer)
         {
@@ -77,9 +77,15 @@ namespace Observer
             return stock;
         }
 
-        public StockData? GetStock(string symbol) =>
-            _stocks.TryGetValue(symbol, out var stock) ? stock : null;
+        public StockData? GetStock(string symbol)
+        {
+            _stocks.TryGetValue(symbol, out var stock);
+            return stock;
+        }
 
-        public IReadOnlyList<string> GetTrackedSymbols() => _stocks.Keys.ToList();
+        public IReadOnlyList<string> GetTrackedSymbols()
+        {
+            return _stocks.Keys.ToList();
+        }
     }
 }
