@@ -1,0 +1,15 @@
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\bin\Debug\net8.0\TemplateMethod.exe
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\bin\Debug\net8.0\TemplateMethod.deps.json
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\bin\Debug\net8.0\TemplateMethod.runtimeconfig.json
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\bin\Debug\net8.0\TemplateMethod.dll
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\bin\Debug\net8.0\TemplateMethod.pdb
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\TemplateMethod.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\TemplateMethod.AssemblyInfoInputs.cache
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\TemplateMethod.AssemblyInfo.cs
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\TemplateMethod.csproj.CoreCompileInputs.cache
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\TemplateMethod.sourcelink.json
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\TemplateMethod.dll
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\refint\TemplateMethod.dll
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\TemplateMethod.pdb
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\TemplateMethod.genruntimeconfig.cache
+c:\Users\voxix\go\pkg\src\github.com\LilVoxy\Army-main\Army\11 задание\Template Method\obj\Debug\net8.0\ref\TemplateMethod.dll
