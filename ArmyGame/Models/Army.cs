@@ -54,13 +54,12 @@ namespace ArmyBattle.Models
                 }
             }
 
-            // Временно сортируем, чтобы WeakFighter был первым для тестирования
-            AliveFightersInBattleOrder.Sort((a, b) =>
+            for (int i = AliveFightersInBattleOrder.Count - 1; i > 0; i--)
             {
-                if (a is WeakFighter && !(b is WeakFighter)) return -1;
-                if (b is WeakFighter && !(a is WeakFighter)) return 1;
-                return 0;
-            });
+                int j = random.Next(i + 1);
+                (AliveFightersInBattleOrder[i], AliveFightersInBattleOrder[j]) =
+                    (AliveFightersInBattleOrder[j], AliveFightersInBattleOrder[i]);
+            }
 
             CurrentFighterIndex = 0;
         }
@@ -223,7 +222,7 @@ namespace ArmyBattle.Models
                     AliveFightersInBattleOrder.Add(unit);
                 }
             }
-            ShuffleAliveFighters();
+            CurrentFighterIndex = 0;
         }
         /// <summary>
         /// Обновляет список живых бойцов без перемешивания (сохраняет порядок)
@@ -240,6 +239,18 @@ namespace ArmyBattle.Models
             }
             // НЕ вызываем ShuffleAliveFighters() - сохраняем порядок
             CurrentFighterIndex = 0;
+        }
+
+        // В Army.cs добавить:
+        public void ReplaceUnit(IUnit oldUnit, IUnit newUnit)
+        {
+            int index = Units.IndexOf(oldUnit);
+            if (index >= 0)
+                Units[index] = newUnit;
+
+            int orderIndex = AliveFightersInBattleOrder.IndexOf(oldUnit);
+            if (orderIndex >= 0)
+                AliveFightersInBattleOrder[orderIndex] = newUnit;
         }
     }
 }

@@ -149,5 +149,6 @@ namespace ArmyBattle.Services
         /// Стоимость юнита
         /// </summary>
         public int Cost { get; set; }
+        public List<string>? AppliedBuffs { get; set; } 
     }
 }
