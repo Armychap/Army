@@ -4,6 +4,7 @@ using System.Linq;
 using ArmyBattle.Models;
 using ArmyBattle.Game;
 using ArmyBattle.Services;
+using ArmyBattle.Models.Decorators;
 using ArmyBattle.UI;
 
 namespace ArmyBattle
@@ -70,49 +71,24 @@ namespace ArmyBattle
                 {
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: true);
 
-                    // Удаляем файл продолжения из Saves (используем logName как имя сохранения)
+                    // Удаляем файл продолжения
                     string? savePath = armyManager?.GetSavePath(logName);
                     if (!string.IsNullOrWhiteSpace(savePath) && File.Exists(savePath))
                     {
-                        try
-                        {
-                            File.Delete(savePath);
-                        }
-                        catch { }
+                        try { File.Delete(savePath); } catch { }
                     }
 
-                    // ПОСЛЕ восстановления консоли - выводим результаты
-                    ConsoleMenu.ClearConsole();
-                    Console.WriteLine("БИТВА ЗАВЕРШЕНА");
-                    Console.WriteLine(new string('=', 40));
+                    // ✅ Восстанавливаем консоль ПЕРЕД выводом статистики
+                    Console.SetOut(originalOutput);
 
-                    // Определяем результат
-                    if (battle.StalemateReached)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("НИЧЬЯ! Жизнь обоих бойцов не изменялась в течение 10 ходов.");
-                        Console.ResetColor();
-                    }
-                    else if (army1.HasAliveUnits())
-                    {
-                        Console.ForegroundColor = army1.Color;
-                        Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = army2.Color;
-                        Console.WriteLine($"ПОБЕДИТЕЛЬ: {army2.Name}!");
-                        Console.ResetColor();
-                    }
-
-                    Console.WriteLine($"\nРаундов: {battle.Round}");
-                    Console.WriteLine($"Ходов: {battle.MoveCount}");
+                    // ✅ Выводим статистику из BattleEngine (она уже есть в логе, но не в консоли)
+                    //    Поэтому выводим её заново:
+                    DisplayEndGameStats(army1, army2, battle);
 
                     Console.WriteLine("\nНажмите любую клавишу для возврата в главное меню...");
                     Console.ReadKey();
-
                     return true;
+
                 }
                 else
                 {
@@ -135,6 +111,77 @@ namespace ArmyBattle
                 return false;
             }
         }
+
+        private static void DisplayEndGameStats(IArmy army1, IArmy army2, BattleEngine battle)
+        {
+            ConsoleMenu.ClearConsole();
+            Console.WriteLine("БИТВА ЗАВЕРШЕНА");
+            Console.WriteLine(new string('=', 40));
+
+            if (battle.StalemateReached)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("НИЧЬЯ!");
+                Console.ResetColor();
+            }
+            else if (army1.HasAliveUnits())
+            {
+                Console.ForegroundColor = army1.Color;
+                Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = army2.Color;
+                Console.WriteLine($"ПОБЕДИТЕЛЬ: {army2.Name}!");
+                Console.ResetColor();
+            }
+
+            // Статистика
+            Console.WriteLine("\nСТАТИСТИКА БИТВЫ:");
+            Console.WriteLine($"Всего ходов: {battle.MoveCount}");
+
+            // Армия 1
+            Console.WriteLine($"\n{army1.Name}:");
+            Console.WriteLine($"Выжило бойцов: {army1.AliveCount()}/{army1.Units.Count}");
+            var alive1 = army1.Units.Where(u => u.IsAlive).ToList();
+            if (alive1.Any())
+            {
+                Console.Write("  Выжившие: ");
+                for (int i = 0; i < alive1.Count; i++)
+                {
+                    var unit = alive1[i];
+                    Console.Write($"{unit.GetDisplayName(army1.Name)} ({unit.PowerLevel})");
+                    if (i < alive1.Count - 1) Console.Write(", ");
+                }
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine("  Все бойцы погибли");
+            }
+
+            // Армия 2
+            Console.WriteLine($"\n{army2.Name}:");
+            Console.WriteLine($"Выжило бойцов: {army2.AliveCount()}/{army2.Units.Count}");
+            var alive2 = army2.Units.Where(u => u.IsAlive).ToList();
+            if (alive2.Any())
+            {
+                Console.Write("  Выжившие: ");
+                for (int i = 0; i < alive2.Count; i++)
+                {
+                    var unit = alive2[i];
+                    Console.Write($"{unit.GetDisplayName(army2.Name)} ({unit.PowerLevel})");
+                    if (i < alive2.Count - 1) Console.Write(", ");
+                }
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine("  Все бойцы погибли");
+            }
+        }
+
 
         /// <summary>
         /// Продолжает боевой цикл со стороны загруженной игры.
@@ -365,35 +412,6 @@ namespace ArmyBattle
             Console.ReadKey();
         }
 
-        /// <summary>
-        /// Сохраняет состояние завершенной игры с возможностью задать название.
-        /// Возвращает true если успешно сохранилось, иначе false.
-        /// </summary>
-        public static bool SaveGameState(IArmy army1, IArmy army2, bool isGameComplete = false)
-        {
-            ConsoleMenu.ClearConsole();
-            ConsoleMenu.PrintHeader("СОХРАНЕНИЕ СОСТОЯНИЯ ИГРЫ");
-            string? saveName = ConsoleMenu.GetInput("Введите название для сохранения (без пробелов): ");
-
-            if (!string.IsNullOrWhiteSpace(saveName))
-            {
-                // Сохраняем состояние армий только для незавершенных игр
-                if (!isGameComplete)
-                {
-                    armyManager?.SaveArmies(army1, army2, saveName, battleLogName: saveName);
-                }
-
-                // Сохраняем историю битвы (стадия игры)
-                string gameStatus = isGameComplete ? "" : "ИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
-                battleManager?.SaveBattleLog(gameStatus, $"{army1.Name} vs {army2.Name}", army1, army2);
-
-                ConsoleMenu.ShowSuccess($"Игра сохранена как '{saveName}'!");
-                Console.ReadKey();
-                return true;
-            }
-
-            return false;
-        }
 
         private static void DisplayBuffs(IArmy army1, IArmy army2)
         {
@@ -408,8 +426,7 @@ namespace ArmyBattle
                 Console.ResetColor();
 
                 var buffedUnits = army.Units
-                    .Where(u => u is StrongFighter sf && sf.Buffs.Count > 0)
-                    .Cast<StrongFighter>()
+                    .Where(u => u is BuffDecorator)
                     .ToList();
 
                 if (!buffedUnits.Any())
@@ -418,10 +435,26 @@ namespace ArmyBattle
                     return;
                 }
 
-                foreach (var sf in buffedUnits)
+                foreach (var unit in buffedUnits)
                 {
-                    var buffNames = sf.Buffs.Select(b => b.Name);
-                    Console.WriteLine($"  {sf.GetDisplayName(army.Name)}: {string.Join(", ", buffNames)}");
+                    // Собираем названия всех баффов на этом юните
+                    var buffNames = new List<string>();
+                    var current = unit;
+                    while (current is BuffDecorator decorator)
+                    {
+                        string buffName = decorator switch
+                        {
+                            HorseBuffDecorator => "Конь",
+                            ShieldBuffDecorator => "Щит",
+                            HelmetBuffDecorator => "Шлем",
+                            SpearBuffDecorator => "Копье",
+                            _ => "?"
+                        };
+                        buffNames.Add(buffName);
+                        current = decorator.GetInnerUnit();
+                    }
+
+                    Console.WriteLine($"  {unit.GetDisplayName(army.Name)}: {string.Join(", ", buffNames)}");
                 }
             }
 
@@ -541,12 +574,7 @@ namespace ArmyBattle
                         string? savePath = armyManager?.GetSavePath(saveName);
                         if (!string.IsNullOrWhiteSpace(savePath) && File.Exists(savePath))
                         {
-                            try
-                            {
-                                File.Delete(savePath);
-                                Console.WriteLine($"Сохраненная игра '{saveName}' удалена (игра завершена).");
-                            }
-                            catch { }
+                            try { File.Delete(savePath); } catch { }
                         }
                     }
 
@@ -557,7 +585,7 @@ namespace ArmyBattle
                     if (battle.StalemateReached)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("НИЧЬЯ! Жизнь обоих бойцов не изменялась в течение 10 ходов.");
+                        Console.WriteLine("НИЧЬЯ!");
                         Console.ResetColor();
                     }
                     else if (army1.HasAliveUnits())
@@ -573,20 +601,59 @@ namespace ArmyBattle
                         Console.ResetColor();
                     }
 
-                    Console.WriteLine($"\nРаундов: {battle.Round}");
-                    Console.WriteLine($"Ходов: {battle.MoveCount}");
+                    Console.WriteLine("\nСТАТИСТИКА БИТВЫ:");
+                    Console.WriteLine($"Всего ходов: {battle.MoveCount}");
 
-                    Console.WriteLine("\nМеню действий");
-                    Console.WriteLine("1. Выйти в главное меню");
-                    Console.Write("Выбор: ");
-                    Console.ReadLine();
+                    Console.WriteLine($"\n{army1.Name}:");
+                    Console.WriteLine($"Выжило бойцов: {army1.AliveCount()}/{army1.Units.Count}");
+                    var alive1 = army1.Units.Where(u => u.IsAlive).ToList();
+                    if (alive1.Any())
+                    {
+                        Console.Write("  Выжившие: ");
+                        for (int i = 0; i < alive1.Count; i++)
+                        {
+                            var unit = alive1[i];
+                            Console.Write($"{unit.GetDisplayName(army1.Name)} ({unit.PowerLevel})");
+                            if (i < alive1.Count - 1) Console.Write(", ");
+                        }
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine("  Все бойцы погибли");
+                    }
+
+                    Console.WriteLine($"\n{army2.Name}:");
+                    Console.WriteLine($"Выжило бойцов: {army2.AliveCount()}/{army2.Units.Count}");
+                    var alive2 = army2.Units.Where(u => u.IsAlive).ToList();
+                    if (alive2.Any())
+                    {
+                        Console.Write("  Выжившие: ");
+                        for (int i = 0; i < alive2.Count; i++)
+                        {
+                            var unit = alive2[i];
+                            Console.Write($"{unit.GetDisplayName(army2.Name)} ({unit.PowerLevel})");
+                            if (i < alive2.Count - 1) Console.Write(", ");
+                        }
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.WriteLine("  Все бойцы погибли");
+                    }
+
+                    Console.WriteLine("\nНажмите любую клавишу для возврата в главное меню...");
+                    Console.ReadKey();
+                    return;
                 }
                 else
                 {
                     fullLog += "\nИГРА НЕ ЗАВЕРШЕНА\nСостояние армий сохранено для продолжения.";
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: false);
+                    armyManager?.SaveArmies(army1, army2, saveName, battle.Round, battle.AttackTurn,
+                        battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName, battle.MoveCount, formation);
 
-                    armyManager?.SaveArmies(army1, army2, saveName, battle.Round, battle.AttackTurn, battle.FirstAttackerIsArmy1, battle.NeedNewRoundHeader, logName, battle.MoveCount, formation);
+
                 }
             }
             catch (Exception ex)
@@ -595,6 +662,5 @@ namespace ArmyBattle
                 Console.WriteLine($"Ошибка: {ex.Message}");
             }
         }
-
     }
 }

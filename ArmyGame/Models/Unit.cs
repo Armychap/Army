@@ -16,6 +16,7 @@ namespace ArmyBattle.Models
         public IUnit? LastHealed { get; private set; }  // Для лечения
 
         private Random random = new Random();
+        protected internal IUnit? _wrappedUnit;
 
         public SpecialAbility(string name, int range, int power)
         {
