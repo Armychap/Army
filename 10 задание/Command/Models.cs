@@ -43,36 +43,36 @@ namespace ShoppingCartCommandPattern
     // Получатель (Receiver) - бизнес-логика работы с корзиной
     public class ShoppingCart
     {
-        private List<CartItem> items = new List<CartItem>(); // список позиций в корзине
-        private int nextCartItemId = 1; // Генератор ID для позиций в корзине
+        private List<CartItem> items = new List<CartItem>();
+        private int nextCartItemId = 1;
 
-        // Генерация уникального ID для каждой позиции в корзине
+        // История изменений цен для каждой позиции
+        private Dictionary<string, Stack<PriceSnapshot>> priceHistory = new Dictionary<string, Stack<PriceSnapshot>>();
+
+        // Класс для хранения снимка цены
+        private class PriceSnapshot
+        {
+            public decimal CurrentPrice { get; set; }
+            public decimal DiscountPercent { get; set; }
+        }
+
         private string GenerateCartItemId() => (nextCartItemId++).ToString();
 
-        // проверка наличия товара в корзине по ID товара
         public bool HasProduct(string productId) => items.Any(i => i.ProductId == productId);
-
-        // получение позиции в корзине по ID позиции
         public CartItem? GetCartItem(string cartItemId) => items.FirstOrDefault(i => i.CartItemId == cartItemId);
-
-        // получение позиции в корзине по ID товара
         public CartItem? GetCartItemByProductId(string productId) => items.FirstOrDefault(i => i.ProductId == productId);
 
-        // Добавляет товар в корзину или увеличивает количество, если уже есть
         public void AddItem(Product product, int quantity = 1)
         {
-            // Проверяем, есть ли уже такой товар в корзине
             var existing = items.FirstOrDefault(i => i.ProductId == product.ProductId);
 
             if (existing != null)
             {
-                // Если товар уже есть - увеличиваем количество
                 existing.Quantity += quantity;
                 Console.WriteLine($"Добавлен: {product.Name} x{quantity}");
             }
             else
             {
-                // Если товара нет - создаем новую позицию
                 var newItem = new CartItem
                 {
                     CartItemId = GenerateCartItemId(),
@@ -84,23 +84,26 @@ namespace ShoppingCartCommandPattern
                     DiscountPercent = 0
                 };
                 items.Add(newItem);
+
+                // Инициализируем историю для новой позиции
+                priceHistory[newItem.CartItemId] = new Stack<PriceSnapshot>();
+
                 Console.WriteLine($"Добавлен: {product.Name} x{quantity}");
             }
         }
 
-        // Удаляет позицию из корзины по ID позиции
         public void RemoveItem(string cartItemId)
         {
             var item = items.FirstOrDefault(i => i.CartItemId == cartItemId);
             if (item != null)
             {
                 items.Remove(item);
+                // НОВОЕ: Очищаем историю при удалении
+                priceHistory.Remove(cartItemId);
                 Console.WriteLine($"Удален: {item.Name}");
             }
         }
 
-        // Изменяет количество товара в указанной позиции
-        // Если новое количество <= 0 - удаляет позицию
         public void ChangeQuantity(string cartItemId, int newQty)
         {
             var item = items.FirstOrDefault(i => i.CartItemId == cartItemId);
@@ -115,17 +118,24 @@ namespace ShoppingCartCommandPattern
             }
         }
 
-        // Применяет скидку к указанной позиции
-        // Скидка применяется к текущей цене (цепочка скидок)
+        // Сохраняет состояние в историю перед применением скидки
         public void ApplyDiscount(string cartItemId, decimal percent)
         {
             var item = items.FirstOrDefault(i => i.CartItemId == cartItemId);
             if (item != null)
             {
-                // применяем скидку к текущей цене
-                item.CurrentPrice = item.CurrentPrice * (1 - percent / 100);
+                // Сохраняем текущее состояние в историю ПЕРЕД изменением
+                if (!priceHistory.ContainsKey(cartItemId))
+                    priceHistory[cartItemId] = new Stack<PriceSnapshot>();
 
-                // пересчитываем общий процент скидки от исходной цены
+                priceHistory[cartItemId].Push(new PriceSnapshot
+                {
+                    CurrentPrice = item.CurrentPrice,
+                    DiscountPercent = item.DiscountPercent
+                });
+
+                // Применяем новую скидку
+                item.CurrentPrice = item.CurrentPrice * (1 - percent / 100);
                 decimal totalDiscountPercent = (1 - item.CurrentPrice / item.OriginalPrice) * 100;
                 item.DiscountPercent = Math.Round(totalDiscountPercent, 2);
 
@@ -133,7 +143,32 @@ namespace ShoppingCartCommandPattern
             }
         }
 
-        // Отображает текущее содержимое корзины и общую сумму
+        // Восстанавливает предыдущую цену из истории
+        public void UndoLastDiscount(string cartItemId)
+        {
+            if (priceHistory.TryGetValue(cartItemId, out var history) && history.Count > 0)
+            {
+                var previous = history.Pop();
+                var item = GetCartItem(cartItemId);
+                if (item != null)
+                {
+                    item.CurrentPrice = previous.CurrentPrice;
+                    item.DiscountPercent = previous.DiscountPercent;
+                    Console.WriteLine($"Восстановлена цена {item.Name}: {item.CurrentPrice:C} (скидка {item.DiscountPercent}%)");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Нет истории скидок для позиции {cartItemId}");
+            }
+        }
+
+        // Проверяет, можно ли отменить скидку
+        public bool CanUndoDiscount(string cartItemId)
+        {
+            return priceHistory.TryGetValue(cartItemId, out var history) && history.Count > 0;
+        }
+
         public void Show()
         {
             Console.WriteLine("\nКорзина:");
@@ -148,4 +183,5 @@ namespace ShoppingCartCommandPattern
             Console.WriteLine();
         }
     }
+
 }
