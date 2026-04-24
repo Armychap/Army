@@ -18,6 +18,16 @@ namespace Strategy
             _strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
         }
 
+        public string GetCurrentPolicyDescription()
+        {
+            return _strategy.GetPolicyDescription();
+        }
+
+        public int GetMinLength()
+        {
+            return _strategy.GetMinLength();
+        }
+
         public string GeneratePassword(int length, out int score, out string strength)
         {
             var password = _strategy.Generate(length);
@@ -25,13 +35,6 @@ namespace Strategy
             strength = _strengthChecker.GetStrengthLevel(score);
 
             return password;
-        }
-
-        public void ShowCurrentPolicy()
-        {
-            Console.WriteLine($"Тип стратегии: {_strategy.GetName()}");
-            Console.WriteLine($"Описание: {_strategy.GetPolicyDescription()}");
-            Console.WriteLine($"Минимальная длина: {_strategy.GetMinLength()} символов");
         }
     }
 }

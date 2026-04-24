@@ -28,9 +28,12 @@ namespace Strategy
         {
             Console.Clear();
             Console.WriteLine("   ГЕНЕРАТОР ПАРОЛЕЙ   ");
+            Console.WriteLine();
+            Console.WriteLine($"Текущая стратегия: {_generator.GetCurrentPolicyDescription()}");
+            Console.WriteLine();
             Console.WriteLine("1. Простой пароль (только буквы)");
-            Console.WriteLine("2. Сложный пароль (буквы+цифры+символы)");
-            Console.WriteLine("3. Запоминаемый пароль (слова+цифры)");
+            Console.WriteLine("2. Сложный пароль (буквы + цифры + символы)");
+            Console.WriteLine("3. Запоминаемый пароль (слова + цифры)");
             Console.WriteLine("4. PIN-код (только цифры)");
             Console.WriteLine("5. Демонстрация надёжности паролей");
             Console.WriteLine("0. Выход");
@@ -75,7 +78,13 @@ namespace Strategy
             _generator.SetStrategy(strategy);
 
             Console.Clear();
-            _generator.ShowCurrentPolicy();
+
+            Console.WriteLine("  Информация о стратегии  ");
+            Console.WriteLine();
+            Console.WriteLine($"Описание: {_generator.GetCurrentPolicyDescription()}");
+
+            int minLength = _generator.GetMinLength();
+            Console.WriteLine($"Минимальная длина: {minLength} символов");
 
             Console.Write($"\nВведите длину пароля (мин. {strategy.GetMinLength()}): ");
             if (!int.TryParse(Console.ReadLine(), out int length) || length < strategy.GetMinLength())
