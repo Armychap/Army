@@ -64,10 +64,9 @@ namespace Strategy
                     break;
                 case "0":
                     _running = false;
-                    Console.WriteLine("\nДо свидания!");
                     break;
                 default:
-                    Console.WriteLine("Неверный выбор...");
+                    Console.WriteLine("Неверный выбор.");
                     Console.ReadKey();
                     break;
             }

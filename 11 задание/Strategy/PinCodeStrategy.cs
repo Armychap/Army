@@ -30,10 +30,5 @@ namespace Strategy
         {
             return 4;
         }
-
-        public string GetName()
-        {
-            return "PIN-код";
-        }
     }
 }

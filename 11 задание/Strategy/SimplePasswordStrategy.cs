@@ -30,10 +30,5 @@ namespace Strategy
         {
             return 6;
         }
-
-        public string GetName()
-        {
-            return "Простой пароль";
-        }
     }
 }

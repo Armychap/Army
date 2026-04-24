@@ -42,10 +42,5 @@ namespace Strategy
         {
             return 8;
         }
-
-        public string GetName()
-        {
-            return "Сложный пароль";
-        }
     }
 }

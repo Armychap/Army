@@ -15,42 +15,60 @@ namespace Strategy
                 throw new ArgumentException($"Минимальная длина пароля: {GetMinLength()}");
 
             var password = new StringBuilder();
-            int targetLength = length;
 
-            while (password.Length < targetLength - 2)
+            while (password.Length < length - 3)
             {
                 if (password.Length > 0)
                     password.Append("-");
 
                 var word = _words[_random.Next(_words.Length)];
-                if (password.Length + word.Length <= targetLength - 2)
+                if (password.Length + word.Length <= length - 2)
                 {
                     password.Append(word);
                 }
                 else
                 {
+                    if (password.Length > 0 && password[password.Length - 1] == '-')
+                        password.Length--;
                     break;
                 }
             }
 
-            password.Append(_random.Next(10, 99));
+            int remainingLength = length - password.Length;
+
+            int digitsToAdd = Math.Max(2, remainingLength);
+
+            if (password.Length + digitsToAdd > length)
+            {
+                digitsToAdd = length - password.Length;
+            }
+
+            for (int i = 0; i < digitsToAdd; i++)
+            {
+                password.Append(_random.Next(0, 10));
+            }
+
+            while (password.Length < length)
+            {
+                password.Append(_random.Next(0, 10));
+            }
+
+            if (password.Length > length)
+            {
+                password.Length = length;
+            }
 
             return password.ToString();
         }
 
         public string GetPolicyDescription()
         {
-            return "Слова + дефисы + две цифры в конце";
+            return "Слова + дефисы + цифры в конце";
         }
 
         public int GetMinLength()
         {
             return 6;
-        }
-
-        public string GetName()
-        {
-            return "Запоминаемый пароль";
         }
     }
 }
