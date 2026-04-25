@@ -48,6 +48,11 @@ namespace ArmyBattle.Game
         private IUnit? _lastDisplayedFighter1;
         private IUnit? _lastDisplayedFighter2;
         private bool _needDisplayPair = true;
+        // Сохранённое состояние колонн для переключения обратно
+        private IUnit?[] _savedColumnsArmy1 = new IUnit?[3];
+        private IUnit?[] _savedColumnsArmy2 = new IUnit?[3];
+        private List<IUnit> _savedBackupArmy1 = new();
+        private List<IUnit> _savedBackupArmy2 = new();
 
         public BattleEngine(IArmy army1, IArmy army2, int speed = 400)
         {
@@ -201,8 +206,8 @@ namespace ArmyBattle.Game
                         Console.Write(f2 != null ? $"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})" : "Пусто");
                         Console.WriteLine();
                     }
-                    Console.WriteLine($"Резерв {army1.Name}: {string.Join("→", army1BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
-                    Console.WriteLine($"Резерв {army2.Name}: {string.Join("←", army2BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
+                    Console.WriteLine($"Резерв {army1.Name}: {string.Join("->", army1BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
+                    Console.WriteLine($"Резерв {army2.Name}: {string.Join("<-", army2BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
                     Console.WriteLine();
                 }
             }
@@ -1052,82 +1057,71 @@ namespace ArmyBattle.Game
         /// <summary>
         /// Пересоздаёт боевой порядок при смене построения во время боя.
         /// </summary>
+        /// <summary>
+        /// Пересоздаёт боевой порядок при смене построения во время боя.
+        /// </summary>
         public void ReinitializeFormation(FormationType newFormation)
         {
             if (currentFormation == newFormation) return;
 
+            // === СОХРАНЯЕМ ТЕКУЩЕЕ СОСТОЯНИЕ ===
+            if (currentFormation == FormationType.ThreeColumns)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    _savedColumnsArmy1[i] = currentFightersArmy1[i];
+                    _savedColumnsArmy2[i] = currentFightersArmy2[i];
+                }
+                _savedBackupArmy1 = new List<IUnit>(army1BackupQueue);
+                _savedBackupArmy2 = new List<IUnit>(army2BackupQueue);
+            }
+            else if (currentFormation == FormationType.OneColumn)
+            {
+                _savedColumnsArmy1[0] = currentFighter1;
+                _savedColumnsArmy2[0] = currentFighter2;
+            }
+
             currentFormation = newFormation;
             SetFormationStrategy(newFormation);
 
-            if (_currentStrategy != null)
+            // === ВОССТАНАВЛИВАЕМ СОХРАНЁННОЕ СОСТОЯНИЕ ===
+            if (newFormation == FormationType.ThreeColumns)
             {
-                _currentStrategy.Reinitialize(this);
+                // Если есть сохранённые колонны - восстанавливаем
+                if (_savedColumnsArmy1[0] != null || _savedColumnsArmy2[0] != null)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        currentFightersArmy1[i] = _savedColumnsArmy1[i];
+                        currentFightersArmy2[i] = _savedColumnsArmy2[i];
+                    }
+                    army1BackupQueue = new List<IUnit>(_savedBackupArmy1);
+                    army2BackupQueue = new List<IUnit>(_savedBackupArmy2);
+                }
+                else
+                {
+                    InitializeThreeColumnBattle();
+                }
+                _currentStrategy?.Initialize(this);
+            }
+            else if (newFormation == FormationType.OneColumn &&
+                     (_savedColumnsArmy1[0] != null || _savedColumnsArmy2[0] != null))
+            {
+                currentFighter1 = _savedColumnsArmy1[0];
+                currentFighter2 = _savedColumnsArmy2[0];
+
+                if (currentFighter1?.IsAlive != true)
+                    currentFighter1 = army1.GetNextFighterInBattleOrder();
+                if (currentFighter2?.IsAlive != true)
+                    currentFighter2 = army2.GetNextFighterInBattleOrder();
             }
             else
             {
-                // Fallback для обратной совместимости
-                var activeFighters1 = new List<IUnit>();
-                var activeFighters2 = new List<IUnit>();
-
-                if (currentFormation == FormationType.OneColumn)
-                {
-                    if (currentFighter1?.IsAlive == true) activeFighters1.Add(currentFighter1);
-                    if (currentFighter2?.IsAlive == true) activeFighters2.Add(currentFighter2);
-                }
-                else
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        if (currentFightersArmy1[i]?.IsAlive == true) activeFighters1.Add(currentFightersArmy1[i]);
-                        if (currentFightersArmy2[i]?.IsAlive == true) activeFighters2.Add(currentFightersArmy2[i]);
-                    }
-                }
-
-                if (newFormation == FormationType.ThreeColumns || newFormation == FormationType.Wall)
-                {
-                    army1BackupQueue.Clear();
-                    army2BackupQueue.Clear();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        currentFightersArmy1[i] = null;
-                        currentFightersArmy2[i] = null;
-                    }
-
-                    var allAlive1 = army1.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
-                    var allAlive2 = army2.AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
-
-                    for (int i = 0; i < Math.Min(3, allAlive1.Count); i++)
-                        currentFightersArmy1[i] = allAlive1[i];
-                    for (int i = 0; i < Math.Min(3, allAlive2.Count); i++)
-                        currentFightersArmy2[i] = allAlive2[i];
-
-                    army1BackupQueue.AddRange(allAlive1.Skip(3));
-                    army2BackupQueue.AddRange(allAlive2.Skip(3));
-                }
-                else
-                {
-                    army1.RefreshAliveFighters();
-                    army2.RefreshAliveFighters();
-
-                    currentFighter1 = army1.AliveFightersInBattleOrder.FirstOrDefault();
-                    currentFighter2 = army2.AliveFightersInBattleOrder.FirstOrDefault();
-
-                    army1.CurrentFighterIndex = 0;
-                    army2.CurrentFighterIndex = 0;
-
-                    army1BackupQueue.Clear();
-                    army2BackupQueue.Clear();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        currentFightersArmy1[i] = null;
-                        currentFightersArmy2[i] = null;
-                    }
-                }
+                _currentStrategy?.Initialize(this);
             }
 
             needNewRoundHeader = true;
         }
-
         // === НОВЫЕ ПУБЛИЧНЫЕ МЕТОДЫ ДЛЯ СТРАТЕГИЙ ===
 
         public IArmy GetArmy1() => army1;
@@ -1530,6 +1524,20 @@ namespace ArmyBattle.Game
 
             Console.WriteLine($"{buffedUnit.GetDisplayName(buffedUnit.Army?.Name ?? "")} надевает бафф!");
             Console.WriteLine($"Атака {buffedUnit.EffectiveAttack}, Защита {buffedUnit.EffectiveDefence}");
+        }
+
+        /// <summary>
+        /// Очищает сохранённое состояние колонн
+        /// </summary>
+        public void ClearSavedColumns()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                _savedColumnsArmy1[i] = null;
+                _savedColumnsArmy2[i] = null;
+            }
+            _savedBackupArmy1.Clear();
+            _savedBackupArmy2.Clear();
         }
 
     }

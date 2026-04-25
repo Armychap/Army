@@ -167,12 +167,13 @@ namespace ArmyBattle
                 // Выводим варианты действий
                 Console.WriteLine("\nВыберите действие:");
                 Console.WriteLine("1 - Добавить слабого бойца (ATK 10, DEF 8, HP 25) - 15");
-                Console.WriteLine("2 - Добавить лучника (ATK 5, DEF 3, HP 18) - 25");
-                Console.WriteLine("3 - Добавить мага (клонирует союзников) - 30");
+                Console.WriteLine("2 - Добавить лучника (ATK 5, DEF 13, HP 18) - 25");
+                Console.WriteLine("3 - Добавить мага (ATK 7, DEF 4, HP 22) - 30");
                 Console.WriteLine("4 - Добавить сильного бойца (ATK 20, DEF 15, HP 60) - 40");
                 Console.WriteLine("5 - Добавить Гуляй город (ATK 0, DEF 50, HP 70) - 55");
-                Console.WriteLine("6 - Удалить последнего бойца");
-                Console.WriteLine("7 - Завершить настройку");
+                Console.WriteLine("6 - Добавить лекаря (ATK 3, DEF 2, HP 15) - 20");
+                Console.WriteLine("7 - Удалить последнего бойца");
+                Console.WriteLine("8 - Завершить настройку");
                 Console.Write("Выбор: ");
 
                 // Читаем выбор пользователя
@@ -239,7 +240,7 @@ namespace ArmyBattle
                             Console.WriteLine("Недостаточно бюджета!");
                         break;
 
-                    case "4":
+                    case "4": // Добавить сильного бойца
                         if (totalCost + 40 <= maxBudget)
                         {
                             IUnit fighter = new StrongFighter(fighterNumber++);
@@ -264,7 +265,19 @@ namespace ArmyBattle
                             Console.WriteLine("Недостаточно бюджета!");
                         break;
 
-                    case "6":
+                    case "6": // или другой номер
+                        if (totalCost + 20 <= maxBudget)
+                        {
+                            IUnit fighter = new Healer(fighterNumber++);
+                            army.AddUnit(fighter);
+                            totalCost += 20;
+                            Console.WriteLine("Лекарь добавлен!");
+                        }
+                        else
+                            Console.WriteLine("Недостаточно бюджета!");
+                        break;
+
+                    case "7": // Удалить последнего бойца
                         if (army.Units.Count > 0)
                         {
                             var removed = army.Units[army.Units.Count - 1];
@@ -277,7 +290,7 @@ namespace ArmyBattle
                             Console.WriteLine("Нет бойцов для удаления!");
                         break;
 
-                    case "7":
+                    case "8":
                         Console.WriteLine("Настройка завершена!");
                         Console.WriteLine("Нажмите любую клавишу, чтобы продолжить...");
                         Console.ReadKey(true);

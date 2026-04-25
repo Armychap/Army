@@ -39,6 +39,10 @@ namespace ArmyBattle.Models
             Units.Add(unit);
             unit.Army = this;
             TotalCost += unit.Cost;
+            if (unit.IsAlive)
+            {
+                AliveFightersInBattleOrder.Add(unit);
+            }
         }
 
         //Перемешивает список живых бойцов в случайном порядке
