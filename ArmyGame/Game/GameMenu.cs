@@ -78,6 +78,7 @@ namespace ArmyBattle
                 // Ручное создание первой армии
                 ConsoleMenu.PrintHeader("НАСТРОЙКА ПЕРВОЙ АРМИИ");
                 ArmyCreation.SetupArmyManually(_lastArmy1, budget);
+                _lastArmy1.RefreshAliveFighters();
             }
 
             // Спрашиваем способ создания второй армии
@@ -103,6 +104,7 @@ namespace ArmyBattle
                 // Ручное создание второй армии
                 ConsoleMenu.PrintHeader("НАСТРОЙКА ВТОРОЙ АРМИИ");
                 ArmyCreation.SetupArmyManually(_lastArmy2, budget);
+                _lastArmy2.RefreshAliveFighters();
             }
 
             // Очищаем экран перед окончательным отображением

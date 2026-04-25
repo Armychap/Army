@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\bin\\Debug",
+    "\\bin\\Debug\\net9.0"
   ],
+  "SelectedNode": "\\ArmyGame.sln",
   "PreviewInSolutionExplorer": false
 }
