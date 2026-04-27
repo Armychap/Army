@@ -54,20 +54,6 @@ namespace ArmyBattle.Game.Formations
             Console.WriteLine($"{battle.GetArmy1().Name}: {order1}");
             Console.WriteLine($"{battle.GetArmy2().Name}: {order2}");
             Console.WriteLine();
-
-            // Показываем текущую пару
-            if (battle.GetCurrentFighter1()?.IsAlive == true && battle.GetCurrentFighter2()?.IsAlive == true)
-            {
-                Console.WriteLine("Текущая пара:");
-                Console.ForegroundColor = battle.GetArmy1().Color;
-                Console.Write($"{battle.GetCurrentFighter1()?.GetDisplayName(battle.GetArmy1().Name)} ({battle.GetCurrentFighter1()?.PowerLevel})");
-                Console.ResetColor();
-                Console.Write(" vs ");
-                Console.ForegroundColor = battle.GetArmy2().Color;
-                Console.Write($"{battle.GetCurrentFighter2()?.GetDisplayName(battle.GetArmy2().Name)} ({battle.GetCurrentFighter2()?.PowerLevel})");
-                Console.ResetColor();
-                Console.WriteLine();
-            }
         }
 
         public bool ProcessMove(BattleEngine battle)

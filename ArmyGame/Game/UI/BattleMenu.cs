@@ -69,6 +69,9 @@ namespace ArmyBattle
 
                 if (battleFinished)
                 {
+                    DisplayEndGameStats(army1, army2, battle);
+
+                    fullLog = logCapture.ToString();
                     battleManager?.SaveBattleLog(fullLog, logName, army1, army2, useTimestamp: true);
 
                     // Удаляем файл продолжения
@@ -78,13 +81,7 @@ namespace ArmyBattle
                         try { File.Delete(savePath); } catch { }
                     }
 
-                    // ✅ Восстанавливаем консоль ПЕРЕД выводом статистики
                     Console.SetOut(originalOutput);
-
-                    // ✅ Выводим статистику из BattleEngine (она уже есть в логе, но не в консоли)
-                    //    Поэтому выводим её заново:
-                    DisplayEndGameStats(army1, army2, battle);
-
                     Console.WriteLine("\nНажмите любую клавишу для возврата в главное меню...");
                     Console.ReadKey();
                     return true;
@@ -160,6 +157,8 @@ namespace ArmyBattle
             {
                 Console.WriteLine("  Все бойцы погибли");
             }
+            Console.WriteLine($"Добавлено бойцов: {battle.Army1AddedFightersCount}");
+            Console.WriteLine($"Надето баффов: {battle.Army1BuffsAppliedCount}");
 
             // Армия 2
             Console.WriteLine($"\n{army2.Name}:");
@@ -180,6 +179,8 @@ namespace ArmyBattle
             {
                 Console.WriteLine("  Все бойцы погибли");
             }
+            Console.WriteLine($"Добавлено бойцов: {battle.Army2AddedFightersCount}");
+            Console.WriteLine($"Надето баффов: {battle.Army2BuffsAppliedCount}");
         }
 
 
