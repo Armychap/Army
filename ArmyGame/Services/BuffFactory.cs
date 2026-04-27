@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using ArmyBattle.Models;
 using ArmyBattle.Models.Interfaces;
 using ArmyBattle.Models.Decorators;
+using ArmyBattle.Services;
+
 
 namespace ArmyBattle.Services
 {
