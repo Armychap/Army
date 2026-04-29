@@ -120,6 +120,15 @@ namespace ArmyBattle.Game
 
         public void ReinitializeThreeColumns()
         {
+            // Сохраняем текущий порядок колонн и резерва перед перестроением
+            for (int i = 0; i < 3; i++)
+            {
+                _savedColumnsArmy1[i] = currentFightersArmy1[i];
+                _savedColumnsArmy2[i] = currentFightersArmy2[i];
+            }
+            _savedBackupArmy1 = new List<IUnit>(army1BackupQueue);
+            _savedBackupArmy2 = new List<IUnit>(army2BackupQueue);
+
             army1BackupQueue.Clear();
             army2BackupQueue.Clear();
 
