@@ -52,6 +52,14 @@ namespace ArmyBattle.Game
         public List<IUnit> GetArmy1BackupQueue() => army1BackupQueue;
         public List<IUnit> GetArmy2BackupQueue() => army2BackupQueue;
 
+        public List<IUnit> GetSavedFightersForArmy(bool isArmy1)
+        {
+            var savedColumns = isArmy1 ? _savedColumnsArmy1 : _savedColumnsArmy2;
+            var savedBackup = isArmy1 ? _savedBackupArmy1 : _savedBackupArmy2;
+            var fighters = savedColumns.Where(u => u?.IsAlive == true).Concat(savedBackup.Where(u => u.IsAlive)).ToList();
+            return fighters;
+        }
+
         public void SetNeedRebuildPairs(bool value)
         {
             // Для WallStrategy - будет использоваться через стратегию

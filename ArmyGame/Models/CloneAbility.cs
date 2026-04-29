@@ -52,7 +52,7 @@ namespace ArmyBattle.Models
 
             // Создаем клон
             IUnit clone;
-            int newFighterNumber = army.Units.Count + 1;
+            int newFighterNumber = army.Units.Max(u => u.FighterNumber) + 1;
 
             if (chosen is Archer)
             {

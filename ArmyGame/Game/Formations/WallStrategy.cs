@@ -17,6 +17,8 @@ namespace ArmyBattle.Game.Formations
         private bool _needRebuildPairs = true;
         private bool[] _pairDisplayed;  // Флаги отображения для каждой пары
         private List<IUnit> _fightersWhoAttacked = new List<IUnit>();
+        private List<IUnit> _savedArmy1 = new();
+        private List<IUnit> _savedArmy2 = new();
 
         public void Initialize(BattleEngine battle)
         {
@@ -63,11 +65,8 @@ namespace ArmyBattle.Game.Formations
             }
 
             //  Показываем бойцов без пары (только если они есть)
-            var allAlive1 = battle.GetArmy1().AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
-            var allAlive2 = battle.GetArmy2().AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
-
-            var solo1 = allAlive1.Skip(_pairs.Count).ToList();  // бойцы, которые не попали в пары (сверх minCount)
-            var solo2 = allAlive2.Skip(_pairs.Count).ToList();
+            var solo1 = _savedArmy1.Skip(_pairs.Count).ToList();  // бойцы, которые не попали в пары (сверх minCount)
+            var solo2 = _savedArmy2.Skip(_pairs.Count).ToList();
 
             if (solo1.Any() || solo2.Any())
             {
@@ -226,10 +225,11 @@ namespace ArmyBattle.Game.Formations
         {
             _pairs.Clear();
 
-            var alive1 = battle.GetArmy1().AliveFightersInBattleOrder
-                .Where(u => u.IsAlive).ToList();
-            var alive2 = battle.GetArmy2().AliveFightersInBattleOrder
-                .Where(u => u.IsAlive).ToList();
+            var alive1 = battle.GetArmy1().AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
+            var alive2 = battle.GetArmy2().AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
+
+            _savedArmy1 = alive1;
+            _savedArmy2 = alive2;
 
             int minCount = Math.Min(alive1.Count, alive2.Count);
 
