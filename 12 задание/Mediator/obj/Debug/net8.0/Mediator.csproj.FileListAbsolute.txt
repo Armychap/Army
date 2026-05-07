@@ -1,0 +1,15 @@
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\bin\Debug\net8.0\Mediator.exe
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\bin\Debug\net8.0\Mediator.deps.json
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\bin\Debug\net8.0\Mediator.runtimeconfig.json
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\bin\Debug\net8.0\Mediator.dll
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\bin\Debug\net8.0\Mediator.pdb
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\Mediator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\Mediator.AssemblyInfoInputs.cache
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\Mediator.AssemblyInfo.cs
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\Mediator.csproj.CoreCompileInputs.cache
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\Mediator.sourcelink.json
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\Mediator.dll
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\refint\Mediator.dll
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\Mediator.pdb
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\Mediator.genruntimeconfig.cache
+C:\Users\Alex\.vscode\Army\12 задание\Mediator\obj\Debug\net8.0\ref\Mediator.dll
