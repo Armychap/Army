@@ -6,6 +6,7 @@ using ArmyBattle.Game;
 using ArmyBattle.Services;
 using ArmyBattle.Models.Decorators;
 using ArmyBattle.UI;
+using ArmyBattle.Game.Commands;
 
 namespace ArmyBattle
 {
@@ -17,6 +18,7 @@ namespace ArmyBattle
         // Ссылки на сервисы
         private static ArmyManager? armyManager;
         private static BattleManager? battleManager;
+        private static CommandManager _commandManager = new CommandManager();
 
         /// <summary>
         /// Инициализация ссылок на сервисы
@@ -271,6 +273,7 @@ namespace ArmyBattle
         /// </summary>
         private static bool RunBattleMenu(BattleEngine battle, IArmy army1, IArmy army2, string saveName, string battleLogName = "")
         {
+            _commandManager.Clear(); // Очищаем историю команд при старте битвы
             // Меню управления боем
             bool battleActive = true;
             while (battleActive && (army1.HasAliveUnits() && army2.HasAliveUnits()))
@@ -279,56 +282,70 @@ namespace ArmyBattle
                 Console.WriteLine("\nМеню действий");
                 Console.WriteLine("1. Сделать ход");
                 Console.WriteLine("2. Автоматически пройти до конца");
-                Console.WriteLine("3. Посмотреть состояние");
-                Console.WriteLine("4. Посмотреть баффы");
-                Console.WriteLine("5. Изменить боевое построение");
-                Console.WriteLine("6. Сохранить игру");
-                Console.WriteLine("7. Выйти (назад в меню)");
-                Console.Write("Выбор: ");
+                Console.WriteLine("3. Посмотреть состояние и баффы");
+                Console.WriteLine("4. Изменить боевое построение");
+                Console.WriteLine("5. Сохранить игру");
+                Console.WriteLine("6. Отменить (Undo)");
+                Console.WriteLine("7. Повторить (Redo)");
+                Console.WriteLine("8. Выйти (назад в меню)");
 
+                Console.Write("Выбор: ");
                 string? choice = Console.ReadLine();
 
                 switch (choice)
                 {
                     case "1":
                         // Выполняем один ход
-                        if (!battle.DoSingleMove())
-                        {
-                            // Битва закончилась
-                            battleActive = false;
-                        }
+                        var moveCmd = new MakeMoveCommand(battle);
+                        _commandManager.ExecuteCommand(moveCmd);
                         break;
 
                     case "2":
                         // Выполняем все ходы до конца без меню
-                        Console.WriteLine("\nАвтоматическое проведение боя...\n");
-                        while (battle.DoSingleMove())
-                        {
-                            System.Threading.Thread.Sleep(400);
-                        }
+                        var autoCmd = new AutoBattleCommand(battle);
+                        _commandManager.ExecuteCommand(autoCmd);
                         battleActive = false;
                         break;
 
                     case "3":
-                        // Посмотреть состояние (порядок боя)
-                        Console.WriteLine();
-                        battle.DisplayBattleOrder();
+                        // Посмотреть состояние и баффы
+                        var stateAndBuffsCmd = new DisplayBattleStateAndBuffsCommand(battle, army1, army2);
+                        _commandManager.ExecuteCommand(stateAndBuffsCmd);
                         break;
 
                     case "4":
-                        // Посмотреть баффы бойцов
-                        DisplayBuffs(army1, army2);
+                        var formationCmd = new ChangeFormationCommand(battle);
+                        _commandManager.ExecuteCommand(formationCmd);
                         break;
 
                     case "5":
-                        ChangeFormationDuringBattle(battle);
-                        break;
-
-                    case "6":
                         // Сохраняем текущее состояние игры и выходим в главное меню
                         SaveGameDuringBattle(army1, army2, battle, saveName, battleLogName);
                         return true;  //  Указываем что пользователь вышел
-                    case "7":
+
+                    case "6": // Undo
+                        if (!_commandManager.Undo())
+                        {
+                            ConsoleMenu.ShowMessage("Нечего отменять!");
+                        }
+                        else
+                        {
+                            ConsoleMenu.ShowMessage($"Отмена: {_commandManager.GetRedoName()}");
+                        }
+                        break;
+
+                    case "7": // Redo
+                        if (!_commandManager.Redo())
+                        {
+                            ConsoleMenu.ShowMessage("Нечего повторять!");
+                        }
+                        else
+                        {
+                            ConsoleMenu.ShowMessage($"Повтор: {_commandManager.GetUndoName()}");
+                        }
+                        break;
+
+                    case "8":
                         Console.WriteLine("\nВы уверены? Битва будет потеряна (д/н): ");
                         if (Console.ReadLine()?.ToLower() == "д")
                         {
@@ -414,57 +431,6 @@ namespace ArmyBattle
         }
 
 
-        private static void DisplayBuffs(IArmy army1, IArmy army2)
-        {
-            Console.Clear();
-            Console.WriteLine("Бафы бойцов");
-            Console.WriteLine(new string('=', 40));
-
-            void PrintArmyBuffs(IArmy army)
-            {
-                Console.ForegroundColor = army.Color;
-                Console.WriteLine($"{army.Name}:");
-                Console.ResetColor();
-
-                var buffedUnits = army.Units
-                    .Where(u => u is BuffDecorator)
-                    .ToList();
-
-                if (!buffedUnits.Any())
-                {
-                    Console.WriteLine("  Нет бойцов с баффами.");
-                    return;
-                }
-
-                foreach (var unit in buffedUnits)
-                {
-                    // Собираем названия всех баффов на этом юните
-                    var buffNames = new List<string>();
-                    var current = unit;
-                    while (current is BuffDecorator decorator)
-                    {
-                        string buffName = decorator switch
-                        {
-                            HorseBuffDecorator => "Конь",
-                            ShieldBuffDecorator => "Щит",
-                            HelmetBuffDecorator => "Шлем",
-                            SpearBuffDecorator => "Копье",
-                            _ => "?"
-                        };
-                        buffNames.Add(buffName);
-                        current = decorator.GetInnerUnit();
-                    }
-
-                    Console.WriteLine($"  {unit.GetDisplayName(army.Name)}: {string.Join(", ", buffNames)}");
-                }
-            }
-
-            PrintArmyBuffs(army1);
-            Console.WriteLine();
-            PrintArmyBuffs(army2);
-
-            Console.WriteLine();
-        }
 
         private static void ChangeFormationDuringBattle(BattleEngine battle)
         {
