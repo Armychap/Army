@@ -51,8 +51,18 @@ namespace ArmyBattle.Game.Formations
             var order1 = string.Join(" -> ", battle.GetArmy1().AliveFightersInBattleOrder.Select(FormatUnit));
             var order2 = string.Join(" -> ", battle.GetArmy2().AliveFightersInBattleOrder.Select(FormatUnit));
 
-            Console.WriteLine($"{battle.GetArmy1().Name}: {order1}");
-            Console.WriteLine($"{battle.GetArmy2().Name}: {order2}");
+            // Армия 1 с её цветом
+            Console.ForegroundColor = battle.GetArmy1().Color;
+            Console.Write($"{battle.GetArmy1().Name}: ");
+            Console.ResetColor();
+            Console.WriteLine(order1);
+
+            // Армия 2 с её цветом
+            Console.ForegroundColor = battle.GetArmy2().Color;
+            Console.Write($"{battle.GetArmy2().Name}: ");
+            Console.ResetColor();
+            Console.WriteLine(order2);
+
             Console.WriteLine();
         }
 

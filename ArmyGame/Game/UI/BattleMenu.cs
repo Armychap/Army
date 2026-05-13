@@ -285,8 +285,8 @@ namespace ArmyBattle
                 Console.WriteLine("3. Посмотреть состояние и баффы");
                 Console.WriteLine("4. Изменить боевое построение");
                 Console.WriteLine("5. Сохранить игру");
-                Console.WriteLine("6. Отменить (Undo)");
-                Console.WriteLine("7. Повторить (Redo)");
+                Console.WriteLine("6. Отменить последнее действие (Undo)");
+                Console.WriteLine("7. Вернуть отменённое действие (Redo)");
                 Console.WriteLine("8. Выйти (назад в меню)");
 
                 Console.Write("Выбор: ");

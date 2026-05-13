@@ -32,7 +32,6 @@ namespace ArmyBattle.Game.Commands
             _battle.DisplayBattleOrder();
             Console.WriteLine();
             DisplayBuffs(_army1, _army2);
-            ConsoleMenu.WaitForKey("\nНажмите любую клавишу для продолжения...");
         }
 
         public void Undo()
@@ -80,7 +79,7 @@ namespace ArmyBattle.Game.Commands
                 }
             }
 
-            Console.WriteLine("=== БАФФЫ ===");
+            Console.WriteLine("Баффы");
             PrintArmyBuffs(army1);
             Console.WriteLine();
             PrintArmyBuffs(army2);

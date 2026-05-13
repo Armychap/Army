@@ -11,10 +11,10 @@ namespace ArmyBattle.Game.Formations
     public class ThreeColumnsStrategy : IFormationStrategy
     {
         public string Name => "Три колонны";
-        
+
         // Флаги для отслеживания, какие пары уже показаны
         private bool[] _pairDisplayed = new bool[3];
-        private List<IUnit> _fightersWhoAttacked = new List<IUnit>(); 
+        private List<IUnit> _fightersWhoAttacked = new List<IUnit>();
 
         public void Initialize(BattleEngine battle)
         {
@@ -42,13 +42,29 @@ namespace ArmyBattle.Game.Formations
                 var f1 = battle.GetCurrentFighterInColumn(col, true);
                 var f2 = battle.GetCurrentFighterInColumn(col, false);
                 Console.Write($"Колонна {col + 1}: ");
+
+                Console.ForegroundColor = battle.GetArmy1().Color;
                 Console.Write(f1 != null ? $"{f1.FighterNumber}({f1.PowerLevel.Substring(0, 3)})" : "Пусто");
+                Console.ResetColor();
+
                 Console.Write("  vs  ");
+                Console.ForegroundColor = battle.GetArmy2().Color;
                 Console.Write(f2 != null ? $"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})" : "Пусто");
+                Console.ResetColor();
                 Console.WriteLine();
             }
-            Console.WriteLine($"Резерв {battle.GetArmy1().Name}: {string.Join("→", battle.GetArmy1BackupQueue().Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
-            Console.WriteLine($"Резерв {battle.GetArmy2().Name}: {string.Join("←", battle.GetArmy2BackupQueue().Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
+            // Резерв армии 1
+            Console.ForegroundColor = battle.GetArmy1().Color;
+            Console.Write($"Резерв {battle.GetArmy1().Name}: ");
+            Console.ResetColor();
+            Console.WriteLine(string.Join("→", battle.GetArmy1BackupQueue().Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})")));
+
+            // Резерв армии 2
+            Console.ForegroundColor = battle.GetArmy2().Color;
+            Console.Write($"Резерв {battle.GetArmy2().Name}: ");
+            Console.ResetColor();
+            Console.WriteLine(string.Join("←", battle.GetArmy2BackupQueue().Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})")));
+
             Console.WriteLine();
         }
 
@@ -90,24 +106,24 @@ namespace ArmyBattle.Game.Formations
                 if (army1AttacksFirst)
                 {
                     _fightersWhoAttacked.Add(fighter1);
-                    battle.PerformAttackInColumnPublic(battle.GetArmy1(), battle.GetArmy2(), 
+                    battle.PerformAttackInColumnPublic(battle.GetArmy1(), battle.GetArmy2(),
                         ref fighter1, ref fighter2, col);
                     if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
                     {
                         _fightersWhoAttacked.Add(fighter2);
-                        battle.PerformAttackInColumnPublic(battle.GetArmy2(), battle.GetArmy1(), 
+                        battle.PerformAttackInColumnPublic(battle.GetArmy2(), battle.GetArmy1(),
                             ref fighter2, ref fighter1, col);
                     }
                 }
                 else
                 {
                     _fightersWhoAttacked.Add(fighter2);
-                    battle.PerformAttackInColumnPublic(battle.GetArmy2(), battle.GetArmy1(), 
+                    battle.PerformAttackInColumnPublic(battle.GetArmy2(), battle.GetArmy1(),
                         ref fighter2, ref fighter1, col);
                     if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
                     {
                         _fightersWhoAttacked.Add(fighter1);
-                        battle.PerformAttackInColumnPublic(battle.GetArmy1(), battle.GetArmy2(), 
+                        battle.PerformAttackInColumnPublic(battle.GetArmy1(), battle.GetArmy2(),
                             ref fighter1, ref fighter2, col);
                     }
                 }

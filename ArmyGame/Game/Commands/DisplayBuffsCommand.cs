@@ -31,7 +31,7 @@ namespace ArmyBattle.Game.Commands
         
         private static void DisplayBuffs(IArmy army1, IArmy army2)
         {
-            Console.WriteLine("\n=== БАФФЫ ===");
+            Console.WriteLine("\nБафы");
             
             // Армия 1
             Console.WriteLine($"\n{army1.Name}:");

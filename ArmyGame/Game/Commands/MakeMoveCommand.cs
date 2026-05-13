@@ -15,7 +15,6 @@ namespace ArmyBattle.Game.Commands
         private BattleMemento? _beforeState;
         private BattleMemento? _afterState;
         private bool _moveExecuted;
-        private bool _moveResult;
         
         public MakeMoveCommand(BattleEngine battle)
         {
@@ -26,20 +25,23 @@ namespace ArmyBattle.Game.Commands
         {
             if (!_moveExecuted)
             {
-                // Сохраняем состояние ДО выполнения
+                // ПЕРВЫЙ РАЗ: сохраняем состояние ДО, выполняем ход, сохраняем ПОСЛЕ
+                Console.WriteLine(); // Отступ перед выводом хода
                 _beforeState = _battle.CreateMemento();
-                _moveResult = _battle.DoSingleMove();
+                _battle.DoSingleMove();
                 _afterState = _battle.CreateMemento();
                 _moveExecuted = true;
             }
             else
             {
-                // При Redo восстанавливаем состояние ПОСЛЕ
-                if (_afterState != null)
-                {
-                    _battle.RestoreMemento(_afterState);
-                    ConsoleMenu.ShowMessage("Ход повторен");
-                }
+                // REDO: заново выполняем ход (чтобы показать его в консоли)
+                Console.WriteLine(); // Отступ перед выводом хода
+                _battle.RestoreMemento(_beforeState);      // Возвращаемся к состоянию ДО
+                _battle.DoSingleMove();                    // Заново выполняем ход (с выводом)
+                // _afterState уже есть, не перезаписываем
+                
+                // Можно также обновить _afterState новым состоянием
+                // _afterState = _battle.CreateMemento();
             }
         }
         
@@ -48,6 +50,7 @@ namespace ArmyBattle.Game.Commands
             if (_beforeState != null && CanUndo)
             {
                 _battle.RestoreMemento(_beforeState);
+                ConsoleMenu.ShowMessage("Ход отменён");
             }
         }
     }
