@@ -84,25 +84,49 @@ namespace ArmyBattle.Game
                     var order1 = string.Join(" -> ", army1.AliveFightersInBattleOrder.Select(FormatUnit));
                     var order2 = string.Join(" -> ", army2.AliveFightersInBattleOrder.Select(FormatUnit));
 
+                    Console.ForegroundColor = army1.Color;
                     Console.WriteLine($"{army1.Name}: {order1}");
+                    Console.ResetColor();
+                    Console.ForegroundColor = army2.Color;
                     Console.WriteLine($"{army2.Name}: {order2}");
+                    Console.ResetColor();
                     Console.WriteLine();
                 }
                 else
                 {
-                    Console.WriteLine($"Порядок боя {army1.Name} vs {army2.Name}");
+                    Console.Write("Порядок боя ");
+                    Console.ForegroundColor = army1.Color;
+                    Console.Write($"{army1.Name}");
+                    Console.ResetColor();
+                    Console.Write(" vs ");
+                    Console.ForegroundColor = army2.Color;
+                    Console.Write($"{army2.Name}");
+                    Console.ResetColor();
+                    Console.WriteLine();
                     for (int col = 0; col < 3; col++)
                     {
                         var f1 = currentFightersArmy1[col];
                         var f2 = currentFightersArmy2[col];
                         Console.Write($"Колонна {col + 1}: ");
+                        Console.ForegroundColor = army1.Color;
                         Console.Write(f1 != null ? $"{f1.FighterNumber}({f1.PowerLevel.Substring(0, 3)})" : "Пусто");
+                        Console.ResetColor();
                         Console.Write("  vs  ");
+                        Console.ForegroundColor = army2.Color;
                         Console.Write(f2 != null ? $"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})" : "Пусто");
+                        Console.ResetColor();
                         Console.WriteLine();
                     }
-                    Console.WriteLine($"Резерв {army1.Name}: {string.Join("->", army1BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
-                    Console.WriteLine($"Резерв {army2.Name}: {string.Join("<-", army2BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
+                    Console.Write("Резерв ");
+                    Console.ForegroundColor = army1.Color;
+                    Console.Write($"{army1.Name}");
+                    Console.ResetColor();
+                    Console.WriteLine($": {string.Join("->", army1BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
+                    Console.Write("Резерв ");
+                    Console.ForegroundColor = army2.Color;
+                    Console.Write($"{army2.Name}");
+                    Console.ResetColor();
+                    Console.WriteLine($": {string.Join("<-", army2BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
                     Console.WriteLine();
                 }
             }
