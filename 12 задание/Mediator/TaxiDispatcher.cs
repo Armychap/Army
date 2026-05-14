@@ -4,28 +4,29 @@ using System.Linq;
 
 namespace TaxiMediator
 {
-    /// <summary>
-    /// Диспетчерская служба такси (конкретный Mediator)
-    /// </summary>
+    // Диспетчерская служба такси (конкретный Mediator)
     public class TaxiDispatcher : ITaxiMediator
     {
-        private List<Driver> _drivers = new List<Driver>();
-        private List<Passenger> _passengers = new List<Passenger>();
-        private Queue<Order> _pendingOrders = new Queue<Order>();
-        private List<Order> _completedOrders = new List<Order>();
+        private List<Driver> _drivers = new List<Driver>(); // БД водителей
+        private List<Passenger> _passengers = new List<Passenger>(); // БД пассажиров
+        private Queue<Order> _pendingOrders = new Queue<Order>(); // Очередь заказов
+        private List<Order> _completedOrders = new List<Order>(); // История
 
+        // Регистрация водителя
         public void RegisterDriver(Driver driver)
         {
             _drivers.Add(driver);
             Console.WriteLine($"[Диспетчер] Водитель {driver.Name} ({driver.CarModel}) зарегистрирован");
         }
 
+        // Регистрация пассажира
         public void RegisterPassenger(Passenger passenger)
         {
             _passengers.Add(passenger);
             Console.WriteLine($"[Диспетчер] Пассажир {passenger.Name} зарегистрирован");
         }
 
+        // Запрос такси от пассажира
         public void RequestTaxi(Passenger passenger, string pickupLocation, string destination)
         {
             // Создаем новую заявку
@@ -48,6 +49,8 @@ namespace TaxiMediator
             }
         }
 
+        
+        // Принятие заказа водителем
         public void AcceptOrder(Driver driver, Guid orderId)
         {
             var pendingOrder = _pendingOrders.FirstOrDefault(o => o.Id == orderId);
@@ -62,12 +65,14 @@ namespace TaxiMediator
             }
         }
 
+        // Уведомление о доступности водителя
         public void NotifyDriverAvailable(Driver driver)
         {
             Console.WriteLine($"[Диспетчер] Водитель {driver.Name} освободился");
             TryProcessNextOrder();
         }
 
+        // Назначение заказа водителю
         private void AssignOrderToDriver(Driver driver, Order order)
         {
             if (!driver.IsAvailable)
@@ -87,6 +92,7 @@ namespace TaxiMediator
             Console.WriteLine($"[Диспетчер] Выполнено заказов: {_completedOrders.Count}, в очереди: {_pendingOrders.Count}");
         }
 
+        // обработка следующего заказа в очереди
         private void TryProcessNextOrder()
         {
             if (_pendingOrders.Count > 0)
@@ -102,6 +108,7 @@ namespace TaxiMediator
             }
         }
 
+        // Отображение статистики
         public void ShowStatistics()
         {
             Console.WriteLine("\n=== СТАТИСТИКА ДИСПЕТЧЕРСКОЙ СЛУЖБЫ ===");

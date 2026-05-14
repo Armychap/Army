@@ -13,19 +13,19 @@ namespace TaxiMediator
             var dispatcher = new TaxiDispatcher();
 
             // Регистрируем водителей
-            var driver1 = new Driver(dispatcher, "Алексей", "Toyota Camry", "А123ВС");
+            var driver1 = new Driver(dispatcher, "Михаил", "Toyota Camry", "А123ВС");
             var driver2 = new Driver(dispatcher, "Дмитрий", "Hyundai Solaris", "В456ММ");
-            var driver3 = new Driver(dispatcher, "Сергей", "Kia Rio", "С789НН");
+            var driver3 = new Driver(dispatcher, "Генадий", "Kia Rio", "С789НН");
             
             dispatcher.RegisterDriver(driver1);
             dispatcher.RegisterDriver(driver2);
             dispatcher.RegisterDriver(driver3);
 
             // Регистрируем пассажиров
-            var passenger1 = new Passenger(dispatcher, "Иван", "+7-999-123-45-67");
-            var passenger2 = new Passenger(dispatcher, "Мария", "+7-999-234-56-78");
-            var passenger3 = new Passenger(dispatcher, "Петр", "+7-999-345-67-89");
-            var passenger4 = new Passenger(dispatcher, "Елена", "+7-999-456-78-90");
+            var passenger1 = new Passenger(dispatcher, "Иван", "+71111111111");
+            var passenger2 = new Passenger(dispatcher, "Мария", "+72222222222");
+            var passenger3 = new Passenger(dispatcher, "Петр", "+73333333333");
+            var passenger4 = new Passenger(dispatcher, "Елена", "+74444444444");
 
             dispatcher.RegisterPassenger(passenger1);
             dispatcher.RegisterPassenger(passenger2);
@@ -48,7 +48,7 @@ namespace TaxiMediator
             Thread.Sleep(500);
             
             // Дополнительный заказ, который попадет в очередь
-            var passenger5 = new Passenger(dispatcher, "Анна", "+7-999-567-89-01");
+            var passenger5 = new Passenger(dispatcher, "Анна", "+75555555555");
             dispatcher.RegisterPassenger(passenger5);
             passenger5.RequestTaxi("Театральная площадь", "Торговый центр");
 

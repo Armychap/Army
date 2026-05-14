@@ -15,17 +15,20 @@ namespace TaxiMediator
             PhoneNumber = phoneNumber;
         }
 
+        // Пассажир запрашивает такси
         public void RequestTaxi(string pickupLocation, string destination)
         {
             Console.WriteLine($"\n[Пассажир {Name}] Заказываю такси от {pickupLocation} до {destination}");
             Mediator.RequestTaxi(this, pickupLocation, destination);
         }
 
+        // Пассажир получает уведомление о приезде такси
         public void ReceiveTaxiArrived(Driver driver)
         {
             Console.WriteLine($"[Пассажир {Name}] Водитель {driver.Name} ({driver.CarModel}) приехал. Сажусь в такси.");
         }
 
+        // Оценка поездки
         public void RateTrip(int rating)
         {
             Console.WriteLine($"[Пассажир {Name}] Оценил поездку на {rating} звезд");

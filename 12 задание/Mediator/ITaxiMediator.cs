@@ -2,15 +2,13 @@ using System;
 
 namespace TaxiMediator
 {
-    /// <summary>
-    /// Интерфейс диспетчерской службы (Mediator)
-    /// </summary>
+    // Интерфейс диспетчерской службы (Mediator)
     public interface ITaxiMediator
-    {
-        void RegisterDriver(Driver driver);
-        void RegisterPassenger(Passenger passenger);
-        void RequestTaxi(Passenger passenger, string pickupLocation, string destination);
-        void AcceptOrder(Driver driver, Guid orderId);
-        void NotifyDriverAvailable(Driver driver);
-    }
+{
+    void RegisterDriver(Driver driver);           // добавить водителя
+    void RegisterPassenger(Passenger passenger);  // добавить пассажира
+    void RequestTaxi(Passenger passenger, string pickupLocation, string destination);
+    void AcceptOrder(Driver driver, Guid orderId);
+    void NotifyDriverAvailable(Driver driver);    // водитель освободился
+}
 }
