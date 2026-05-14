@@ -2,9 +2,7 @@ using System;
 
 namespace TaxiMediator
 {
-    /// <summary>
-    /// Класс заявки на такси
-    /// </summary>
+    // Класс заявки на такси
     public class Order
     {
         public Guid Id { get; }

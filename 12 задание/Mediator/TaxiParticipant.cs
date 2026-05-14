@@ -1,11 +1,9 @@
 namespace TaxiMediator
 {
-    /// <summary>
-    /// Базовый абстрактный класс для всех участников системы
-    /// </summary>
+    // Базовый абстрактный класс для всех участников системы
     public abstract class TaxiParticipant
     {
-        protected ITaxiMediator Mediator;
+        protected ITaxiMediator Mediator; // Ссылка на посредника (диспетчера)
         public string Name { get; }
 
         protected TaxiParticipant(ITaxiMediator mediator, string name)
