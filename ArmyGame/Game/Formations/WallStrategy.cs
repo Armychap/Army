@@ -93,11 +93,12 @@ namespace ArmyBattle.Game.Formations
         {
             _fightersWhoAttacked.Clear();
             bool anyAction = false;
+
+            // Перестраиваем пары если нужно
             if (_needRebuildPairs || !AreAllPairsValid())
             {
                 RebuildPairs(battle);
                 _needRebuildPairs = false;
-                // Сбрасываем флаги отображения для всех пар
                 _pairDisplayed = new bool[_pairs.Count];
             }
 
@@ -108,64 +109,63 @@ namespace ArmyBattle.Game.Formations
             {
                 var pair = _pairs[i];
 
-                if (pair.attacker?.IsAlive == true && pair.defender?.IsAlive == true)
+                // Пропускаем если кто-то умер
+                if (pair.attacker?.IsAlive != true || pair.defender?.IsAlive != true)
                 {
-                    anyAction = true;
-                    // Выводим пару если ещё не показывали в этом раунде
-                    if (_pairDisplayed == null || !_pairDisplayed[i])
-                    {
-                        Console.WriteLine();
-                        Console.ForegroundColor = battle.GetArmy1().Color;
-                        Console.Write($"{pair.attacker.GetDisplayName(battle.GetArmy1().Name)} ({pair.attacker.PowerLevel})");
-                        Console.ResetColor();
-                        Console.Write(" vs ");
-                        Console.ForegroundColor = battle.GetArmy2().Color;
-                        Console.Write($"{pair.defender.GetDisplayName(battle.GetArmy2().Name)} ({pair.defender.PowerLevel})");
-                        Console.ResetColor();
-                        Console.WriteLine();
+                    _needRebuildPairs = true;
+                    continue;
+                }
 
-                        if (_pairDisplayed == null)
-                            _pairDisplayed = new bool[_pairs.Count];
-                        _pairDisplayed[i] = true;
-                    }
+                anyAction = true;
 
-                    bool army1AttacksFirst = battle.GetRandom().Next(2) == 0;
+                // Выводим пару если ещё не показывали
+                if (_pairDisplayed == null || !_pairDisplayed[i])
+                {
+                    Console.WriteLine();
+                    Console.ForegroundColor = battle.GetArmy1().Color;
+                    Console.Write($"{pair.attacker.GetDisplayName(battle.GetArmy1().Name)} ({pair.attacker.PowerLevel})");
+                    Console.ResetColor();
+                    Console.Write(" vs ");
+                    Console.ForegroundColor = battle.GetArmy2().Color;
+                    Console.Write($"{pair.defender.GetDisplayName(battle.GetArmy2().Name)} ({pair.defender.PowerLevel})");
+                    Console.ResetColor();
+                    Console.WriteLine();
 
-                    if (army1AttacksFirst)
-                    {
-                        _fightersWhoAttacked.Add(pair.attacker);
-                        PerformWallAttack(battle, battle.GetArmy1(), battle.GetArmy2(),
-                            ref pair.attacker, ref pair.defender);
-                        if (pair.attacker?.IsAlive == true && pair.defender?.IsAlive == true)
-                        {
-                            _fightersWhoAttacked.Add(pair.defender);
-                            PerformWallAttack(battle, battle.GetArmy2(), battle.GetArmy1(),
-                                ref pair.defender, ref pair.attacker);
-                        }
-                    }
-                    else
+                    if (_pairDisplayed == null)
+                        _pairDisplayed = new bool[_pairs.Count];
+                    _pairDisplayed[i] = true;
+                }
+
+                bool army1AttacksFirst = battle.GetRandom().Next(2) == 0;
+
+                if (army1AttacksFirst)
+                {
+                    _fightersWhoAttacked.Add(pair.attacker);
+                    PerformWallAttack(battle, battle.GetArmy1(), battle.GetArmy2(),
+                        ref pair.attacker, ref pair.defender);
+
+                    if (pair.attacker?.IsAlive == true && pair.defender?.IsAlive == true)
                     {
                         _fightersWhoAttacked.Add(pair.defender);
                         PerformWallAttack(battle, battle.GetArmy2(), battle.GetArmy1(),
                             ref pair.defender, ref pair.attacker);
-                        if (pair.attacker?.IsAlive == true && pair.defender?.IsAlive == true)
-                        {
-                            _fightersWhoAttacked.Add(pair.attacker);
-                            PerformWallAttack(battle, battle.GetArmy1(), battle.GetArmy2(),
-                                ref pair.attacker, ref pair.defender);
-                        }
                     }
-
-                    if (pair.attacker?.IsAlive == false || pair.defender?.IsAlive == false)
-                    {
-                        _needRebuildPairs = true;
-                        // Сбрасываем флаг для этой пары
-                        if (_pairDisplayed != null)
-                            _pairDisplayed[i] = false;
-                    }
-
-                    _pairs[i] = pair;
                 }
+                else
+                {
+                    _fightersWhoAttacked.Add(pair.defender);
+                    PerformWallAttack(battle, battle.GetArmy2(), battle.GetArmy1(),
+                        ref pair.defender, ref pair.attacker);
+
+                    if (pair.attacker?.IsAlive == true && pair.defender?.IsAlive == true)
+                    {
+                        _fightersWhoAttacked.Add(pair.attacker);
+                        PerformWallAttack(battle, battle.GetArmy1(), battle.GetArmy2(),
+                            ref pair.attacker, ref pair.defender);
+                    }
+                }
+
+                _pairs[i] = pair;
             }
 
             if (anyAction)
@@ -177,7 +177,7 @@ namespace ArmyBattle.Game.Formations
         }
 
         private void PerformWallAttack(BattleEngine battle, IArmy attackingArmy, IArmy defendingArmy,
-            ref IUnit? attacker, ref IUnit? defender)
+    ref IUnit? attacker, ref IUnit? defender)
         {
             if (attacker == null || defender == null) return;
 
@@ -205,6 +205,7 @@ namespace ArmyBattle.Game.Formations
             Console.WriteLine($"Урон: {damage}");
             Console.WriteLine($"Здоровье {defender.FighterNumber}: {Math.Max(0, defender.Health)}/{defender.MaxHealth}");
 
+            // ЕСЛИ ЗАЩИТНИК УМЕР
             if (!defender.IsAlive)
             {
                 Console.WriteLine();
@@ -217,14 +218,18 @@ namespace ArmyBattle.Game.Formations
                 Console.ResetColor();
                 Console.WriteLine();
 
+                // Удаляем мёртвого из армии
                 defendingArmy.RemoveDeadFighter(defender);
+
+                // Помечаем, что нужно перестроить пары
+                _needRebuildPairs = true;
             }
         }
-
         private void RebuildPairs(BattleEngine battle)
         {
             _pairs.Clear();
 
+            // Получаем живых бойцов в правильном порядке
             var alive1 = battle.GetArmy1().AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
             var alive2 = battle.GetArmy2().AliveFightersInBattleOrder.Where(u => u.IsAlive).ToList();
 
@@ -237,8 +242,13 @@ namespace ArmyBattle.Game.Formations
             {
                 _pairs.Add((alive1[i], alive2[i]));
             }
-        }
 
+            // Если нет ни одной пары, битва закончена
+            if (_pairs.Count == 0)
+            {
+                Console.WriteLine("Нет активных пар - битва завершена!");
+            }
+        }
         private bool AreAllPairsValid()
         {
             foreach (var pair in _pairs)

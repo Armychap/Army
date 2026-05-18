@@ -17,9 +17,13 @@ namespace ArmyBattle.Models.Observers
         {
             try
             {
-                if (File.Exists("death_sound.wav"))
+                string fileName = "death_sound.wav";
+                string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+                string filePath = File.Exists(fileName) ? fileName : Path.Combine(rootPath, fileName);
+
+                if (File.Exists(filePath))
                 {
-                    soundPlayer = new SoundPlayer("death_sound.wav");
+                    soundPlayer = new SoundPlayer(filePath);
                     soundPlayer.Load();
                 }
             }

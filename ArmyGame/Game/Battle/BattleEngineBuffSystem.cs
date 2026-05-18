@@ -8,6 +8,9 @@ namespace ArmyBattle.Game
 {
     public partial class BattleEngine
     {
+        /// <summary>
+        /// Обрабатывает применение случайных буффов к сильным бойцам каждой армии
+        /// </summary>
         private void ProcessBuffs()
         {
             var army1StrongFighters = army1.Units
@@ -33,12 +36,18 @@ namespace ArmyBattle.Game
             }
         }
 
+        /// <summary>
+        /// Проверяет, является ли юнит сильным бойцом (с учётом декораторов)
+        /// </summary>
         private bool IsStrongFighter(IUnit unit)
         {
             var realUnit = UnwrapToStrongFighter(unit);
             return realUnit != null;
         }
 
+        /// <summary>
+        /// Разворачивает юнита от буффов (декораторов) и проверяет, является ли он сильным
+        /// </summary>
         private IUnit? UnwrapToStrongFighter(IUnit unit)
         {
             while (unit is BuffDecorator decorator)
@@ -48,6 +57,9 @@ namespace ArmyBattle.Game
             return unit is StrongFighter ? unit : null;
         }
 
+        /// <summary>
+        /// Проверяет, может ли юнит надеть бафф (должен быть рядом со слабым бойцом)
+        /// </summary>
         private bool CanEquipBuff(IUnit unit, IArmy army)
         {
             var realUnit = UnwrapToStrongFighter(unit);
@@ -68,6 +80,9 @@ namespace ArmyBattle.Game
             return false;
         }
 
+        /// <summary>
+        /// Надевает случайный бафф на юнита и обновляет его в армии
+        /// </summary>
         private void EquipBuff(IUnit unit)
         {
             IUnit buffedUnit = BuffFactory.ApplyRandomBuff(unit);

@@ -78,6 +78,7 @@ namespace ArmyBattle.Game.Formations
                 var fighter1 = battle.GetCurrentFighterInColumn(col, true);
                 var fighter2 = battle.GetCurrentFighterInColumn(col, false);
 
+                // Пропускаем если нет пары
                 if (fighter1 == null || fighter2 == null || !fighter1.IsAlive || !fighter2.IsAlive)
                 {
                     _pairDisplayed[col] = false;
@@ -103,11 +104,16 @@ namespace ArmyBattle.Game.Formations
 
                 bool army1AttacksFirst = (col + battle.AttackTurn) % 2 == 0;
 
+                // Сохраняем ссылки до атаки
+                var originalFighter1 = fighter1;
+                var originalFighter2 = fighter2;
+
                 if (army1AttacksFirst)
                 {
                     _fightersWhoAttacked.Add(fighter1);
                     battle.PerformAttackInColumnPublic(battle.GetArmy1(), battle.GetArmy2(),
                         ref fighter1, ref fighter2, col);
+
                     if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
                     {
                         _fightersWhoAttacked.Add(fighter2);
@@ -120,6 +126,7 @@ namespace ArmyBattle.Game.Formations
                     _fightersWhoAttacked.Add(fighter2);
                     battle.PerformAttackInColumnPublic(battle.GetArmy2(), battle.GetArmy1(),
                         ref fighter2, ref fighter1, col);
+
                     if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
                     {
                         _fightersWhoAttacked.Add(fighter1);
@@ -128,14 +135,15 @@ namespace ArmyBattle.Game.Formations
                     }
                 }
 
-                // Если кто-то умер, сбрасываем флаг для этой колонны
-                if (fighter1?.IsAlive == false || fighter2?.IsAlive == false)
+                // Обновляем колонну в движке
+                battle.UpdateCurrentFighterInColumn(col, true, fighter1);
+                battle.UpdateCurrentFighterInColumn(col, false, fighter2);
+
+                // Если кто-то изменился (умер и заменился), сбрасываем флаг
+                if (fighter1 != originalFighter1 || fighter2 != originalFighter2)
                 {
                     _pairDisplayed[col] = false;
                 }
-
-                battle.UpdateCurrentFighterInColumn(col, true, fighter1);
-                battle.UpdateCurrentFighterInColumn(col, false, fighter2);
             }
 
             if (anyAction)

@@ -69,6 +69,9 @@ namespace ArmyBattle.Services
                     saveName = $"Armies_{DateTime.Now:yyyyMMdd_HHmmss}";
                 }
 
+                saveName = GetSafeName(saveName);
+                battleLogName = string.IsNullOrWhiteSpace(battleLogName) ? null : GetSafeName(battleLogName);
+
                 // Конвертируем армии в сериализуемый формат
                 var saveData = SerializeArmies(army1, army2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader, battleLogName, moveCount, currentFormation);
 
@@ -288,8 +291,20 @@ namespace ArmyBattle.Services
         /// </summary>
         public string GetSavePath(string saveName)
         {
-            // Объединяем путь: папка + имя файла + расширение
+            saveName = GetSafeName(saveName);
             return Path.Combine(savesDirectory, $"{saveName}.json");
+        }
+
+        private static string GetSafeName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return string.Empty;
+
+            foreach (var invalid in Path.GetInvalidFileNameChars())
+            {
+                name = name.Replace(invalid, '_');
+            }
+            return name.Trim();
         }
 
         /// <summary>

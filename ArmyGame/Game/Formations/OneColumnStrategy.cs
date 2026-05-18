@@ -91,18 +91,33 @@ namespace ArmyBattle.Game.Formations
             // Если оба живы - проводим атаку
             if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
             {
-                // Первый удар
-                battle.PerformOneColumnAttack(battle.GetArmy1(), battle.GetArmy2(),
-                    ref fighter1, ref fighter2);
-                anyAction = true;
+                bool currentAttackerIsArmy1 = battle.AttackTurn == 0 ? battle.FirstAttackerIsArmy1 : !battle.FirstAttackerIsArmy1;
 
-                // Проверяем, живы ли оба после первого удара
-                if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
+                if (currentAttackerIsArmy1)
                 {
-                    // Второй удар
+                    battle.PerformOneColumnAttack(battle.GetArmy1(), battle.GetArmy2(),
+                        ref fighter1, ref fighter2);
+                    anyAction = true;
+
+                    if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
+                    {
+                        battle.PerformOneColumnAttack(battle.GetArmy2(), battle.GetArmy1(),
+                            ref fighter2, ref fighter1);
+                        anyAction = true;
+                    }
+                }
+                else
+                {
                     battle.PerformOneColumnAttack(battle.GetArmy2(), battle.GetArmy1(),
                         ref fighter2, ref fighter1);
                     anyAction = true;
+
+                    if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
+                    {
+                        battle.PerformOneColumnAttack(battle.GetArmy1(), battle.GetArmy2(),
+                            ref fighter1, ref fighter2);
+                        anyAction = true;
+                    }
                 }
 
                 // Если кто-то умер, берём следующего бойца

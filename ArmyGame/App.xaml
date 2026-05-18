@@ -1,0 +1,8 @@
+<Application x:Class="ArmyBattle.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ArmyBattle"
+             StartupUri="Game/UI/MainWindow.xaml">
+    <Application.Resources>
+    </Application.Resources>
+</Application>

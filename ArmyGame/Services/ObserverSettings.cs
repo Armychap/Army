@@ -8,8 +8,8 @@ namespace ArmyBattle.Services
     {
         private const string SettingsFile = "observersettings.json";
 
-        public bool EnableDamageLog { get; set; }
-        public bool EnableDeathBeep { get; set; }
+        public bool EnableDamageLog { get; set; } = true;
+        public bool EnableDeathBeep { get; set; } = true;
 
         public static ObserverSettings Current { get; private set; } = new ObserverSettings();
 

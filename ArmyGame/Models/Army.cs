@@ -212,8 +212,8 @@ namespace ArmyBattle.Models
                 }
             }
 
-            // Перемешиваем бойцов для случайного порядка в бою
-            ShuffleAliveFighters();
+            // Сохраняем порядок, который создаётся при построении армии
+            CurrentFighterIndex = 0;
         }
 
         public void RefreshAliveFighters()

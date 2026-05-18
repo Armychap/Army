@@ -139,6 +139,7 @@ namespace ArmyBattle.Game
             return snapshots;
         }
         
+        // Метод для восстановления юнитов из снимков, включая их баффы
         private void RestoreUnitSnapshots(IArmy army, List<UnitSnapshot> snapshots)
         {
             foreach (var snapshot in snapshots)
@@ -167,6 +168,7 @@ namespace ArmyBattle.Game
             army.RefreshAliveFighters();
         }
         
+        // Метод для восстановления порядка боя на основе сохранённого списка номеров бойцов
         private void RestoreAliveOrder(IArmy army, List<int> order)
         {
             var newOrder = new List<IUnit>();
@@ -179,12 +181,15 @@ namespace ArmyBattle.Game
             army.CurrentFighterIndex = 0;
         }
         
+        // Метод для поиска юнита по его номеру
+        
         private IUnit? FindUnitByNumber(IArmy army, int? fighterNumber)
         {
             if (fighterNumber == null) return null;
             return army.Units.FirstOrDefault(u => u.FighterNumber == fighterNumber && u.IsAlive);
         }
         
+        // Метод для получения типов применённых баффов
         private List<string> GetAppliedBuffTypes(IUnit unit)
         {
             var buffs = new List<string>();

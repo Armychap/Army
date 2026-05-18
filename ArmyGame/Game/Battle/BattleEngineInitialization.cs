@@ -7,8 +7,12 @@ namespace ArmyBattle.Game
 {
     public partial class BattleEngine
     {
+        // Текущая выбранная формация
         private FormationType currentFormation = FormationType.OneColumn;
 
+        /// <summary>
+        /// Настраивает битву с выбранной формацией
+        /// </summary>
         public void InitializeBattle(FormationType formation = FormationType.OneColumn)
         {
             if (battleInitialized)
@@ -34,6 +38,9 @@ namespace ArmyBattle.Game
             _lastDisplayedFighter2 = null;
         }
 
+        /// <summary>
+        /// Настраивает текущую стратегию на основе типа формации
+        /// </summary>
         public void SetFormationStrategy(FormationType type)
         {
             currentFormation = type;
@@ -46,6 +53,9 @@ namespace ArmyBattle.Game
             };
         }
 
+        /// <summary>
+        /// Настраивает трёхколонный режим боя
+        /// </summary>
         public void InitializeThreeColumnBattle()
         {
             currentFormation = FormationType.ThreeColumns;
@@ -69,10 +79,14 @@ namespace ArmyBattle.Game
                 currentFightersArmy2[i] = alive2[i];
             }
 
+            // Остальные бойцы идут в резерв
             army1BackupQueue.AddRange(alive1.Skip(pairsToTake));
             army2BackupQueue.AddRange(alive2.Skip(pairsToTake));
         }
 
+        /// <summary>
+        /// Переходит на новую формацию, сохраняя текущее состояние боя
+        /// </summary>
         public void ReinitializeFormation(FormationType newFormation)
         {
             if (currentFormation == newFormation) return;
@@ -118,6 +132,9 @@ namespace ArmyBattle.Game
             needNewRoundHeader = true;
         }
 
+        /// <summary>
+        /// Восстанавливает и переинициализирует трёхколонное построение
+        /// </summary>
         public void ReinitializeThreeColumns()
         {
             // Сохраняем текущий порядок колонн и резерва перед перестроением
@@ -153,12 +170,16 @@ namespace ArmyBattle.Game
             army2BackupQueue.AddRange(alive2.Skip(pairsToTake));
         }
 
+        // Метод для восстановления текущих бойцов при продолжении битвы после смены формации
         public void SetCurrentFightersForContinuation()
         {
             currentFighter1 = SelectFighterForArmy(army1);
             currentFighter2 = SelectFighterForArmy(army2);
         }
 
+        /// <summary>
+        /// Выбирает текущего бойца для армии в порядке боя
+        /// </summary>
         private IUnit? SelectFighterForArmy(IArmy army)
         {
             if (army.CurrentFighterIndex < army.AliveFightersInBattleOrder.Count)
@@ -168,6 +189,7 @@ namespace ArmyBattle.Game
             return null;
         }
 
+        // Метод для очистки сохранённых данных колонн и резерва при переходе на другую формацию
         public void ClearSavedColumns()
         {
             for (int i = 0; i < 3; i++)
@@ -179,6 +201,7 @@ namespace ArmyBattle.Game
             _savedBackupArmy2.Clear();
         }
 
+        // Метод для инициализации трёхколонного режима боя (может быть вызван при выборе формации)
         public void InitializeThreeColumns()
         {
             InitializeThreeColumnBattle();

@@ -7,6 +7,9 @@ namespace ArmyBattle.Game
 {
     public partial class BattleEngine
     {
+        /// <summary>
+        /// Проверяет и активирует специальные способности для боевых юнитов в строю
+        /// </summary>
         private void CheckAndExecuteSpecialAbilities()
         {
             if (currentFighter1 == null || currentFighter2 == null || !currentFighter1.IsAlive || !currentFighter2.IsAlive)
@@ -35,6 +38,9 @@ namespace ArmyBattle.Game
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Исполняет специальные способности для отдельного типа юнитов в армии
+        /// </summary>
         private void ExecuteSpecialAbilitiesForArmy(IArmy attackingArmy, IArmy defendingArmy, Type? unitType = null)
         {
             var unitsCopy = attackingArmy.Units.ToList();
@@ -214,6 +220,9 @@ namespace ArmyBattle.Game
             }
         }
 
+        /// <summary>
+        /// Проверяет и исполняет специальные способности для юнитов, которые не участвовали в нападении
+        /// </summary>
         public void CheckAndExecuteSpecialAbilitiesForNonAttackers(List<IUnit> fightersWhoAttacked)
         {
             Console.WriteLine();
@@ -256,6 +265,9 @@ namespace ArmyBattle.Game
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Исполняет специальные способности для конкретного юнита
+        /// </summary>
         private void ExecuteSpecialAbilitiesForSingleUnit(IUnit unit, IArmy attackingArmy, IArmy defendingArmy)
         {
             var realUnit = unit.GetRootUnit();
@@ -408,6 +420,9 @@ namespace ArmyBattle.Game
             }
         }
 
+        /// <summary>
+        /// Проверяет специальные способности для всех юнитов в трёхколонном строю
+        /// </summary>
         private void CheckSpecialAbilitiesThreeColumns()
         {
             for (int col = 0; col < 3; col++)
@@ -424,6 +439,9 @@ namespace ArmyBattle.Game
             }
         }
 
+        /// <summary>
+        /// Метод для получения цвета отображения способности в зависимости от типа юнита
+        /// </summary>
         private ConsoleColor GetAbilityColor(Type unitType)
         {
             if (unitType == typeof(Archer)) return ConsoleColor.Yellow;
@@ -432,6 +450,9 @@ namespace ArmyBattle.Game
             return ConsoleColor.White;
         }
 
+        /// <summary>
+        /// Метод для увеличения счетчика добавленных бойцов
+        /// </summary>
         private void IncrementAddedFighters(IArmy army)
         {
             if (army == army1)
