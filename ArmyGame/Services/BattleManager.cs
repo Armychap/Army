@@ -218,6 +218,7 @@ namespace ArmyBattle.Services
             return "";
         }
 
+        // Получает отображаемое имя битвы, удаляя временные метки из названия файла
         public string GetBattleDisplayName(string fileName)
         {
             // Находим последний подчеркивание (это время HHMMSS)
@@ -265,6 +266,7 @@ namespace ArmyBattle.Services
             return Path.Combine(logsDirectory, $"{battleName}.txt");
         }
 
+        // Санитизация имени файла для удаления недопустимых символов
         private static string SanitizeFileName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))

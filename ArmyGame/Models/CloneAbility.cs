@@ -9,14 +9,34 @@ namespace ArmyBattle.Models
     /// </summary>
     public class CloneAbility : ISpecialAbility
     {
+        /// <summary>
+        /// Генератор случайных чисел для определения шанса и выбора целей
+        /// </summary>
         private static readonly Random random = new Random();
+        
+        /// <summary>
+        /// Название способности
+        /// </summary>
         public string Name { get; set; }
+        
+        /// <summary>
+        /// Радиус действия способности (количество позиций до цели)
+        /// </summary>
         public int Range { get; set; }
-        public int Power { get; set; } // Шанс в процентах
+        
+        /// <summary>
+        /// Сила способности (шанс срабатывания в процентах)
+        /// </summary>
+        public int Power { get; set; }
 
-        // Добавлено для отображения выбранного бойца
+        /// <summary>
+        /// Выбранный для клонирования боец (для отображения в логе)
+        /// </summary>
         public IUnit? ChosenToClone { get; private set; }
 
+        /// <summary>
+        /// Конструктор способности клонирования
+        /// </summary>
         public CloneAbility(string name, int range, int power)
         {
             Name = name;
@@ -24,6 +44,9 @@ namespace ArmyBattle.Models
             Power = power;
         }
 
+        /// <summary>
+        /// Выполняет способность клонирования: создаёт копию случайного союзника
+        /// </summary>
         public void Execute(IUnit user, IUnit? target)
         {
             if (user == null || user.Army == null)
@@ -32,13 +55,14 @@ namespace ArmyBattle.Models
             // Сбрасываем предыдущий результат перед каждой попыткой
             ChosenToClone = null;
 
-            // Шанс сработать
+            // Проверяем шанс срабатывания
             if (random.Next(100) >= Power)
                 return;
 
             var army = user.Army;
 
-            // Выбираем случайного кандидата для клона (только слабый боец или лучник в радиусе действия, не маг и не лекарь, и может быть клонирован)
+            // Выбираем случайного кандидата для клона
+            // Только слабый боец или лучник в радиусе действия, не маг и не лекарь, и может быть клонирован
             int myIndex = army.AliveFightersInBattleOrder.IndexOf(user);
             var candidates = army.AliveFightersInBattleOrder
                 .Where(u => u.IsAlive && u != user && (u is WeakFighter || u is Archer) && u.CanBeCloned() && Math.Abs(army.AliveFightersInBattleOrder.IndexOf(u) - myIndex) <= Range)
@@ -47,10 +71,11 @@ namespace ArmyBattle.Models
             if (candidates.Count == 0)
                 return;
 
+            // Выбираем случайного кандидата
             var chosen = candidates[random.Next(candidates.Count)];
             ChosenToClone = chosen;
 
-            // Создаем клон
+            // Создаём клона в зависимости от типа оригинального бойца
             IUnit clone;
             int newFighterNumber = army.Units.Max(u => u.FighterNumber) + 1;
 
@@ -67,7 +92,7 @@ namespace ArmyBattle.Models
             clone.Health = chosen.Health;
             clone.MaxHealth = chosen.MaxHealth;
 
-            // Добавляем клон в армию
+            // Добавляем клона в армию
             army.AddUnit(clone);
 
             // Устанавливаем позицию клона перед магом (в любом месте перед магом)
@@ -80,7 +105,7 @@ namespace ArmyBattle.Models
                 army.Units.Insert(insertIndex, clone);
             }
 
-            // Если клон жив, добавляем в порядок боя перед магом
+            // Если клон жив, добавляем его в порядок боя перед магом
             if (clone.IsAlive)
             {
                 int wizardBattleIndex = army.AliveFightersInBattleOrder.IndexOf(user);

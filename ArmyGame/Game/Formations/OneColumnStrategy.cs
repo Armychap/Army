@@ -10,28 +10,44 @@ namespace ArmyBattle.Game.Formations
     /// </summary>
     public class OneColumnStrategy : IFormationStrategy
     {
+        /// <summary>
+        /// Название стратегии построения
+        /// </summary>
         public string Name => "Одна колонна";
 
+        /// <summary>
+        /// Инициализирует стратегию: устанавливает первых бойцов для битвы
+        /// </summary>
         public void Initialize(BattleEngine battle)
         {
             battle.SetCurrentFighter1(battle.GetArmy1().GetNextFighterInBattleOrder());
             battle.SetCurrentFighter2(battle.GetArmy2().GetNextFighterInBattleOrder());
         }
 
+        /// <summary>
+        /// Проверяет, активна ли битва (есть ли живые бойцы у обеих армий)
+        /// </summary>
         public bool IsCombatActive(BattleEngine battle)
         {
             return battle.GetArmy1().HasAliveUnits() && battle.GetArmy2().HasAliveUnits();
         }
 
+        /// <summary>
+        /// Отображает заголовок раунда (для одной колонны ничего не выводим)
+        /// </summary>
         public void DisplayRoundHeader(BattleEngine battle, int round)
         {
             // Ничего не выводим
         }
 
+        /// <summary>
+        /// Отображает текущий порядок боя в виде цепочки бойцов
+        /// </summary>
         public void DisplayBattleOrder(BattleEngine battle)
         {
             Console.WriteLine("Порядок боя");
 
+            // Локальная функция для форматирования названия бойца
             string FormatUnit(IUnit unit)
             {
                 string shortType = unit.PowerLevel.ToLowerInvariant() switch
@@ -48,6 +64,7 @@ namespace ArmyBattle.Game.Formations
                 return $"{unit.FighterNumber} ({shortType})";
             }
 
+            // Формируем цепочки бойцов для каждой армии
             var order1 = string.Join(" -> ", battle.GetArmy1().AliveFightersInBattleOrder.Select(FormatUnit));
             var order2 = string.Join(" -> ", battle.GetArmy2().AliveFightersInBattleOrder.Select(FormatUnit));
 
@@ -66,6 +83,10 @@ namespace ArmyBattle.Game.Formations
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Обрабатывает один ход битвы в стратегии "Одна колонна"
+        /// </summary>
+        /// <returns>Было ли совершено какое-либо действие</returns>
         public bool ProcessMove(BattleEngine battle)
         {
             bool anyAction = false;
@@ -91,14 +112,17 @@ namespace ArmyBattle.Game.Formations
             // Если оба живы - проводим атаку
             if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
             {
+                // Определяем, кто атакует первым в текущем ходу
                 bool currentAttackerIsArmy1 = battle.AttackTurn == 0 ? battle.FirstAttackerIsArmy1 : !battle.FirstAttackerIsArmy1;
 
                 if (currentAttackerIsArmy1)
                 {
+                    // Атака армии 1 на армию 2
                     battle.PerformOneColumnAttack(battle.GetArmy1(), battle.GetArmy2(),
                         ref fighter1, ref fighter2);
                     anyAction = true;
 
+                    // Если оба ещё живы - ответная атака армии 2
                     if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
                     {
                         battle.PerformOneColumnAttack(battle.GetArmy2(), battle.GetArmy1(),
@@ -108,10 +132,12 @@ namespace ArmyBattle.Game.Formations
                 }
                 else
                 {
+                    // Атака армии 2 на армию 1
                     battle.PerformOneColumnAttack(battle.GetArmy2(), battle.GetArmy1(),
                         ref fighter2, ref fighter1);
                     anyAction = true;
 
+                    // Если оба ещё живы - ответная атака армии 1
                     if (fighter1?.IsAlive == true && fighter2?.IsAlive == true)
                     {
                         battle.PerformOneColumnAttack(battle.GetArmy1(), battle.GetArmy2(),
@@ -139,6 +165,9 @@ namespace ArmyBattle.Game.Formations
             return anyAction;
         }
 
+        /// <summary>
+        /// Переинициализирует стратегию (для одной колонны не требуется)
+        /// </summary>
         public void Reinitialize(BattleEngine battle)
         {
             // Для одной колонны не требуется специальная реинициализация

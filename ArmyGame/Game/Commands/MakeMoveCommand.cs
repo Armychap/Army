@@ -8,19 +8,47 @@ namespace ArmyBattle.Game.Commands
     /// </summary>
     public class MakeMoveCommand : ICommand
     {
+        /// <summary>
+        /// Название команды, отображаемое в меню
+        /// </summary>
         public string Name => "Сделать ход";
+        
+        /// <summary>
+        /// Можно ли отменить команду. Ход можно откатить
+        /// </summary>
         public bool CanUndo => true;
         
+        /// <summary>
+        /// Движок битвы, над которым выполняется ход
+        /// </summary>
         private readonly BattleEngine _battle;
+        
+        /// <summary>
+        /// Состояние битвы до выполнения хода
+        /// </summary>
         private BattleMemento? _beforeState;
+        
+        /// <summary>
+        /// Состояние битвы после выполнения хода
+        /// </summary>
         private BattleMemento? _afterState;
+        
+        /// <summary>
+        /// Флаг, указывающий, был ли ход уже выполнен
+        /// </summary>
         private bool _moveExecuted;
         
+        /// <summary>
+        /// Конструктор команды выполнения хода
+        /// </summary>
         public MakeMoveCommand(BattleEngine battle)
         {
             _battle = battle;
         }
         
+        /// <summary>
+        /// Выполняет ход с сохранением состояния для отмены
+        /// </summary>
         public void Execute()
         {
             if (!_moveExecuted)
@@ -45,6 +73,9 @@ namespace ArmyBattle.Game.Commands
             }
         }
         
+        /// <summary>
+        /// Отменяет выполненный ход, возвращая битву в состояние до хода
+        /// </summary>
         public void Undo()
         {
             if (_beforeState != null && CanUndo)

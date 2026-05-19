@@ -11,18 +11,44 @@ namespace ArmyBattle.Models
     /// </summary>
     public class Army : IArmy
     {
+        /// <summary>
+        /// Название армии
+        /// </summary>
         public string Name { get; set; }
-        // Применяем интерфейсы для юнитов
+        
+        /// <summary>
+        /// Список всех юнитов армии (живых и мёртвых)
+        /// </summary>
         public List<IUnit> Units { get; set; }
+        
+        /// <summary>
+        /// Цвет армии для вывода в консоли
+        /// </summary>
         public ConsoleColor Color { get; set; }
+        
+        /// <summary>
+        /// Общая стоимость всех юнитов армии
+        /// </summary>
         public int TotalCost { get; set; }
 
-        // Список живых бойцов в случайном порядке для боя
+        /// <summary>
+        /// Список живых бойцов в порядке боя (перемешанный или сохранённый)
+        /// </summary>
         public List<IUnit> AliveFightersInBattleOrder { get; set; }
+        
+        /// <summary>
+        /// Индекс текущего бойца для поочерёдного вызова
+        /// </summary>
         public int CurrentFighterIndex { get; set; }
 
+        /// <summary>
+        /// Генератор случайных чисел для армии
+        /// </summary>
         private static Random random = new Random();
 
+        /// <summary>
+        /// Конструктор армии с указанием имени и цвета
+        /// </summary>
         public Army(string name, ConsoleColor color)
         {
             Name = name;
@@ -33,7 +59,9 @@ namespace ArmyBattle.Models
             CurrentFighterIndex = 0;
         }
 
-        // Добавление юнита в армию (работает с интерфейсом IUnit)
+        /// <summary>
+        /// Добавление юнита в армию (работает с интерфейсом IUnit)
+        /// </summary>
         public void AddUnit(IUnit unit)
         {
             Units.Add(unit);
@@ -45,7 +73,9 @@ namespace ArmyBattle.Models
             }
         }
 
-        //Перемешивает список живых бойцов в случайном порядке
+        /// <summary>
+        /// Перемешивает список живых бойцов в случайном порядке
+        /// </summary>
         public void ShuffleAliveFighters()
         {
             AliveFightersInBattleOrder.Clear();
@@ -58,6 +88,7 @@ namespace ArmyBattle.Models
                 }
             }
 
+            // Алгоритм Фишера-Йетса для случайного перемешивания
             for (int i = AliveFightersInBattleOrder.Count - 1; i > 0; i--)
             {
                 int j = random.Next(i + 1);
@@ -68,8 +99,10 @@ namespace ArmyBattle.Models
             CurrentFighterIndex = 0;
         }
 
-        // Возвращает следующего бойца из перемешанного списка.
-        // Если индекс вышел за пределы, возвращаем первого бойца заново.
+        /// <summary>
+        /// Возвращает следующего бойца из перемешанного списка.
+        /// Если индекс вышел за пределы, возвращаем первого бойца заново.
+        /// </summary>
         public IUnit? GetNextFighterInBattleOrder()
         {
             if (AliveFightersInBattleOrder.Count == 0)
@@ -83,7 +116,9 @@ namespace ArmyBattle.Models
             return nextFighter;
         }
 
+        /// <summary>
         /// Удаляет мёртвого бойца из порядка боя, корректируя индекс
+        /// </summary>
         public void RemoveDeadFighter(IUnit deadFighter)
         {
             int removedIndex = AliveFightersInBattleOrder.IndexOf(deadFighter);
@@ -111,7 +146,9 @@ namespace ArmyBattle.Models
             }
         }
 
-        // Проверка наличия живых юнитов
+        /// <summary>
+        /// Проверка наличия живых юнитов
+        /// </summary>
         public bool HasAliveUnits()
         {
             // Надёжно проверяем по основному списку Units на наличие живых юнитов
@@ -122,7 +159,9 @@ namespace ArmyBattle.Models
             return false;
         }
 
-        // Количество живых юнитов
+        /// <summary>
+        /// Количество живых юнитов
+        /// </summary>
         public int AliveCount()
         {
             int count = 0;
@@ -133,7 +172,9 @@ namespace ArmyBattle.Models
             return count;
         }
 
-        // Вывод информации об армии
+        /// <summary>
+        /// Вывод информации об армии
+        /// </summary>
         public void DisplayArmyInfo(bool showDetails = false)
         {
             Console.ForegroundColor = Color;
@@ -157,7 +198,9 @@ namespace ArmyBattle.Models
             }
         }
 
-        // Генерация армии с заданным бюджетом
+        /// <summary>
+        /// Генерация армии с заданным бюджетом
+        /// </summary>
         public void GenerateArmyWithBudget(int budget)
         {
             Units.Clear();
@@ -167,7 +210,7 @@ namespace ArmyBattle.Models
             int remainingBudget = budget;
             int fighterNumber = 1;
 
-            // Список доступных типов бойцов с их стоимостью
+            // Список доступных типов бойцов с их стоимостью и фабричными методами
             var availableFighters = new List<Tuple<int, Func<int, IUnit>>>
             {
                 new Tuple<int, Func<int, IUnit>>(55, (num) => new ShieldWall(num)),
@@ -178,7 +221,7 @@ namespace ArmyBattle.Models
                 new Tuple<int, Func<int, IUnit>>(15, (num) => new WeakFighter(num))
             };
 
-            // Пока есть бюджет на любого бойца
+            // Пока есть бюджет на любого бойца (минимум 15 - самый дешёвый)
             while (remainingBudget >= 15)
             {
                 // Выбираем случайного бойца, которого можем себе позволить
@@ -216,6 +259,9 @@ namespace ArmyBattle.Models
             CurrentFighterIndex = 0;
         }
 
+        /// <summary>
+        /// Обновляет список живых бойцов (с перемешиванием)
+        /// </summary>
         public void RefreshAliveFighters()
         {
             AliveFightersInBattleOrder.Clear();
@@ -228,6 +274,7 @@ namespace ArmyBattle.Models
             }
             CurrentFighterIndex = 0;
         }
+        
         /// <summary>
         /// Обновляет список живых бойцов без перемешивания (сохраняет порядок)
         /// </summary>
@@ -245,7 +292,9 @@ namespace ArmyBattle.Models
             CurrentFighterIndex = 0;
         }
 
-        // В Army.cs добавить:
+        /// <summary>
+        /// Заменяет одного юнита другим в армии
+        /// </summary>
         public void ReplaceUnit(IUnit oldUnit, IUnit newUnit)
         {
             int index = Units.IndexOf(oldUnit);

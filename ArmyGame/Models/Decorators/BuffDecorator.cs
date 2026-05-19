@@ -9,19 +9,25 @@ namespace ArmyBattle.Models.Decorators
     /// </summary>
     public abstract class BuffDecorator : IUnit
     {
+        /// <summary>
+        /// Декорируемый юнит (базовый боец или другой декоратор)
+        /// </summary>
         protected IUnit _unit;
 
+        /// <summary>
+        /// Конструктор декоратора, принимающий декорируемый юнит
+        /// </summary>
         protected BuffDecorator(IUnit unit)
         {
             _unit = unit;
             
-            // Проксируем армию и номер бойца
+            // Проксируем армию и номер бойца от декорируемого юнита
             Army = unit.Army;
             FighterNumber = unit.FighterNumber;
             Name = unit.Name;
         }
 
-        // Проксируем все свойства
+        // Проксируем все свойства к декорируемому юниту
         public virtual string Name { get; set; }
         public virtual int Attack { get => _unit.Attack; set => _unit.Attack = value; }
         public virtual int Defence { get => _unit.Defence; set => _unit.Defence = value; }
@@ -37,9 +43,13 @@ namespace ArmyBattle.Models.Decorators
         public virtual IArmy? Army { get; set; }
         public virtual bool IsAlive => _unit.IsAlive;
         public virtual List<IUnitObserver> Observers => _unit.Observers;
+        
+        /// <summary>
+        /// Возвращает внутренний декорируемый юнит (для разбора цепочки декораторов)
+        /// </summary>
         public IUnit GetInnerUnit() => _unit;
 
-        // Проксируем все методы
+        // Проксируем все методы к декорируемому юниту (можно переопределять в конкретных баффах для изменения поведения)
         public virtual void AttachObserver(IUnitObserver observer) => _unit.AttachObserver(observer);
         public virtual void DetachObserver(IUnitObserver observer) => _unit.DetachObserver(observer);
         public virtual void ClearObservers() => _unit.ClearObservers();

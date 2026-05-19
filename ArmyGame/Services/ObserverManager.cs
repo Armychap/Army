@@ -10,9 +10,24 @@ namespace ArmyBattle.Services
     /// </summary>
     public static class ObserverManager
     {
+        /// <summary>
+        /// Наблюдатель для логирования урона в файл
+        /// </summary>
         private static DamageLogObserver? _damageLogObserver;
+        
+        /// <summary>
+        /// Наблюдатель для воспроизведения звука при смерти юнита
+        /// </summary>
         private static DeathBeepObserver? _deathBeepObserver;
+        
+        /// <summary>
+        /// Флаг включения логирования урона
+        /// </summary>
         private static bool _damageLogEnabled = false;
+        
+        /// <summary>
+        /// Флаг включения звука при смерти
+        /// </summary>
         private static bool _deathBeepEnabled = false;
 
         /// <summary>
@@ -24,6 +39,9 @@ namespace ArmyBattle.Services
             ApplyToArmy(army2);
         }
 
+        /// <summary>
+        /// Применяет настройки наблюдателей ко всем юнитам указанной армии
+        /// </summary>
         private static void ApplyToArmy(IArmy army)
         {
             if (army?.Units == null) return;
@@ -34,6 +52,9 @@ namespace ArmyBattle.Services
             }
         }
 
+        /// <summary>
+        /// Применяет настройки наблюдателей к конкретному юниту
+        /// </summary>
         private static void ApplyToUnit(IUnit unit)
         {
             // Очищаем старых наблюдателей
@@ -105,6 +126,5 @@ namespace ArmyBattle.Services
                 ApplySettingsToArmies(army1, army2);
             }
         }
-        
     }
 }

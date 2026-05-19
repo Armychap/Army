@@ -3,10 +3,13 @@ using ArmyBattle.Models;
 
 namespace ArmyBattle.Services
 {
+    /// <summary>
+    /// Фабрика для создания юнитов различных типов
+    /// </summary>
     public class UnitFactory
     {
         /// <summary>
-        /// Создает юнита без оберток (наблюдатели добавляются через ObserverManager)
+        /// Создаёт юнита без оберток (наблюдатели добавляются через ObserverManager)
         /// </summary>
         public IUnit CreateFromType(string unitType, int fighterNumber)
         {
@@ -22,14 +25,23 @@ namespace ArmyBattle.Services
             };
         }
 
+        /// <summary>
+        /// Создаёт юнита с помощью фабричного метода
+        /// </summary>
         public IUnit Create(Func<int, IUnit> creator, int fighterNumber)
         {
             return creator(fighterNumber);
         }
     }
 
+    /// <summary>
+    /// Статический провайдер для доступа к экземпляру фабрики юнитов
+    /// </summary>
     public static class UnitFactoryProvider
     {
+        /// <summary>
+        /// Единственный экземпляр фабрики юнитов
+        /// </summary>
         public static UnitFactory Instance { get; } = new UnitFactory();
     }
 }

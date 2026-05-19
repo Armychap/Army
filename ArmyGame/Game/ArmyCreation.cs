@@ -330,6 +330,7 @@ namespace ArmyBattle
             return budget;
         }
 
+        // Запрашивает у пользователя тип боевого построения и возвращает его
         public static FormationType AskFormationType()
         {
             while (true)

@@ -12,13 +12,34 @@ namespace ArmyBattle.Game.Commands
     /// </summary>
     public class DisplayBattleStateAndBuffsCommand : ICommand
     {
+        /// <summary>
+        /// Название команды, отображаемое в меню
+        /// </summary>
         public string Name => "Просмотр состояния и баффов";
+        
+        /// <summary>
+        /// Можно ли отменить команду. Просмотр не меняет состояние, поэтому false
+        /// </summary>
         public bool CanUndo => false;
 
+        /// <summary>
+        /// Движок битвы для получения порядка ходов
+        /// </summary>
         private readonly BattleEngine _battle;
+        
+        /// <summary>
+        /// Первая армия для отображения её баффов
+        /// </summary>
         private readonly IArmy _army1;
+        
+        /// <summary>
+        /// Вторая армия для отображения её баффов
+        /// </summary>
         private readonly IArmy _army2;
 
+        /// <summary>
+        /// Конструктор команды просмотра состояния
+        /// </summary>
         public DisplayBattleStateAndBuffsCommand(BattleEngine battle, IArmy army1, IArmy army2)
         {
             _battle = battle;
@@ -26,6 +47,9 @@ namespace ArmyBattle.Game.Commands
             _army2 = army2;
         }
 
+        /// <summary>
+        /// Выполняет команду: выводит порядок ходов и список активных баффов
+        /// </summary>
         public void Execute()
         {
             Console.WriteLine();
@@ -34,13 +58,21 @@ namespace ArmyBattle.Game.Commands
             DisplayBuffs(_army1, _army2);
         }
 
+        /// <summary>
+        /// Отмена команды. Не требуется, так как команда только отображает информацию
+        /// </summary>
         public void Undo()
         {
-            // Просмотр не требует отмены
         }
 
+        /// <summary>
+        /// Отображает всех бойцов с баффами для обеих армий
+        /// </summary>
         private static void DisplayBuffs(IArmy army1, IArmy army2)
         {
+            /// <summary>
+            /// Локальная функция для вывода баффов одной армии
+            /// </summary>
             void PrintArmyBuffs(IArmy army)
             {
                 Console.ForegroundColor = army.Color;
@@ -61,6 +93,7 @@ namespace ArmyBattle.Game.Commands
                 {
                     var buffNames = new List<string>();
                     var current = unit;
+                    
                     while (current is BuffDecorator decorator)
                     {
                         string buffName = decorator switch
