@@ -57,6 +57,7 @@ namespace ArmyBattle.Game
             }
             else if (currentFormation == FormationType.ThreeColumns)
             {
+                FillThreeColumnsFromReserve();
                 if (!HasActiveColumnPair()) return false;
             }
             else
@@ -517,6 +518,58 @@ namespace ArmyBattle.Game
             ref IUnit? attacker, ref IUnit? defender, int column)
         {
             PerformAttackInColumn(attackingArmy, defendingArmy, ref attacker, ref defender, column);
+        }
+
+        /// <summary>
+        /// Обновляет резервные очереди для трёхколонного боя на основе текущего списка живых бойцов.
+        /// Это гарантирует, что новые бойцы и клоны, добавленные в порядок боя, попадут в резерв.
+        /// </summary>
+        private void RefreshThreeColumnReservesFromAliveOrder()
+        {
+            if (currentFormation != FormationType.ThreeColumns)
+                return;
+
+            var activeArmy1 = currentFightersArmy1.Where(u => u?.IsAlive == true).ToHashSet();
+            var activeArmy2 = currentFightersArmy2.Where(u => u?.IsAlive == true).ToHashSet();
+
+            army1BackupQueue = army1.AliveFightersInBattleOrder
+                .Where(u => u.IsAlive && !activeArmy1.Contains(u))
+                .ToList();
+
+            army2BackupQueue = army2.AliveFightersInBattleOrder
+                .Where(u => u.IsAlive && !activeArmy2.Contains(u))
+                .ToList();
+
+            for (int col = 0; col < 3; col++)
+            {
+                if (currentFightersArmy1[col]?.IsAlive != true)
+                    currentFightersArmy1[col] = null;
+                if (currentFightersArmy2[col]?.IsAlive != true)
+                    currentFightersArmy2[col] = null;
+            }
+        }
+
+        /// <summary>
+        /// Заполняет свободные позиции в трёхколонном бою резервными бойцами.
+        /// </summary>
+        private void FillThreeColumnsFromReserve()
+        {
+            RefreshThreeColumnReservesFromAliveOrder();
+
+            for (int col = 0; col < 3; col++)
+            {
+                if (currentFightersArmy1[col]?.IsAlive != true && army1BackupQueue.Count > 0)
+                {
+                    currentFightersArmy1[col] = army1BackupQueue[0];
+                    army1BackupQueue.RemoveAt(0);
+                }
+
+                if (currentFightersArmy2[col]?.IsAlive != true && army2BackupQueue.Count > 0)
+                {
+                    currentFightersArmy2[col] = army2BackupQueue[0];
+                    army2BackupQueue.RemoveAt(0);
+                }
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ namespace ArmyBattle.Services
                 nameof(Healer) => new Healer(fighterNumber),
                 nameof(Wizard) => new Wizard(fighterNumber),
                 nameof(ShieldWall) => new ShieldWall(fighterNumber),
+                nameof(ShieldWallAdapter) => new ShieldWallAdapter(fighterNumber),
                 _ => throw new InvalidOperationException($"Неизвестный тип юнита: {unitType}")
             };
         }

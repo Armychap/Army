@@ -448,6 +448,9 @@ namespace ArmyBattle.Services
                     // Если тип был "ShieldWall" создаем стену щитов
                     nameof(ShieldWall) => new ShieldWall(unitData.FighterNumber),
 
+                    // Если тип был "ShieldWallAdapter" создаем адаптер стены
+                    nameof(ShieldWallAdapter) => new ShieldWallAdapter(unitData.FighterNumber),
+
                     // Если тип неизвестен выбрасываем исключение с описанием ошибки
                     _ => throw new Exception($"Неизвестный тип юнита: {unitData.Type}")
                 };

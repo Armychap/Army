@@ -50,7 +50,15 @@ namespace ArmyBattle.Game
 
                 if (unitType != null && unit.GetRootType() != unitType) continue;
 
-                if (unit == currentFighter1 || unit == currentFighter2) continue;
+                // Пропускаем юнитов, которые участвуют в бою (как в одноколонном режиме,
+                // так и в трёхколонном — проверяем текущие колоны)
+                if (unit == currentFighter1 || unit == currentFighter2)
+                    continue;
+                if (currentFormation == FormationType.ThreeColumns)
+                {
+                    if (currentFightersArmy1.Contains(unit) || currentFightersArmy2.Contains(unit))
+                        continue;
+                }
 
                 if (unit.SpecialAbility == null) continue;
 

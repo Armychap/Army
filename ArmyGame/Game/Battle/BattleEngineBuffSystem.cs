@@ -15,6 +15,7 @@ namespace ArmyBattle.Game
         {
             var army1StrongFighters = army1.Units
                 .Where(u => u.IsAlive && u != currentFighter1 && u != currentFighter2
+                            && !(currentFormation == FormationType.ThreeColumns && (currentFightersArmy1.Contains(u) || currentFightersArmy2.Contains(u)))
                             && IsStrongFighter(u) && CanEquipBuff(u, u.Army))
                 .ToList();
 
@@ -26,6 +27,7 @@ namespace ArmyBattle.Game
 
             var army2StrongFighters = army2.Units
                 .Where(u => u.IsAlive && u != currentFighter1 && u != currentFighter2
+                            && !(currentFormation == FormationType.ThreeColumns && (currentFightersArmy1.Contains(u) || currentFightersArmy2.Contains(u)))
                             && IsStrongFighter(u) && CanEquipBuff(u, u.Army))
                 .ToList();
 
@@ -69,12 +71,14 @@ namespace ArmyBattle.Game
             if (index == -1) return false;
 
             if (index > 0 && army.AliveFightersInBattleOrder[index - 1] is WeakFighter wf1 && wf1.IsAlive
-                && wf1 != currentFighter1 && wf1 != currentFighter2)
+                && wf1 != currentFighter1 && wf1 != currentFighter2
+                && !(currentFormation == FormationType.ThreeColumns && (currentFightersArmy1.Contains(wf1) || currentFightersArmy2.Contains(wf1))))
                 return true;
 
             if (index < army.AliveFightersInBattleOrder.Count - 1
                 && army.AliveFightersInBattleOrder[index + 1] is WeakFighter wf2 && wf2.IsAlive
-                && wf2 != currentFighter1 && wf2 != currentFighter2)
+                && wf2 != currentFighter1 && wf2 != currentFighter2
+                && !(currentFormation == FormationType.ThreeColumns && (currentFightersArmy1.Contains(wf2) || currentFightersArmy2.Contains(wf2))))
                 return true;
 
             return false;

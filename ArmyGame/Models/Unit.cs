@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ArmyBattle.Models.Interfaces;
+using ArmyBattle.Services;
 
 namespace ArmyBattle.Models
 {
@@ -223,8 +224,7 @@ namespace ArmyBattle.Models
         // Атаковать цель через интерфейс
         public virtual void AttackUnit(IUnit target)
         {
-            target.TakeDamage(EffectiveAttack, Name);
-            DamageDealt += Math.Max(1, EffectiveAttack - target.EffectiveDefence);
+            DamageService.Instance.ResolveAttack(this, target);
         }
 
         // Может ли юнит быть скопирован магом
