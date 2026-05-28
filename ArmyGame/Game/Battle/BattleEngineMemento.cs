@@ -145,26 +145,38 @@ namespace ArmyBattle.Game
             foreach (var snapshot in snapshots)
             {
                 var unit = army.Units.FirstOrDefault(u => u.FighterNumber == snapshot.FighterNumber);
-                if (unit != null)
+                if (unit == null) continue;
+
+                // Снимаем все текущие баффы, чтобы восстановить точную цепочку
+                var baseUnit = unit;
+                while (baseUnit is BuffDecorator decorator)
                 {
-                    unit.Health = snapshot.Health;
-                    unit.Attack = snapshot.Attack;
-                    unit.Defence = snapshot.Defence;
-                    
-                    // Восстанавливаем баффы
-                    IUnit restoredUnit = unit;
-                    foreach (var buffType in snapshot.AppliedBuffs)
-                    {
-                        restoredUnit = BuffFactory.ApplyBuff(restoredUnit, buffType);
-                    }
-                    
-                    // Если баффы были применены, заменяем юнита
-                    if (restoredUnit != unit)
-                    {
-                        ReplaceUnitInArmy(unit, restoredUnit);  // Используем существующий метод из BattleEngineMoves.cs
-                    }
+                    baseUnit = decorator.GetInnerUnit();
+                }
+
+                if (baseUnit != unit)
+                {
+                    army.ReplaceUnit(unit, baseUnit);
+                    unit = baseUnit;
+                }
+
+                unit.Health = snapshot.Health;
+                unit.Attack = snapshot.Attack;
+                unit.Defence = snapshot.Defence;
+
+                // Восстанавливаем баффы в правильном порядке: сначала самые внутренние, затем внешние
+                IUnit restoredUnit = unit;
+                foreach (var buffType in snapshot.AppliedBuffs.AsEnumerable().Reverse())
+                {
+                    restoredUnit = BuffFactory.ApplyBuff(restoredUnit, buffType);
+                }
+
+                if (restoredUnit != unit)
+                {
+                    ReplaceUnitInArmy(unit, restoredUnit);
                 }
             }
+
             army.RefreshAliveFighters();
         }
         

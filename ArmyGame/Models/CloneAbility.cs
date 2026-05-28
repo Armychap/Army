@@ -35,6 +35,11 @@ namespace ArmyBattle.Models
         public IUnit? ChosenToClone { get; private set; }
 
         /// <summary>
+        /// Созданный клон (для отображения в логе)
+        /// </summary>
+        public IUnit? CreatedClone { get; private set; }
+
+        /// <summary>
         /// Конструктор способности клонирования
         /// </summary>
         public CloneAbility(string name, int range, int power)
@@ -94,6 +99,7 @@ namespace ArmyBattle.Models
 
             // Добавляем клона в армию
             army.AddUnit(clone);
+            CreatedClone = clone;
 
             // Устанавливаем позицию клона перед магом (в любом месте перед магом)
             int wizardIndex = army.Units.IndexOf(user);

@@ -373,14 +373,14 @@ namespace ArmyBattle.Game
             else
             {
                 Console.WriteLine($"Урон: {damage}");
+                Console.WriteLine($"Здоровье {attacker.GetDisplayName(attackingArmy.Name)}: {Math.Max(0, attacker.Health)}/{attacker.MaxHealth}");
+                Console.WriteLine($"Здоровье {defender.GetDisplayName(defendingArmy.Name)}: {Math.Max(0, defender.Health)}/{defender.MaxHealth}");
             }
 
             if (defender.IsAlive && TryRemoveOneBuffOnStrongHit(attacker, ref defender))
             {
                 Console.WriteLine("У противника сброшен один бафф!");
             }
-
-            Console.WriteLine($"Здоровье {defender.FighterNumber}: {Math.Max(0, defender.Health)}/{defender.MaxHealth}");
 
             // ЕСЛИ ЗАЩИТНИК УМЕР - ЗАМЕНЯЕМ ЕГО
             if (!defender.IsAlive)

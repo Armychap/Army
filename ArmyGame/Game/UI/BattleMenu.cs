@@ -352,6 +352,9 @@ namespace ArmyBattle
                         else
                         {
                             ConsoleMenu.ShowMessage($"Отмена: {_commandManager.GetRedoName()}");
+                            Console.WriteLine("Текущее состояние:");
+                            var undoState = new DisplayBattleStateAndBuffsCommand(battle, army1, army2);
+                            undoState.Execute();
                         }
                         break;
 
@@ -363,6 +366,9 @@ namespace ArmyBattle
                         else
                         {
                             ConsoleMenu.ShowMessage($"Повтор: {_commandManager.GetUndoName()}");
+                            Console.WriteLine("Текущее состояние:");
+                            var redoState = new DisplayBattleStateAndBuffsCommand(battle, army1, army2);
+                            redoState.Execute();
                         }
                         break;
 

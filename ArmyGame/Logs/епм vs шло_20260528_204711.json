@@ -1,0 +1,490 @@
+{
+  "Army1Name": "\u0435\u043F\u043C",
+  "Army1Prefix": null,
+  "Army1Color": 12,
+  "Army1Units": [
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 1,
+      "Health": -11,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 2,
+      "Health": 55,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "ShieldWallAdapter",
+      "FighterNumber": 3,
+      "Health": 88,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 4,
+      "Health": -3,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 5,
+      "Health": 49,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40,
+      "AppliedBuffs": [
+        "Spear",
+        "Spear",
+        "Shield",
+        "Horse",
+        "Spear",
+        "Helmet",
+        "Helmet",
+        "Spear",
+        "Horse",
+        "Shield",
+        "Spear",
+        "Spear"
+      ]
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 6,
+      "Health": -5,
+      "Attack": 3,
+      "Defence": 2,
+      "Cost": 20,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 7,
+      "Health": 54,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 8,
+      "Health": 69,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55,
+      "AppliedBuffs": []
+    }
+  ],
+  "TotalCost1": 295,
+  "Army2Name": "\u0448\u043B\u043E",
+  "Army2Prefix": null,
+  "Army2Color": 9,
+  "Army2Units": [
+    {
+      "Type": "Archer",
+      "FighterNumber": 15,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 14,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 25,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 26,
+      "Health": -16,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 28,
+      "Health": -11,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 12,
+      "Health": 1,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 11,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 17,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 22,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 31,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 21,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 18,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 32,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 27,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 1,
+      "Health": 58,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 23,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 10,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 20,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 2,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 29,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 16,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 3,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 30,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 24,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 13,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 4,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40,
+      "AppliedBuffs": [
+        "Spear",
+        "Spear",
+        "Horse",
+        "Shield",
+        "Helmet",
+        "Helmet",
+        "Helmet",
+        "Helmet",
+        "Helmet",
+        "Shield",
+        "Spear",
+        "Helmet",
+        "Horse",
+        "Spear",
+        "Spear",
+        "Horse",
+        "Spear",
+        "Helmet",
+        "Shield",
+        "Helmet",
+        "Horse",
+        "Helmet",
+        "Spear",
+        "Horse",
+        "Spear",
+        "Horse",
+        "Horse",
+        "Helmet",
+        "Spear",
+        "Shield",
+        "Helmet",
+        "Helmet",
+        "Helmet",
+        "Helmet",
+        "Helmet",
+        "Shield",
+        "Horse",
+        "Spear",
+        "Spear"
+      ]
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 5,
+      "Health": 25,
+      "Attack": 10,
+      "Defence": 8,
+      "Cost": 15,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 33,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 6,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 7,
+      "Health": 60,
+      "Attack": 20,
+      "Defence": 15,
+      "Cost": 40,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Archer",
+      "FighterNumber": 19,
+      "Health": 18,
+      "Attack": 5,
+      "Defence": 3,
+      "Cost": 25,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "ShieldWall",
+      "FighterNumber": 8,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 50,
+      "Cost": 55,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 9,
+      "Health": 22,
+      "Attack": 7,
+      "Defence": 4,
+      "Cost": 30,
+      "AppliedBuffs": []
+    }
+  ],
+  "TotalCost2": 830,
+  "SaveDate": "2026-05-28T20:47:11.2380419+03:00",
+  "CurrentRound": 1,
+  "AttackTurn": 0,
+  "Army1CurrentFighterIndex": 0,
+  "Army2CurrentFighterIndex": 0,
+  "FirstAttackerIsArmy1": false,
+  "NeedNewRoundHeader": true,
+  "Army1AliveOrder": [
+    2,
+    3,
+    5,
+    7,
+    8
+  ],
+  "Army2AliveOrder": [
+    15,
+    1,
+    11,
+    14,
+    17,
+    21,
+    12,
+    2,
+    3,
+    13,
+    4,
+    5,
+    19,
+    10,
+    18,
+    22,
+    20,
+    16,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22
+  ],
+  "BattleLogName": null,
+  "MoveCount": 0,
+  "CurrentFormation": 0
+}

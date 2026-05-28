@@ -89,6 +89,7 @@ namespace ArmyBattle.Game
         /// </summary>
         private void EquipBuff(IUnit unit)
         {
+            var source = FindBuffSource(unit, unit.Army!);
             IUnit buffedUnit = BuffFactory.ApplyRandomBuff(unit);
             ReplaceUnitInArmy(unit, buffedUnit);
 
@@ -98,13 +99,34 @@ namespace ArmyBattle.Game
                 Army2BuffsAppliedCount++;
 
             var buffName = GetBuffName(buffedUnit);
-            Console.WriteLine($"{buffedUnit.GetDisplayName(buffedUnit.Army?.Name ?? "")} надевает бафф {buffName}!");
+            if (source != null)
+            {
+                Console.WriteLine($"{source.GetDisplayName(source.Army?.Name ?? "")} дает бафф {buffName} {buffedUnit.GetDisplayName(buffedUnit.Army?.Name ?? "")}!");
+            }
+            else
+            {
+                Console.WriteLine($"{buffedUnit.GetDisplayName(buffedUnit.Army?.Name ?? "")} надевает бафф {buffName}!");
+            }
             Console.WriteLine($"Атака {buffedUnit.EffectiveAttack}, Защита {buffedUnit.EffectiveDefence}");
 
             if (_view != null)
             {
-                _view.DisplayBuff(buffedUnit, buffName, buffedUnit.EffectiveAttack, buffedUnit.EffectiveDefence);
+                    _view.DisplayBuff(buffedUnit, buffName, buffedUnit.EffectiveAttack, buffedUnit.EffectiveDefence, source);
             }
+        }
+
+        private IUnit? FindBuffSource(IUnit strongUnit, IArmy army)
+        {
+            int index = army.AliveFightersInBattleOrder.IndexOf(strongUnit);
+            if (index == -1) return null;
+
+            if (index > 0 && army.AliveFightersInBattleOrder[index - 1] is WeakFighter wf1 && wf1.IsAlive)
+                return wf1;
+
+            if (index < army.AliveFightersInBattleOrder.Count - 1 && army.AliveFightersInBattleOrder[index + 1] is WeakFighter wf2 && wf2.IsAlive)
+                return wf2;
+
+            return null;
         }
 
         private static string GetBuffName(IUnit unit)

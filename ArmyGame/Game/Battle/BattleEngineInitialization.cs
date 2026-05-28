@@ -109,6 +109,7 @@ namespace ArmyBattle.Game
 
             currentFormation = newFormation;
             SetFormationStrategy(newFormation);
+            Console.WriteLine($"Перестроение: {GetFormationName(newFormation)}");
 
             if (newFormation == FormationType.ThreeColumns)
             {
@@ -175,6 +176,17 @@ namespace ArmyBattle.Game
         {
             currentFighter1 = SelectFighterForArmy(army1);
             currentFighter2 = SelectFighterForArmy(army2);
+        }
+
+        private static string GetFormationName(FormationType formation)
+        {
+            return formation switch
+            {
+                FormationType.OneColumn => "Одна колонна",
+                FormationType.ThreeColumns => "Три колонны",
+                FormationType.Wall => "Стенка",
+                _ => "Неизвестно"
+            };
         }
 
         /// <summary>

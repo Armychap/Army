@@ -64,7 +64,8 @@ namespace ArmyBattle.Game.Commands
             {
                 // REDO: заново выполняем ход (чтобы показать его в консоли)
                 Console.WriteLine(); // Отступ перед выводом хода
-                _battle.RestoreMemento(_beforeState);      // Возвращаемся к состоянию ДО
+                if (_beforeState != null)
+                    _battle.RestoreMemento(_beforeState);      // Возвращаемся к состоянию ДО
                 _battle.DoSingleMove();                    // Заново выполняем ход (с выводом)
                 // _afterState уже есть, не перезаписываем
                 

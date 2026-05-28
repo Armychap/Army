@@ -166,6 +166,7 @@ namespace ArmyBattle.Game
                         {
                             int damage = healthBefore - (target?.Health ?? 0);
                             Console.WriteLine($"Урон: {damage}");
+                            Console.WriteLine($"Здоровье {unit.GetDisplayName(attackingArmy.Name)}: {unit.Health}/{unit.MaxHealth}");
                             Console.Write($"Здоровье ");
                             Console.ForegroundColor = defendingArmy.Color;
                             Console.Write(target?.GetDisplayName(defendingArmy.Name));
@@ -230,6 +231,7 @@ namespace ArmyBattle.Game
                             Console.ResetColor();
                             Console.WriteLine();
 
+                            Console.WriteLine($"Здоровье {unit.GetDisplayName(attackingArmy.Name)}: {unit.Health}/{unit.MaxHealth}");
                             Console.Write($"Здоровье ");
                             Console.ForegroundColor = attackingArmy.Color;
                             Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));
@@ -364,6 +366,13 @@ namespace ArmyBattle.Game
                             Console.Write($"({ca.ChosenToClone.PowerLevel}) ");
                             Console.ForegroundColor = attackingArmy.Color;
                             Console.Write(ca.ChosenToClone.GetDisplayName(attackingArmy.Name));
+                            if (ca.CreatedClone != null)
+                            {
+                                Console.ForegroundColor = abilityColor;
+                                Console.Write(" -> получился ");
+                                Console.ForegroundColor = attackingArmy.Color;
+                                Console.Write(ca.CreatedClone.GetDisplayName(attackingArmy.Name));
+                            }
                             Console.ResetColor();
                             Console.WriteLine();
                         }
@@ -390,6 +399,7 @@ namespace ArmyBattle.Game
                     {
                         int damage = healthBefore - (target?.Health ?? 0);
                         Console.WriteLine($"Урон: {damage}");
+                        Console.WriteLine($"Здоровье {unit.GetDisplayName(attackingArmy.Name)}: {unit.Health}/{unit.MaxHealth}");
                         Console.Write($"Здоровье ");
                         Console.ForegroundColor = defendingArmy.Color;
                         Console.Write(target?.GetDisplayName(defendingArmy.Name));
@@ -444,6 +454,7 @@ namespace ArmyBattle.Game
                         Console.ResetColor();
                         Console.WriteLine();
 
+                        Console.WriteLine($"Здоровье {unit.GetDisplayName(attackingArmy.Name)}: {unit.Health}/{unit.MaxHealth}");
                         Console.Write($"Здоровье ");
                         Console.ForegroundColor = attackingArmy.Color;
                         Console.Write(sa.LastHealed.GetDisplayName(attackingArmy.Name));

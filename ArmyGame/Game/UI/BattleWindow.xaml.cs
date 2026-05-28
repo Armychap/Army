@@ -90,7 +90,13 @@ namespace ArmyBattle.UI
             Dispatcher.Invoke(() =>
             {
                 var c = attArmy == _army1 ? C1 : C2;
-                AddLog($"⚔ {att.Name}#{att.FighterNumber} → {def.Name}#{def.FighterNumber}: −{dmg} HP", c);
+                var cDef = defArmy == _army1 ? C1 : C2;
+
+                // Полная информация об атаке с HP
+                AddLog($"⚔ {att.GetDisplayName(attArmy.Name)} бьёт {def.GetDisplayName(defArmy.Name)} (−{dmg} HP)", c);
+                AddLog($"  ❤ {att.GetDisplayName(attArmy.Name)}: {Math.Max(0, att.Health)}/{att.MaxHealth}", c);
+                AddLog($"  ❤ {def.GetDisplayName(defArmy.Name)}: {Math.Max(0, def.Health)}/{def.MaxHealth}", cDef);
+
                 RenderRosters();
                 RenderFormationField();
             });
@@ -111,7 +117,7 @@ namespace ArmyBattle.UI
                 if (!_engine.IsCombatActive)
                 {
                     FinishBattle();
-                    ShowWinnerAndExit();
+                    AddLog("✓ Боя завершена! Нажмите 'Выход' для завершения.", "#95e1d3");
                 }
             });
         }
@@ -121,16 +127,57 @@ namespace ArmyBattle.UI
             Dispatcher.Invoke(() =>
             {
                 var c = uArmy == _army1 ? C1 : C2;
-                var t = target == null ? "поле" : $"{target.Name}#{target.FighterNumber}";
-                AddLog($"✨ {user.Name}#{user.FighterNumber}: {name} → {t}", c);
+                // Специальная обработка для различных типов способностей
+                if (user.SpecialAbility is ArmyBattle.Models.CloneAbility ca)
+                {
+                    var chosen = ca.ChosenToClone;
+                    var created = ca.CreatedClone;
+                    if (chosen != null)
+                    {
+                        var msg = $"🔮 {user.Name}#{user.FighterNumber} клонирует {chosen.Name}#{chosen.FighterNumber}";
+                        if (created != null)
+                            msg += $" -> получился {created.Name}#{created.FighterNumber} (HP {created.Health}/{created.MaxHealth})";
+                        AddLog(msg, c);
+                        return;
+                    }
+                }
+
+                if (user.Name == "Лучник" || user.GetType().Name.Contains("Archer"))
+                {
+                    var t = target == null ? "поле" : $"{target.Name}#{target.FighterNumber}";
+                    AddLog($"🏹 {user.Name}#{user.FighterNumber} стреляет в {t}", c);
+                    if (target != null)
+                        AddLog($"❤ {target.GetDisplayName(tArmy.Name)}: {Math.Max(0, target.Health)}/{target.MaxHealth}", tArmy == _army1 ? C1 : C2);
+                    return;
+                }
+
+                if (user.Name == "Лекарь" || user.GetType().Name.Contains("Healer"))
+                {
+                    if (target != null)
+                    {
+                        AddLog($"✚ {user.Name}#{user.FighterNumber} лечит {target.Name}#{target.FighterNumber}", c);
+                        AddLog($"❤ {target.GetDisplayName(tArmy.Name)}: {target.Health}/{target.MaxHealth}", tArmy == _army1 ? C1 : C2);
+                        return;
+                    }
+                }
+
+                var t2 = target == null ? "поле" : $"{target.Name}#{target.FighterNumber}";
+                AddLog($"✨ {user.Name}#{user.FighterNumber}: {name} → {t2}", c);
             });
         }
 
-        public void DisplayBuff(IUnit unit, string buff, int atk, int def)
+        public void DisplayBuff(IUnit unit, string buff, int atk, int def, IUnit? source = null)
         {
             Dispatcher.Invoke(() =>
             {
-                AddLog($"🔰 {unit.Name}#{unit.FighterNumber} получил бафф {buff} (+{atk}⚔ +{def}🛡)", "#ffd93d");
+                if (source != null)
+                {
+                    AddLog($"🔰 {source.GetDisplayName(source.Army?.Name ?? "")} дает бафф {buff} {unit.GetDisplayName(unit.Army?.Name ?? "")} (+{atk}⚔ +{def}🛡)", "#ffd93d");
+                }
+                else
+                {
+                    AddLog($"🔰 {unit.Name}#{unit.FighterNumber} получил бафф {buff} (+{atk}⚔ +{def}🛡)", "#ffd93d");
+                }
                 RenderBuffs();
             });
         }
@@ -183,7 +230,7 @@ namespace ArmyBattle.UI
             if (!_engine.IsCombatActive || _engine.StalemateReached)
             {
                 FinishBattle();
-                ShowWinnerAndExit();
+                AddLog("✓ Боя завершена! Нажмите 'Выход' для завершения.", "#95e1d3");
             }
         }
 
@@ -193,59 +240,57 @@ namespace ArmyBattle.UI
 
             _autoBattleRunning = true;
             _autoCts = new CancellationTokenSource();
-            AutoBtn.IsEnabled = false;
+
+            // Блокируем кнопки
             MoveBtn.IsEnabled = false;
+            AutoBtn.IsEnabled = false;
             FormationBtn.IsEnabled = false;
             SaveBtn.IsEnabled = false;
+            UndoBtn.IsEnabled = false;
+            RedoBtn.IsEnabled = false;
 
             try
             {
+                // Запускаем автобой в отдельном потоке (НЕ в UI!)
                 await Task.Run(() =>
                 {
-                    while (_engine.IsCombatActive && !_autoCts.Token.IsCancellationRequested)
-                    {
-                        Dispatcher.Invoke(() =>
-                        {
-                            var cmd = new MakeMoveCommand(_engine);
-                            _cmd.ExecuteCommand(cmd);
-
-                            // Обновляем UI после каждого хода
-                            RenderRosters();
-                            RenderFormationField();
-                        });
-                        Thread.Sleep(200);
-                    }
+                    var autoBattleCmd = new AutoBattleCommand(_engine, this);
+                    Dispatcher.Invoke(() => _cmd.ExecuteCommand(autoBattleCmd));
                 }, _autoCts.Token);
             }
             catch (OperationCanceledException)
             {
-                // Отменено пользователем
+                AddLog("Автобой прерван пользователем.", "#ffd93d");
             }
-            catch (Exception ex)
+            finally
             {
-                System.Diagnostics.Debug.WriteLine($"Auto battle error: {ex.Message}");
-            }
-
-            _autoBattleRunning = false;
-
-            Dispatcher.Invoke(() =>
-            {
-                RenderRosters();
-                RenderFormationField();
-                RefreshButtons();
-
-                // ПРОВЕРЯЕМ ЗАВЕРШЕНИЕ БИТВЫ
-                if (!_engine.IsCombatActive || _engine.StalemateReached)
+                // Возвращаем управление UI-потоку
+                await Dispatcher.InvokeAsync(() =>
                 {
-                    FinishBattle();
-                    ShowWinnerAndExit();  // ← ВАЖНО: показываем победителя
-                }
-                else
-                {
+                    _autoBattleRunning = false;
+
+                    RenderRosters();
+                    RenderFormationField();
                     RefreshButtons();
-                }
-            });
+
+                    // Проверяем завершение битвы
+                    if (_engine != null && (!_engine.IsCombatActive || _engine.StalemateReached))
+                    {
+                        FinishBattle();
+                        AddLog("✓ Битва завершена! Нажмите 'Выход' для завершения.", "#95e1d3");
+                    }
+                    else
+                    {
+                        // Разблокируем основные кнопки, если битва не закончена
+                        MoveBtn.IsEnabled = true;
+                        AutoBtn.IsEnabled = true;
+                        FormationBtn.IsEnabled = true;
+                        SaveBtn.IsEnabled = true;
+                    }
+                });
+            }
         }
+
         private void UndoBtn_Click(object sender, RoutedEventArgs e)
         {
             if (_cmd.UndoCount == 0) return;
@@ -254,10 +299,19 @@ namespace ArmyBattle.UI
             {
                 _formation = _engine.GetCurrentFormation();
                 FormationLbl.Text = FormatName(_formation);
+                // Если после отката битва ещё идёт, то переживим флаг завершения
+                if (_engine.IsCombatActive && _battleOver)
+                {
+                    _battleOver = false;
+                    AddLog("⟲ Битва возобновлена! Вы можете продолжать делать ходы.", "#95e1d3");
+                }
             }
             RenderRosters();
             RenderFormationField();
             RefreshButtons();
+            if (_cmd.RedoCount > 0)
+                AddLog($"↶ Отмена: {_cmd.GetRedoName()}", "#a09080");
+            LogBattleState();
         }
 
         private void RedoBtn_Click(object sender, RoutedEventArgs e)
@@ -268,10 +322,19 @@ namespace ArmyBattle.UI
             {
                 _formation = _engine.GetCurrentFormation();
                 FormationLbl.Text = FormatName(_formation);
+                // Если после повтора битва завершилась, отобразим это
+                if (!_engine.IsCombatActive && !_battleOver)
+                {
+                    _battleOver = true;
+                    AddLog("✓ Боя завершена! Нажмите 'Выход' для завершения.", "#95e1d3");
+                }
             }
             RenderRosters();
             RenderFormationField();
             RefreshButtons();
+            if (_cmd.UndoCount > 0)
+                AddLog($"↷ Повтор: {_cmd.GetUndoName()}", "#a09080");
+            LogBattleState();
         }
 
         private void FormationBtn_Click(object sender, RoutedEventArgs e)
@@ -308,14 +371,23 @@ namespace ArmyBattle.UI
         private void ExitBtn_Click(object sender, RoutedEventArgs e)
         {
             _autoCts?.Cancel();
-            Close();
+
+            // Если битва завершена, показываем окно результата перед закрытием
+            if (_battleOver)
+            {
+                ShowWinnerAndExit();
+            }
+            else
+            {
+                Close();
+            }
         }
 
         // ════════════════════════════════════════════════════════════════════════════
         // Rendering helpers
         // ════════════════════════════════════════════════════════════════════════════
 
-        private void RenderRosters()
+        public void RenderRosters()
         {
             if (_army1 == null || _army2 == null) return;
             RenderSideRoster(_army1, Army1RosterPanel, Army1CountLbl, Army1Bar, true);
@@ -426,7 +498,7 @@ namespace ArmyBattle.UI
             return border;
         }
 
-        private void RenderBuffs()
+        public void RenderBuffs()
         {
             if (_army1 == null || _army2 == null) return;
             Army1BuffsLbl.Text = BuildBuffSummary(_army1);
@@ -445,9 +517,26 @@ namespace ArmyBattle.UI
             return lines.Count > 0 ? string.Join("\n", lines) : "Нет баффов";
         }
 
+        private void LogBattleState()
+        {
+            if (_army1 == null || _army2 == null) return;
+            AddLog("--- Текущее состояние армий ---", "#a09080");
+            AddLog($"{_army1.Name}:", C1);
+            foreach (var u in _army1.AliveFightersInBattleOrder)
+            {
+                AddLog($"  #{u.FighterNumber} {u.Name} — ❤ {Math.Max(0, u.Health)}/{u.MaxHealth} {(GetBuffNames(u).Count > 0 ? "[бафф]" : "")}", C1);
+            }
+            AddLog($"{_army2.Name}:", C2);
+            foreach (var u in _army2.AliveFightersInBattleOrder)
+            {
+                AddLog($"  #{u.FighterNumber} {u.Name} — ❤ {Math.Max(0, u.Health)}/{u.MaxHealth} {(GetBuffNames(u).Count > 0 ? "[бафф]" : "")}", C2);
+            }
+            AddLog("-------------------------------", "#a09080");
+        }
+
         // ─── Formation field renderer ───────────────────────────────────────────────
 
-        private void RenderFormationField()
+        public void RenderFormationField()
         {
             if (_engine == null || _army1 == null || _army2 == null) return;
             _formation = _engine.GetCurrentFormation();
@@ -914,8 +1003,12 @@ namespace ArmyBattle.UI
         private void RefreshButtons()
         {
             bool over = _battleOver || _engine?.IsCombatActive == false;
+            bool canAct = !over && !_autoBattleRunning;
+            
             MoveBtn.IsEnabled = !over && !_autoBattleRunning;
             AutoBtn.IsEnabled = !over && !_autoBattleRunning;
+            FormationBtn.IsEnabled = canAct;   
+            SaveBtn.IsEnabled = canAct; 
             UndoBtn.IsEnabled = _cmd.UndoCount > 0;
             RedoBtn.IsEnabled = _cmd.RedoCount > 0;
         }
