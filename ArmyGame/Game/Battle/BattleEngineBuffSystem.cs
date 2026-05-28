@@ -14,9 +14,9 @@ namespace ArmyBattle.Game
         private void ProcessBuffs()
         {
             var army1StrongFighters = army1.Units
-                .Where(u => u.IsAlive && u != currentFighter1 && u != currentFighter2
+                .Where(u => u.Army != null && u.IsAlive && u != currentFighter1 && u != currentFighter2
                             && !(currentFormation == FormationType.ThreeColumns && (currentFightersArmy1.Contains(u) || currentFightersArmy2.Contains(u)))
-                            && IsStrongFighter(u) && CanEquipBuff(u, u.Army))
+                            && IsStrongFighter(u) && CanEquipBuff(u, u.Army!))
                 .ToList();
 
             if (army1StrongFighters.Any())
@@ -26,9 +26,9 @@ namespace ArmyBattle.Game
             }
 
             var army2StrongFighters = army2.Units
-                .Where(u => u.IsAlive && u != currentFighter1 && u != currentFighter2
+                .Where(u => u.Army != null && u.IsAlive && u != currentFighter1 && u != currentFighter2
                             && !(currentFormation == FormationType.ThreeColumns && (currentFightersArmy1.Contains(u) || currentFightersArmy2.Contains(u)))
-                            && IsStrongFighter(u) && CanEquipBuff(u, u.Army))
+                            && IsStrongFighter(u) && CanEquipBuff(u, u.Army!))
                 .ToList();
 
             if (army2StrongFighters.Any())
@@ -97,8 +97,26 @@ namespace ArmyBattle.Game
             else if (buffedUnit.Army == army2)
                 Army2BuffsAppliedCount++;
 
-            Console.WriteLine($"{buffedUnit.GetDisplayName(buffedUnit.Army?.Name ?? "")} надевает бафф!");
+            var buffName = GetBuffName(buffedUnit);
+            Console.WriteLine($"{buffedUnit.GetDisplayName(buffedUnit.Army?.Name ?? "")} надевает бафф {buffName}!");
             Console.WriteLine($"Атака {buffedUnit.EffectiveAttack}, Защита {buffedUnit.EffectiveDefence}");
+
+            if (_view != null)
+            {
+                _view.DisplayBuff(buffedUnit, buffName, buffedUnit.EffectiveAttack, buffedUnit.EffectiveDefence);
+            }
+        }
+
+        private static string GetBuffName(IUnit unit)
+        {
+            return unit switch
+            {
+                HorseBuffDecorator => "Конь",
+                ShieldBuffDecorator => "Щит",
+                HelmetBuffDecorator => "Шлем",
+                SpearBuffDecorator => "Копьё",
+                _ => "бафф"
+            };
         }
     }
 }

@@ -11,6 +11,7 @@ namespace ArmyBattle.Services
         /// <summary>
         /// Создаёт юнита без оберток (наблюдатели добавляются через ObserverManager)
         /// </summary>
+        // Абстрактная фабрика — умеет создавать ЛЮБОГО юнита по строковому типу
         public IUnit CreateFromType(string unitType, int fighterNumber)
         {
             return unitType switch
@@ -29,6 +30,7 @@ namespace ArmyBattle.Services
         /// <summary>
         /// Создаёт юнита с помощью фабричного метода
         /// </summary>
+        // Фабричный метод — принимает ФАБРИКУ (делегат) и вызывает её
         public IUnit Create(Func<int, IUnit> creator, int fighterNumber)
         {
             return creator(fighterNumber);

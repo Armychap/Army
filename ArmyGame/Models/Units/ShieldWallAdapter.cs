@@ -9,7 +9,7 @@ namespace ArmyBattle.Models
     {
         public ShieldWallAdapter(int fighterNumber) : base(fighterNumber)
         {
-            Name = "Гуляй город (адаптер)";
+            Name = "Гуляй город";
             MaxHealth = 100;
             Health = 100;
             Cost = 55;

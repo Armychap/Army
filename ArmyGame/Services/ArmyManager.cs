@@ -427,6 +427,7 @@ namespace ArmyBattle.Services
             // Итерируемся по каждому сохраненному юниту
             foreach (var unitData in unitsData)
             {
+                // Абстрактная фабрика — может создать ЛЮБОГО юнита на основе строки из JSON
                 // Используем switch выражение для создания правильного типа юнита
                 Unit unit = unitData.Type switch
                 {

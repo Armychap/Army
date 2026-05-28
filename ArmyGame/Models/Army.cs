@@ -210,6 +210,7 @@ namespace ArmyBattle.Models
             int remainingBudget = budget;
             int fighterNumber = 1;
 
+            // Каждый элемент списка — это ФАБРИЧНЫЙ МЕТОД для создания КОНКРЕТНОГО юнита
             // Список доступных типов бойцов с их стоимостью и фабричными методами
             var availableFighters = new List<Tuple<int, Func<int, IUnit>>>
             {
@@ -241,19 +242,11 @@ namespace ArmyBattle.Models
                 // Случайный выбор бойца из доступных
                 var selectedFighter = affordableFighters[random.Next(affordableFighters.Count)];
 
+                // Вызов фабричного метода
                 IUnit newUnit = selectedFighter.Item2(fighterNumber);
                 AddUnit(newUnit);
                 remainingBudget -= selectedFighter.Item1;
                 fighterNumber++;
-            }
-
-            // Изначально все бойцы живые, добавляем их в список для боя
-            foreach (var unit in Units)
-            {
-                if (unit.IsAlive)
-                {
-                    AliveFightersInBattleOrder.Add(unit);
-                }
             }
 
             // Сохраняем порядок, который создаётся при построении армии

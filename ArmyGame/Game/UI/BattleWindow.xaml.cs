@@ -250,6 +250,11 @@ namespace ArmyBattle.UI
         {
             if (_cmd.UndoCount == 0) return;
             _cmd.Undo();
+            if (_engine != null)
+            {
+                _formation = _engine.GetCurrentFormation();
+                FormationLbl.Text = FormatName(_formation);
+            }
             RenderRosters();
             RenderFormationField();
             RefreshButtons();
@@ -259,6 +264,11 @@ namespace ArmyBattle.UI
         {
             if (_cmd.RedoCount == 0) return;
             _cmd.Redo();
+            if (_engine != null)
+            {
+                _formation = _engine.GetCurrentFormation();
+                FormationLbl.Text = FormatName(_formation);
+            }
             RenderRosters();
             RenderFormationField();
             RefreshButtons();
@@ -440,6 +450,9 @@ namespace ArmyBattle.UI
         private void RenderFormationField()
         {
             if (_engine == null || _army1 == null || _army2 == null) return;
+            _formation = _engine.GetCurrentFormation();
+            FormationLbl.Text = FormatName(_formation);
+
             CombatGrid.Children.Clear();
             CombatGrid.RowDefinitions.Clear();
             CombatGrid.ColumnDefinitions.Clear();

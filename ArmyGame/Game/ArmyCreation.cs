@@ -171,7 +171,7 @@ namespace ArmyBattle
                 Console.WriteLine("3 - Добавить мага (ATK 7, DEF 4, HP 22) - 30");
                 Console.WriteLine("4 - Добавить сильного бойца (ATK 20, DEF 15, HP 60) - 40");
                 Console.WriteLine("5 - Добавить Гуляй город (ATK 0, DEF 50, HP 70) - 55");
-                Console.WriteLine("6 - Добавить Гуляй город (адаптер) (ATK 0, DEF 50, HP 100) - 55");
+                Console.WriteLine("6 - Добавить Гуляй город (ATK 0, DEF 50, HP 100) - 55");
                 Console.WriteLine("7 - Добавить лекаря (ATK 3, DEF 2, HP 15) - 20");
                 Console.WriteLine("8 - Удалить последнего бойца");
                 Console.WriteLine("9 - Завершить настройку");
@@ -273,7 +273,7 @@ namespace ArmyBattle
                             IUnit fighter = new ShieldWallAdapter(fighterNumber++);
                             army.AddUnit(fighter);
                             totalCost += 55;
-                            Console.WriteLine("Гуляй город (адаптер) добавлен!");
+                            Console.WriteLine("Гуляй город добавлен!");
                         }
                         else
                             Console.WriteLine("Недостаточно бюджета!");
@@ -297,6 +297,10 @@ namespace ArmyBattle
                             var removed = army.Units[army.Units.Count - 1];
                             totalCost -= removed.Cost;
                             army.Units.RemoveAt(army.Units.Count - 1);
+                            if (removed.IsAlive)
+                            {
+                                army.AliveFightersInBattleOrder.Remove(removed);
+                            }
                             fighterNumber--;
                             Console.WriteLine($"Боец удален! Возвращено {removed.Cost} монет.");
                         }

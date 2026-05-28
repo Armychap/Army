@@ -103,6 +103,7 @@ namespace ArmyBattle.Game
 
                 if (unit.CanUseSpecialAbility(target))
                 {
+                    var abilityName = unit.SpecialAbility?.Name ?? "Специальная способность";
                     int healthBefore = (isHealing || isCloning) ? 0 : (target?.Health ?? 0);
 
                     if (isCloning)
@@ -111,10 +112,12 @@ namespace ArmyBattle.Game
                         unit.UseSpecialAbility(target);
                         if (attackingArmy.Units.Count > beforeCount)
                             IncrementAddedFighters(attackingArmy);
+                        _view?.DisplaySpecialAbility(unit, target, attackingArmy, defendingArmy, abilityName);
                     }
                     else if (realUnit is Archer)
                     {
                         unit.UseSpecialAbility(target);
+                        _view?.DisplaySpecialAbility(unit, target, attackingArmy, defendingArmy, abilityName);
                     }
 
                     ConsoleColor abilityColor = GetAbilityColor(realUnit.GetType());
@@ -170,7 +173,7 @@ namespace ArmyBattle.Game
                             Console.WriteLine($": {Math.Max(0, target?.Health ?? 0)}/{target?.MaxHealth ?? 0}");
                         }
 
-                        if (!target?.IsAlive ?? false)
+                        if (target != null && !target.IsAlive)
                         {
                             Console.ForegroundColor = abilityColor;
                             Console.Write(unitTypeName + " ");
@@ -179,17 +182,24 @@ namespace ArmyBattle.Game
                             Console.ForegroundColor = abilityColor;
                             Console.Write(" убивает ");
                             Console.ForegroundColor = defendingArmy.Color;
-                            Console.Write(target?.GetDisplayName(defendingArmy.Name));
+                            Console.Write(target.GetDisplayName(defendingArmy.Name));
                             Console.ForegroundColor = abilityColor;
                             Console.Write(" специальной способностью!");
                             Console.ResetColor();
                             Console.WriteLine();
 
                             defendingArmy.RemoveDeadFighter(target);
-                            if (defendingArmy == army1)
-                                currentFighter1 = army1.GetNextFighterInBattleOrder();
+                            if (currentFormation == FormationType.ThreeColumns)
+                            {
+                                ReplaceDeadFighterIfInColumns(target, defendingArmy == army1);
+                            }
                             else
-                                currentFighter2 = army2.GetNextFighterInBattleOrder();
+                            {
+                                if (defendingArmy == army1)
+                                    currentFighter1 = army1.GetNextFighterInBattleOrder();
+                                else
+                                    currentFighter2 = army2.GetNextFighterInBattleOrder();
+                            }
                             needNewRoundHeader = true;
                         }
                     }
@@ -197,6 +207,11 @@ namespace ArmyBattle.Game
                     if (isHealing)
                     {
                         unit.UseSpecialAbility(target);
+
+                        if (_view != null)
+                        {
+                            _view.DisplaySpecialAbility(unit, target, attackingArmy, defendingArmy, abilityName);
+                        }
                     }
 
                     if (isHealing)
@@ -312,6 +327,7 @@ namespace ArmyBattle.Game
 
             if (unit.CanUseSpecialAbility(target))
             {
+                var abilityName = unit.SpecialAbility?.Name ?? "Специальная способность";
                 int healthBefore = (isHealing || isCloning) ? 0 : (target?.Health ?? 0);
 
                 if (isCloning)
@@ -320,10 +336,12 @@ namespace ArmyBattle.Game
                     unit.UseSpecialAbility(target);
                     if (attackingArmy.Units.Count > beforeCount)
                         IncrementAddedFighters(attackingArmy);
+                    _view?.DisplaySpecialAbility(unit, target, attackingArmy, defendingArmy, abilityName);
                 }
                 else if (realUnit is Archer)
                 {
                     unit.UseSpecialAbility(target);
+                    _view?.DisplaySpecialAbility(unit, target, attackingArmy, defendingArmy, abilityName);
                 }
 
                 ConsoleColor abilityColor = GetAbilityColor(realUnit.GetType());
@@ -379,7 +397,7 @@ namespace ArmyBattle.Game
                         Console.WriteLine($": {Math.Max(0, target?.Health ?? 0)}/{target?.MaxHealth ?? 0}");
                     }
 
-                    if (!target?.IsAlive ?? false)
+                    if (target != null && !target.IsAlive)
                     {
                         Console.ForegroundColor = abilityColor;
                         Console.Write(unitTypeName + " ");
@@ -388,13 +406,17 @@ namespace ArmyBattle.Game
                         Console.ForegroundColor = abilityColor;
                         Console.Write(" убивает ");
                         Console.ForegroundColor = defendingArmy.Color;
-                        Console.Write(target?.GetDisplayName(defendingArmy.Name));
+                        Console.Write(target.GetDisplayName(defendingArmy.Name));
                         Console.ForegroundColor = abilityColor;
                         Console.Write(" специальной способностью!");
                         Console.ResetColor();
                         Console.WriteLine();
 
                         defendingArmy.RemoveDeadFighter(target);
+                        if (currentFormation == FormationType.ThreeColumns)
+                        {
+                            ReplaceDeadFighterIfInColumns(target, defendingArmy == army1);
+                        }
                         needNewRoundHeader = true;
                     }
                 }
@@ -402,6 +424,12 @@ namespace ArmyBattle.Game
                 if (isHealing)
                 {
                     unit.UseSpecialAbility(target);
+
+                    if (_view != null)
+                    {
+                        _view.DisplaySpecialAbility(unit, target, attackingArmy, defendingArmy, abilityName);
+                    }
+
                     if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
                     {
                         Console.ForegroundColor = abilityColor;
@@ -425,6 +453,25 @@ namespace ArmyBattle.Game
                 }
 
                 Console.WriteLine();
+            }
+        }
+
+        /// <summary>
+        /// Заменяет погибшего бойца в трёхколонной постройке, если он занимал текущую позицию.
+        /// </summary>
+        private void ReplaceDeadFighterIfInColumns(IUnit deadUnit, bool isArmy1)
+        {
+            int column = isArmy1 ? Array.IndexOf(currentFightersArmy1, deadUnit) : Array.IndexOf(currentFightersArmy2, deadUnit);
+            if (column < 0) return;
+
+            ReplaceDeadFighterInColumn(column, isArmy1);
+            if (isArmy1 && currentFighter1 == deadUnit)
+            {
+                currentFighter1 = currentFightersArmy1[column];
+            }
+            if (!isArmy1 && currentFighter2 == deadUnit)
+            {
+                currentFighter2 = currentFightersArmy2[column];
             }
         }
 
