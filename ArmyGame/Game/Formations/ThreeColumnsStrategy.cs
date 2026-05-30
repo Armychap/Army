@@ -19,7 +19,7 @@ namespace ArmyBattle.Game.Formations
         /// Флаги для отслеживания, какие пары уже были показаны в текущем раунде
         /// </summary>
         private bool[] _pairDisplayed = new bool[3];
-        
+
         /// <summary>
         /// Список бойцов, которые уже атаковали в текущем ходу
         /// </summary>
@@ -36,12 +36,9 @@ namespace ArmyBattle.Game.Formations
                 _pairDisplayed[i] = false;
         }
 
-        /// <summary>
-        /// Проверяет, активна ли битва (есть хотя бы одна активная пара в колоннах)
-        /// </summary>
         public bool IsCombatActive(BattleEngine battle)
         {
-            return battle.HasActiveColumnPair();
+            return battle.GetArmy1().HasAliveUnits() && battle.GetArmy2().HasAliveUnits();
         }
 
         /// <summary>
@@ -58,7 +55,7 @@ namespace ArmyBattle.Game.Formations
         public void DisplayBattleOrder(BattleEngine battle)
         {
             Console.WriteLine($"Порядок боя {battle.GetArmy1().Name} vs {battle.GetArmy2().Name}");
-            
+
             // Выводим каждую колонну
             for (int col = 0; col < 3; col++)
             {
@@ -76,7 +73,7 @@ namespace ArmyBattle.Game.Formations
                 Console.ResetColor();
                 Console.WriteLine();
             }
-            
+
             // Резерв армии 1
             Console.ForegroundColor = battle.GetArmy1().Color;
             Console.Write($"Резерв {battle.GetArmy1().Name}: ");

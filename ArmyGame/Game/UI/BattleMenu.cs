@@ -42,7 +42,6 @@ namespace ArmyBattle
         /// <summary>
         /// Запускает боевой симулятор между двумя армиями с интерактивным меню
         /// </summary>
-        /// <returns>true если битва завершена естественным путем, иначе false</returns>
         public static bool StartBattle(IArmy army1, IArmy army2, FormationType formation = FormationType.OneColumn)
         {
             // Перехватываем вывод консоли для сохранения лога битвы
@@ -290,7 +289,6 @@ namespace ArmyBattle
         /// <summary>
         /// Запускает меню управления битвой
         /// </summary>
-        /// <returns>true если пользователь вышел через case "8" (сохранение и выход), иначе false</returns>
         private static bool RunBattleMenu(BattleEngine battle, IArmy army1, IArmy army2, string saveName, string battleLogName = "")
         {
             _commandManager.Clear(); // Очищаем историю команд при старте битвы

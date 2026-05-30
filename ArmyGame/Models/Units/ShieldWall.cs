@@ -6,6 +6,7 @@ namespace ArmyBattle.Models
     /// Гуляй город - движущаяся стена щитов
     /// Юнит с огромной защитой, но без атаки
     /// Не может быть скопирован (Wizard) или залечен (Healer)
+    /// адаптирующий класс
     /// </summary>
     public class ShieldWall : Unit
     {

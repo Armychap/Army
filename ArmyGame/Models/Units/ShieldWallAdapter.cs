@@ -3,7 +3,8 @@ using ArmyBattle.Models.Interfaces;
 namespace ArmyBattle.Models
 {
     /// <summary>
-    /// Адаптер для Гуляй-город: вариант стены щитов с изменённым здоровьем.
+    /// Адаптер для Гуляй-город
+    /// адаптор сам
     /// </summary>
     public class ShieldWallAdapter : ShieldWall
     {

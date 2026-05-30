@@ -20,27 +20,27 @@ namespace ArmyBattle.Game.Formations
         /// Список пар бойцов, сражающихся друг с другом
         /// </summary>
         private List<(IUnit? attacker, IUnit? defender)> _pairs = new();
-        
+
         /// <summary>
         /// Флаг необходимости перестроения пар после изменений в составах
         /// </summary>
         private bool _needRebuildPairs = true;
-        
+
         /// <summary>
         /// Флаги отображения для каждой пары в текущем раунде
         /// </summary>
         private bool[] _pairDisplayed;
-        
+
         /// <summary>
         /// Список бойцов, которые уже атаковали в текущем ходу
         /// </summary>
         private List<IUnit> _fightersWhoAttacked = new List<IUnit>();
-        
+
         /// <summary>
         /// Сохранённый порядок бойцов армии 1 для перестроения
         /// </summary>
         private List<IUnit> _savedArmy1 = new();
-        
+
         /// <summary>
         /// Сохранённый порядок бойцов армии 2 для перестроения
         /// </summary>
@@ -60,8 +60,7 @@ namespace ArmyBattle.Game.Formations
         /// </summary>
         public bool IsCombatActive(BattleEngine battle)
         {
-            bool hasActive = _pairs.Any(p => p.attacker?.IsAlive == true && p.defender?.IsAlive == true);
-            return hasActive;
+            return battle.GetArmy1().HasAliveUnits() && battle.GetArmy2().HasAliveUnits();
         }
 
         /// <summary>
@@ -280,7 +279,7 @@ namespace ArmyBattle.Game.Formations
                 _needRebuildPairs = true;
             }
         }
-        
+
         /// <summary>
         /// Перестраивает пары бойцов на основе текущих живых составов армий
         /// </summary>
@@ -309,7 +308,7 @@ namespace ArmyBattle.Game.Formations
                 Console.WriteLine("Нет активных пар - битва завершена!");
             }
         }
-        
+
         /// <summary>
         /// Проверяет, есть ли хотя бы одна валидная пара живых бойцов
         /// </summary>

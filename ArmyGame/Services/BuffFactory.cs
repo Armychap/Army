@@ -19,20 +19,32 @@ namespace ArmyBattle.Services
         private static readonly Random _random = new Random();
 
         /// <summary>
-        /// Применяет случайный бафф к юниту
+        /// Применяет случайный бафф к юниту (не надевает уже существующий)
         /// </summary>
         public static IUnit ApplyRandomBuff(IUnit unit)
         {
-            int choice = _random.Next(1, 5);
-            
-            return choice switch
-            {
-                1 => new HorseBuffDecorator(unit),
-                2 => new ShieldBuffDecorator(unit),
-                3 => new HelmetBuffDecorator(unit),
-                4 => new SpearBuffDecorator(unit),
-                _ => unit
-            };
+            // Собираем список ДОСТУПНЫХ баффов (тех, которых ещё нет на юните)
+            var availableBuffs = new List<Func<IUnit, IUnit>>();
+
+            if (!HasBuff<HorseBuffDecorator>(unit))
+                availableBuffs.Add(u => new HorseBuffDecorator(u));
+
+            if (!HasBuff<ShieldBuffDecorator>(unit))
+                availableBuffs.Add(u => new ShieldBuffDecorator(u));
+
+            if (!HasBuff<HelmetBuffDecorator>(unit))
+                availableBuffs.Add(u => new HelmetBuffDecorator(u));
+
+            if (!HasBuff<SpearBuffDecorator>(unit))
+                availableBuffs.Add(u => new SpearBuffDecorator(u));
+
+            // Если все 4 баффа уже есть — не надеваем ничего
+            if (availableBuffs.Count == 0)
+                return unit;
+
+            // Выбираем случайный бафф только из доступных
+            int choice = _random.Next(availableBuffs.Count);
+            return availableBuffs[choice](unit);
         }
         
         /// <summary>
@@ -49,7 +61,7 @@ namespace ArmyBattle.Services
                 _ => unit
             };
         }
-        
+
         /// <summary>
         /// Проверяет, есть ли у юнита бафф определённого типа
         /// </summary>

@@ -228,6 +228,7 @@ namespace ArmyBattle.Models
         }
 
         // Может ли юнит быть скопирован магом
+        // прототип 
         public virtual bool CanBeCloned()
         {
             return true;
