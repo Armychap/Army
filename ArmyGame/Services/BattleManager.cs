@@ -48,6 +48,9 @@ namespace ArmyBattle.Services
 
         public void StartBattle(IArmy army1, IArmy army2, bool saveLog = false)
         {
+            // Применяем настройки наблюдателей к армиям перед боем
+            ObserverManager.LoadSettings(army1, army2);
+
             // Сохраняем оригинальный вывод консоли для восстановления позже
             var originalOutput = Console.Out;
 
@@ -76,7 +79,7 @@ namespace ArmyBattle.Services
                 // Если требуется сохранение лога - сохраняем его с захваченным текстом
                 if (saveLog)
                 {
-                    SaveBattleLog(logCapture.ToString(), $"{army1.Name}_vs_{army2.Name}", army1, army2);
+                    SaveBattleLog(logCapture.ToString(), SanitizeFileName($"{army1.Name}_vs_{army2.Name}"), army1, army2);
                 }
             }
             catch (Exception ex)
@@ -99,6 +102,7 @@ namespace ArmyBattle.Services
         /// </summary>
         public void SaveBattleLog(string log, string battleName, IArmy army1, IArmy army2, bool useTimestamp = true)
         {
+            battleName = SanitizeFileName(battleName);
             string logFileName;
             string jsonFileName;
 
@@ -214,6 +218,7 @@ namespace ArmyBattle.Services
             return "";
         }
 
+        // Получает отображаемое имя битвы, удаляя временные метки из названия файла
         public string GetBattleDisplayName(string fileName)
         {
             // Находим последний подчеркивание (это время HHMMSS)
@@ -257,8 +262,21 @@ namespace ArmyBattle.Services
         /// </summary>
         public string GetLogPath(string battleName)
         {
-            // Объединяем путь: папка логов + имя файла + расширение
+            battleName = SanitizeFileName(battleName);
             return Path.Combine(logsDirectory, $"{battleName}.txt");
+        }
+
+        // Санитизация имени файла для удаления недопустимых символов
+        private static string SanitizeFileName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return string.Empty;
+
+            foreach (var invalid in Path.GetInvalidFileNameChars())
+            {
+                name = name.Replace(invalid, '_');
+            }
+            return name.Trim();
         }
 
         /// <summary>

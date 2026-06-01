@@ -69,7 +69,7 @@ namespace ArmyBattle.UI
                     "Healer" => "Лекарь",
                     "Wizard" => "Маг",
                     "ShieldWall" => "Гуляй-город",
-                    "ShieldWallAdapter" => "Гуляй-город (адаптер)",
+                    "ShieldWallAdapter" => "Гуляй-город",
                     // Если тип неизвестен - используем оригинальное имя
                     _ => unit.Type
                 };

@@ -139,34 +139,48 @@ namespace ArmyBattle.Game
             return snapshots;
         }
         
+        // Метод для восстановления юнитов из снимков, включая их баффы
         private void RestoreUnitSnapshots(IArmy army, List<UnitSnapshot> snapshots)
         {
             foreach (var snapshot in snapshots)
             {
                 var unit = army.Units.FirstOrDefault(u => u.FighterNumber == snapshot.FighterNumber);
-                if (unit != null)
+                if (unit == null) continue;
+
+                // Снимаем все текущие баффы, чтобы восстановить точную цепочку
+                var baseUnit = unit;
+                while (baseUnit is BuffDecorator decorator)
                 {
-                    unit.Health = snapshot.Health;
-                    unit.Attack = snapshot.Attack;
-                    unit.Defence = snapshot.Defence;
-                    
-                    // Восстанавливаем баффы
-                    IUnit restoredUnit = unit;
-                    foreach (var buffType in snapshot.AppliedBuffs)
-                    {
-                        restoredUnit = BuffFactory.ApplyBuff(restoredUnit, buffType);
-                    }
-                    
-                    // Если баффы были применены, заменяем юнита
-                    if (restoredUnit != unit)
-                    {
-                        ReplaceUnitInArmy(unit, restoredUnit);  // Используем существующий метод из BattleEngineMoves.cs
-                    }
+                    baseUnit = decorator.GetInnerUnit();
+                }
+
+                if (baseUnit != unit)
+                {
+                    army.ReplaceUnit(unit, baseUnit);
+                    unit = baseUnit;
+                }
+
+                unit.Health = snapshot.Health;
+                unit.Attack = snapshot.Attack;
+                unit.Defence = snapshot.Defence;
+
+                // Восстанавливаем баффы в правильном порядке: сначала самые внутренние, затем внешние
+                IUnit restoredUnit = unit;
+                foreach (var buffType in snapshot.AppliedBuffs.AsEnumerable().Reverse())
+                {
+                    restoredUnit = BuffFactory.ApplyBuff(restoredUnit, buffType);
+                }
+
+                if (restoredUnit != unit)
+                {
+                    ReplaceUnitInArmy(unit, restoredUnit);
                 }
             }
+
             army.RefreshAliveFighters();
         }
         
+        // Метод для восстановления порядка боя на основе сохранённого списка номеров бойцов
         private void RestoreAliveOrder(IArmy army, List<int> order)
         {
             var newOrder = new List<IUnit>();
@@ -179,12 +193,15 @@ namespace ArmyBattle.Game
             army.CurrentFighterIndex = 0;
         }
         
+        // Метод для поиска юнита по его номеру
+        
         private IUnit? FindUnitByNumber(IArmy army, int? fighterNumber)
         {
             if (fighterNumber == null) return null;
             return army.Units.FirstOrDefault(u => u.FighterNumber == fighterNumber && u.IsAlive);
         }
         
+        // Метод для получения типов применённых баффов
         private List<string> GetAppliedBuffTypes(IUnit unit)
         {
             var buffs = new List<string>();

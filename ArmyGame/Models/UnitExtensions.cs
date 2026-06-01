@@ -1,4 +1,6 @@
 using System;
+using ArmyBattle.Models.Decorators;
+using ArmyBattle.Models.Interfaces;
 
 namespace ArmyBattle.Models
 {
@@ -6,8 +8,19 @@ namespace ArmyBattle.Models
     public static class UnitExtensions
     {
         /// Получить корневой юнит, разворачивая все прокси
+        ///
+        /// Если у нас есть декоратор или адаптер, они оборачивают реальный юнит.
+        /// Этот метод рекурсивно извлекает внутренний объект, чтобы получить
+        /// исходный тип юнита (например, ShieldWall), даже если внешне он был
+        /// обёрнут в прокси.
         public static IUnit GetRootUnit(this IUnit unit)
         {
+            if (unit is BuffDecorator buffDecorator)
+                return buffDecorator.GetInnerUnit().GetRootUnit();
+
+            if (unit is IUnitAdapter adapter)
+                return adapter.GetInnerUnit().GetRootUnit();
+
             return unit;
         }
 
@@ -32,7 +45,7 @@ namespace ArmyBattle.Models
             if (type == typeof(Healer)) return "лек";
             if (type == typeof(StrongFighter)) return "сил";
             if (type == typeof(WeakFighter)) return "слаб";
-            if (type == typeof(ShieldWall)) return "стен";
+            if (type == typeof(ShieldWall) || type == typeof(ShieldWallAdapter)) return "стен";
             return "?";
         }
     }

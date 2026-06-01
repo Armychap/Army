@@ -48,6 +48,9 @@ namespace ArmyBattle.Models
         /// Вывести информацию об армии в консоль
         void DisplayArmyInfo(bool showDetails = false);
         
+        /// Заменить одного юнита другим в армии
+        void ReplaceUnit(IUnit oldUnit, IUnit newUnit);
+        
         /// Сгенерировать армию с заданным бюджетом средств
         void GenerateArmyWithBudget(int budget);
         

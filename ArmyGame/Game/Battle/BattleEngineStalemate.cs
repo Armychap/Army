@@ -5,15 +5,22 @@ namespace ArmyBattle.Game
 {
     public partial class BattleEngine
     {
+        // Счётчик ходов без летальных действий (атак, которые убивают)
         private int noLethalActions = 0;
         private const int maxNoLethalActions = 80;
+        // Флаг патовой ситуации
         private bool stalemateReached = false;
+        // Счётчик ходов без изменения здоровья
         private int noHealthChangeCount = 0;
+        // История здоровья юнитов перед ходом
         private Dictionary<IUnit, int> allUnitsHealthBefore = new();
         private const int maxNoHealthChangeActions = 30;
 
         public bool StalemateReached => stalemateReached;
 
+        /// <summary>
+        /// Проверяет условия для патовой ситуации: стагнация здоровья
+        /// </summary>
         private void CheckStalemateAfterMove()
         {
             bool anyHealthChanged = false;
@@ -54,6 +61,9 @@ namespace ArmyBattle.Game
             }
         }
 
+        /// <summary>
+        /// Обнуляет счётчики стагнации при сбросе условий
+        /// </summary>
         private void ResetStalemateCounters()
         {
             noLethalActions = 0;

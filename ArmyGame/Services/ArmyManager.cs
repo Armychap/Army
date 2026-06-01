@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using ArmyBattle.Models;
-using ArmyBattle.Services;
+using ArmyBattle.Models.Interfaces;
 using ArmyBattle.Models.Decorators;
+using ArmyBattle.Services;
 
 
 namespace ArmyBattle.Services
@@ -68,6 +69,9 @@ namespace ArmyBattle.Services
                 {
                     saveName = $"Armies_{DateTime.Now:yyyyMMdd_HHmmss}";
                 }
+
+                saveName = GetSafeName(saveName);
+                battleLogName = string.IsNullOrWhiteSpace(battleLogName) ? null : GetSafeName(battleLogName);
 
                 // Конвертируем армии в сериализуемый формат
                 var saveData = SerializeArmies(army1, army2, currentRound, attackTurn, firstAttackerIsArmy1, needNewRoundHeader, battleLogName, moveCount, currentFormation);
@@ -288,8 +292,20 @@ namespace ArmyBattle.Services
         /// </summary>
         public string GetSavePath(string saveName)
         {
-            // Объединяем путь: папка + имя файла + расширение
+            saveName = GetSafeName(saveName);
             return Path.Combine(savesDirectory, $"{saveName}.json");
+        }
+
+        private static string GetSafeName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return string.Empty;
+
+            foreach (var invalid in Path.GetInvalidFileNameChars())
+            {
+                name = name.Replace(invalid, '_');
+            }
+            return name.Trim();
         }
 
         /// <summary>
@@ -370,20 +386,20 @@ namespace ArmyBattle.Services
 
                 result.Add(new UnitSaveData
                 {
-                    Type = realUnit.GetRootType().Name,
+                    Type = realUnit is IUnitAdapter ? realUnit.GetType().Name : realUnit.GetRootType().Name,
                     FighterNumber = realUnit.FighterNumber,
                     Health = realUnit.Health,
                     Attack = realUnit.Attack,
                     Defence = realUnit.Defence,
                     Cost = realUnit.Cost,
                     // ДОПОЛНИТЕЛЬНО: сохраняем список баффов для восстановления
-                    AppliedBuffs = GetAppliedBuffTypes(unit)  // новый список
+                    AppliedBuffs = GetAppliedBuffTypes(unit)
                 });
             }
             return result;
         }
 
-        // НОВЫЙ МЕТОД: собирает все типы баффов из декораторов
+        //собирает все типы баффов из декораторов
         private List<string> GetAppliedBuffTypes(IUnit unit)
         {
             var buffs = new List<string>();
@@ -412,8 +428,9 @@ namespace ArmyBattle.Services
             // Итерируемся по каждому сохраненному юниту
             foreach (var unitData in unitsData)
             {
+                // Абстрактная фабрика — может создать ЛЮБОГО юнита на основе строки из JSON
                 // Используем switch выражение для создания правильного типа юнита
-                Unit unit = unitData.Type switch
+                IUnit unit = unitData.Type switch
                 {
                     // Если тип был "WeakFighter" создаем слабого бойца
                     nameof(WeakFighter) => new WeakFighter(unitData.FighterNumber),
@@ -432,6 +449,9 @@ namespace ArmyBattle.Services
 
                     // Если тип был "ShieldWall" создаем стену щитов
                     nameof(ShieldWall) => new ShieldWall(unitData.FighterNumber),
+
+                    // Если тип был "ShieldWallAdapter" создаем адаптер стены
+                    nameof(ShieldWallAdapter) => new ShieldWallAdapter(unitData.FighterNumber),
 
                     // Если тип неизвестен выбрасываем исключение с описанием ошибки
                     _ => throw new Exception($"Неизвестный тип юнита: {unitData.Type}")

@@ -1,6 +1,3 @@
-// HorseBuffDecorator.cs
-using ArmyBattle.Models;
-
 namespace ArmyBattle.Models.Decorators
 {
     /// <summary>

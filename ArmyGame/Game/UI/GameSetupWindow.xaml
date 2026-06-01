@@ -1,0 +1,129 @@
+<Window x:Class="ArmyBattle.UI.GameSetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="⚔ Новая Игра" 
+        Width="900" Height="700"
+        WindowStartupLocation="CenterScreen"
+        Background="#0f1419"
+        Foreground="#e0d5c7"
+        FontFamily="Segoe UI"
+        ResizeMode="NoResize">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- TITLE AND PROGRESS -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock x:Name="StepTitle" Text="Шаг 1: Названия армий" FontSize="24" FontWeight="Bold" Foreground="#ffd93d"/>
+            <ProgressBar x:Name="ProgressBar" Height="6" Background="#2a3a4a" Foreground="#4ecdc4" Value="25" Margin="0,12,0,0"/>
+        </StackPanel>
+
+        <!-- CONTENT AREA -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
+
+            <!-- STEP 1: Names and Budget -->
+            <StackPanel x:Name="Step1Panel" Orientation="Vertical">
+                <TextBlock Text="Название 1-й Армии:" Foreground="#4ecdc4" FontWeight="Bold" Margin="0,0,0,8"/>
+                <TextBox x:Name="Army1NameBox" Background="#1a2a3a" Foreground="#e0d5c7" BorderBrush="#4ecdc4" 
+                         Padding="10" Height="40" Margin="0,0,0,16" FontSize="13"/>
+
+                <TextBlock Text="Название 2-й Армии:" Foreground="#ff6b6b" FontWeight="Bold" Margin="0,0,0,8"/>
+                <TextBox x:Name="Army2NameBox" Background="#1a2a3a" Foreground="#e0d5c7" BorderBrush="#ff6b6b" 
+                         Padding="10" Height="40" Margin="0,0,0,16" FontSize="13"/>
+
+                <TextBlock Text="Бюджет для каждой армии:" Foreground="#95e1d3" FontWeight="Bold" Margin="0,0,0,8"/>
+                <TextBox x:Name="BudgetBox" Background="#1a2a3a" Foreground="#e0d5c7" BorderBrush="#95e1d3" 
+                         Padding="10" Height="40" FontSize="13"/>
+            </StackPanel>
+
+            <!-- STEP 2: Army 1 Creation Method -->
+            <StackPanel x:Name="Step2Panel" Orientation="Vertical" Visibility="Collapsed">
+                <TextBlock Text="Армия 1: Выберите способ сборки" Foreground="#4ecdc4" FontWeight="Bold" FontSize="16" Margin="0,0,0,20"/>
+
+                <Border x:Name="Army1AutoPanel" Background="#0d1f2e" BorderBrush="#4ecdc4" BorderThickness="2" 
+                        Padding="16" CornerRadius="8" Margin="0,0,0,16" MouseDown="Army1AutoPanel_Click" Cursor="Hand">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="🤖 Автоматическая Сборка" FontSize="14" FontWeight="Bold" Foreground="#4ecdc4" Margin="0,0,0,8"/>
+                        <TextBlock Text="Система выберет оптимальный состав" Foreground="#a09080" FontSize="11" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="Army1ManualPanel" Background="#0d2a1f" BorderBrush="#2ecc71" BorderThickness="2" 
+                        Padding="16" CornerRadius="8" MouseDown="Army1ManualPanel_Click" Cursor="Hand">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="🎯 Ручная Сборка" FontSize="14" FontWeight="Bold" Foreground="#2ecc71" Margin="0,0,0,8"/>
+                        <TextBlock Text="Вы выбираете каждого юнита" Foreground="#a09080" FontSize="11" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+                <!-- Preview for Army1 when auto-generated -->
+                <TextBlock x:Name="Army1Preview" Text="" Foreground="#a09080" FontSize="12" Margin="0,12,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- STEP 3: Army 2 Creation Method -->
+            <StackPanel x:Name="Step3Panel" Orientation="Vertical" Visibility="Collapsed">
+                <TextBlock Text="Армия 2: Выберите способ сборки" Foreground="#ff6b6b" FontWeight="Bold" FontSize="16" Margin="0,0,0,20"/>
+
+                <Border x:Name="Army2AutoPanel" Background="#0d1f2e" BorderBrush="#ff6b6b" BorderThickness="2" 
+                        Padding="16" CornerRadius="8" Margin="0,0,0,16" MouseDown="Army2AutoPanel_Click" Cursor="Hand">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="🤖 Автоматическая Сборка" FontSize="14" FontWeight="Bold" Foreground="#ff6b6b" Margin="0,0,0,8"/>
+                        <TextBlock Text="Система выберет оптимальный состав" Foreground="#a09080" FontSize="11" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="Army2ManualPanel" Background="#2e1a0d" BorderBrush="#ffa500" BorderThickness="2" 
+                        Padding="16" CornerRadius="8" MouseDown="Army2ManualPanel_Click" Cursor="Hand">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="🎯 Ручная Сборка" FontSize="14" FontWeight="Bold" Foreground="#ffa500" Margin="0,0,0,8"/>
+                        <TextBlock Text="Вы выбираете каждого юнита" Foreground="#a09080" FontSize="11" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+                <!-- Preview for Army2 when auto-generated -->
+                <TextBlock x:Name="Army2Preview" Text="" Foreground="#a09080" FontSize="12" Margin="0,12,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- STEP 4: Formation Selection -->
+            <StackPanel x:Name="Step4Panel" Orientation="Vertical" Visibility="Collapsed">
+                <TextBlock Text="Выберите боевое построение:" Foreground="#95e1d3" FontWeight="Bold" FontSize="16" Margin="0,0,0,20"/>
+
+                <Border x:Name="FormationOneColumnPanel" Background="#0d1f2e" BorderBrush="#4ecdc4" BorderThickness="2" 
+                        Padding="16" CornerRadius="8" Margin="0,0,0,12" MouseDown="FormationOneColumn_Click" Cursor="Hand">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="🌉 Узкий Мост (1 vs 1)" FontSize="14" FontWeight="Bold" Foreground="#4ecdc4" Margin="0,0,0,8"/>
+                        <TextBlock Text="По одному боцу от каждой армии" Foreground="#a09080" FontSize="11" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="FormationThreeColumnsPanel" Background="#0d2a0d" BorderBrush="#2ecc71" BorderThickness="2" 
+                        Padding="16" CornerRadius="8" Margin="0,0,0,12" MouseDown="FormationThreeColumns_Click" Cursor="Hand">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="🏛 Три Колонны (3 vs 3)" FontSize="14" FontWeight="Bold" Foreground="#2ecc71" Margin="0,0,0,8"/>
+                        <TextBlock Text="По три бойца от каждой армии" Foreground="#a09080" FontSize="11" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="FormationWallPanel" Background="#2e0d0d" BorderBrush="#ff6b6b" BorderThickness="2" 
+                        Padding="16" CornerRadius="8" MouseDown="FormationWall_Click" Cursor="Hand">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="⚔ Стенка на Стенку (Все vs Всех)" FontSize="14" FontWeight="Bold" Foreground="#ff6b6b" Margin="0,0,0,8"/>
+                        <TextBlock Text="ВСЕ бойцы обеих армий сражаются одновременно" Foreground="#a09080" FontSize="11" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+        </Grid>
+
+        <!-- BUTTONS -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="PrevBtn" Content="← Назад" Width="100" Height="40" Background="#666" Foreground="#e0d5c7" 
+                    Click="PrevBtn_Click" Margin="0,0,10,0" Visibility="Collapsed"/>
+            <Button x:Name="NextBtn" Content="Далее →" Width="120" Height="40" Background="#4ecdc4" Foreground="#0f1419" 
+                    FontWeight="Bold" Click="NextBtn_Click" Margin="0,0,10,0"/>
+            <Button x:Name="CancelBtn" Content="Отмена" Width="100" Height="40" Background="#666" Foreground="#e0d5c7" Click="CancelBtn_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

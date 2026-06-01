@@ -8,6 +8,9 @@ namespace ArmyBattle.Game
 {
     public partial class BattleEngine
     {
+        /// <summary>
+        /// Отображает заголовок раунда с учетом текущей формации
+        /// </summary>
         private void DisplayRoundHeader()
         {
             if (_currentStrategy != null)
@@ -53,6 +56,9 @@ namespace ArmyBattle.Game
             }
         }
 
+        /// <summary>
+        /// Отображает порядок боя (в каком порядке бойцы встают друг против друга)
+        /// </summary>
         public void DisplayBattleOrder()
         {
             if (_currentStrategy != null)
@@ -132,6 +138,9 @@ namespace ArmyBattle.Game
             }
         }
 
+        /// <summary>
+        /// Отображает текущее хеалья обоих бойцов и их баффы
+        /// </summary>
         private void DisplayHealthInfo()
         {
             Console.WriteLine($"Здоровье {currentFighter1?.FighterNumber}: {Math.Max(0, currentFighter1?.Health ?? 0)}/{currentFighter1?.MaxHealth ?? 0}");
@@ -141,6 +150,9 @@ namespace ArmyBattle.Game
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Отображает все надетые баффы на юните
+        /// </summary>
         private void DisplayBuffsOnUnit(IUnit? unit, IArmy army)
         {
             if (unit == null || !unit.IsAlive) return;

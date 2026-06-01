@@ -6,18 +6,19 @@ using ArmyBattle.UI;
 namespace ArmyBattle
 {
     /// <summary>
-    /// Класс для отображения результатов битв и управления сохранениями
+    /// Управляет результатами битв, сохранениями армий и их просмотром
     /// </summary>
     static class BattleResults
     {
         // Ссылки на сервисы
         private static ArmyManager? armyManager;
         private static BattleManager? battleManager;
+        // Последние загруженные армии
         private static IArmy? _lastArmy1;
         private static IArmy? _lastArmy2;
 
         /// <summary>
-        /// Инициализация ссылок на сервисы и армии
+        /// Инициализирует ссылки на сервисы и армии для сохранения
         /// </summary>
         public static void Initialize(ArmyManager am, BattleManager bm, ref IArmy? army1, ref IArmy? army2)
         {
@@ -28,6 +29,9 @@ namespace ArmyBattle
         }
 
         // Сохраняет текущие загруженные армии на диск
+        /// <summary>
+        /// Сохраняет текущие боевые армии с пользовательским названием
+        /// </summary>
         public static void SaveCurrentArmies()
         {
             ConsoleMenu.ClearConsole();
@@ -51,6 +55,9 @@ namespace ArmyBattle
         }
 
         // Показывает интерактивное меню для просмотра состава армий из сохраненных битв
+        /// <summary>
+        /// Показывает информацию о составе армий из сохранённых боёв
+        /// </summary>
         public static void ShowStoredArmiesInfo()
         {
             string[] savedBattles = battleManager?.GetSavedBattleArmies() ?? Array.Empty<string>();

@@ -7,6 +7,9 @@ namespace ArmyBattle.Game
 {
     public partial class BattleEngine
     {
+        /// <summary>
+        /// Выполняет все ходы до завершения битвы
+        /// </summary>
         public void DoAllMoves()
         {
             if (!battleInitialized)
@@ -23,6 +26,9 @@ namespace ArmyBattle.Game
             EndBattle();
         }
 
+        /// <summary>
+        /// Выполняет один ход битвы: атаки, действия, проверки
+        /// </summary>
         public bool DoSingleMove()
         {
             if (!battleInitialized)
@@ -33,7 +39,10 @@ namespace ArmyBattle.Game
 
             if (stalemateReached)
             {
-                Console.WriteLine("Битва прекращена: патовая ситуация.");
+                if (_view != null)
+                    _view.DisplayStalemate("Патовая ситуация");
+                else
+                    Console.WriteLine("Битва прекращена: патовая ситуация.");
                 return false;
             }
 
@@ -48,6 +57,7 @@ namespace ArmyBattle.Game
             }
             else if (currentFormation == FormationType.ThreeColumns)
             {
+                FillThreeColumnsFromReserve();
                 if (!HasActiveColumnPair()) return false;
             }
             else
@@ -56,12 +66,19 @@ namespace ArmyBattle.Game
             }
 
             moveCount++;
-            Console.WriteLine($"Ход {moveCount}");
+            if (_view != null)
+            {
+                _view.DisplayRound(moveCount, currentFighter1, currentFighter2, army1, army2);
+            }
+            else
+            {
+                Console.WriteLine($"Ход {moveCount}");
+            }
 
             // Логика баффов
             ProcessBuffs();
 
-            // Проверка изменения здоровья
+            // Проверка изменения здоровья до атаки
             allUnitsHealthBefore.Clear();
             foreach (var unit in army1.Units)
             {
@@ -105,6 +122,9 @@ namespace ArmyBattle.Game
             return anyAction;
         }
 
+        /// <summary>
+        /// Выполняет один полный раунд боя
+        /// </summary>
         public bool DoSingleRound()
         {
             if (!battleInitialized)
@@ -131,6 +151,9 @@ namespace ArmyBattle.Game
             return true;
         }
 
+        /// <summary>
+        /// Однолинейный режим: одни на одного
+        /// </summary>
         public bool ProcessOneColumnMove()
         {
             bool currentAttackerIsArmy1 = attackTurn == 0 ? firstAttackerIsArmy1 : !firstAttackerIsArmy1;
@@ -141,6 +164,9 @@ namespace ArmyBattle.Game
             return true;
         }
 
+        /// <summary>
+        /// Трёхколонный режим: три пары сражаются в приоритетном порядке
+        /// </summary>
         public bool ProcessThreeColumnMove()
         {
             bool anyAction = false;
@@ -181,6 +207,9 @@ namespace ArmyBattle.Game
             return anyAction;
         }
 
+        /// <summary>
+        /// Основная атака: атакующий даёт счёт дефендингу, эффекты и смены
+        /// </summary>
         private void PerformAttack(IArmy attackingArmy, IArmy defendingArmy, ref IUnit attacker, ref IUnit defender)
         {
             if (attacker.EffectiveAttack == 0)
@@ -230,8 +259,15 @@ namespace ArmyBattle.Game
             attacker.AttackUnit(defender);
             int damage = healthBefore - defender.Health;
 
-            Console.WriteLine($"Урон: {damage}");
-            DisplayHealthInfo();
+            if (_view != null)
+            {
+                _view.DisplayAttack(attacker, defender, attackingArmy, defendingArmy, damage);
+            }
+            else
+            {
+                Console.WriteLine($"Урон: {damage}");
+                DisplayHealthInfo();
+            }
 
             if (defender.IsAlive && TryRemoveOneBuffOnStrongHit(attacker, ref defender))
             {
@@ -240,15 +276,22 @@ namespace ArmyBattle.Game
 
             if (!defender.IsAlive)
             {
-                Console.WriteLine();
-                Console.ForegroundColor = attackingArmy.Color;
-                Console.Write(attacker.GetDisplayName(attackingArmy.Name));
-                Console.ResetColor();
-                Console.Write(" убивает ");
-                Console.ForegroundColor = defendingArmy.Color;
-                Console.Write(defender.GetDisplayName(defendingArmy.Name));
-                Console.ResetColor();
-                Console.WriteLine();
+                if (_view != null)
+                {
+                    _view.DisplayDeath(attacker, defender, attackingArmy, defendingArmy);
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.ForegroundColor = attackingArmy.Color;
+                    Console.Write(attacker.GetDisplayName(attackingArmy.Name));
+                    Console.ResetColor();
+                    Console.Write(" убивает ");
+                    Console.ForegroundColor = defendingArmy.Color;
+                    Console.Write(defender.GetDisplayName(defendingArmy.Name));
+                    Console.ResetColor();
+                    Console.WriteLine();
+                }
 
                 defendingArmy?.RemoveDeadFighter(defender);
 
@@ -290,10 +333,15 @@ namespace ArmyBattle.Game
             attackTurn = 1 - attackTurn;
         }
 
-        private void PerformAttackInColumn(IArmy attackingArmy, IArmy defendingArmy,
-            ref IUnit? attacker, ref IUnit? defender, int column)
+        /// <summary>
+        /// Атака в конкретной колонне (трёхколонный режим)
+        /// </summary>
+        public void PerformAttackInColumn(IArmy attackingArmy, IArmy defendingArmy,
+    ref IUnit? attacker, ref IUnit? defender, int column)
         {
-            if (attacker?.EffectiveAttack == 0)
+            if (attacker == null || defender == null) return;
+
+            if (attacker.EffectiveAttack == 0)
             {
                 Console.ForegroundColor = attackingArmy.Color;
                 Console.Write(attacker?.GetDisplayName(attackingArmy.Name));
@@ -317,32 +365,58 @@ namespace ArmyBattle.Game
             int healthBefore = defender!.Health;
             attacker.AttackUnit(defender);
             int damage = healthBefore - defender.Health;
-            Console.WriteLine($"Урон: {damage}");
+
+            if (_view != null)
+            {
+                _view.DisplayAttack(attacker, defender, attackingArmy, defendingArmy, damage);
+            }
+            else
+            {
+                Console.WriteLine($"Урон: {damage}");
+                Console.WriteLine($"Здоровье {attacker.GetDisplayName(attackingArmy.Name)}: {Math.Max(0, attacker.Health)}/{attacker.MaxHealth}");
+                Console.WriteLine($"Здоровье {defender.GetDisplayName(defendingArmy.Name)}: {Math.Max(0, defender.Health)}/{defender.MaxHealth}");
+            }
+
             if (defender.IsAlive && TryRemoveOneBuffOnStrongHit(attacker, ref defender))
             {
                 Console.WriteLine("У противника сброшен один бафф!");
             }
-            Console.WriteLine($"Здоровье {defender.FighterNumber}: {Math.Max(0, defender.Health)}/{defender.MaxHealth}");
 
+            // ЕСЛИ ЗАЩИТНИК УМЕР - ЗАМЕНЯЕМ ЕГО
             if (!defender.IsAlive)
             {
-                Console.WriteLine();
-                Console.ForegroundColor = attackingArmy.Color;
-                Console.Write(attacker.GetDisplayName(attackingArmy.Name));
-                Console.ResetColor();
-                Console.Write(" убивает ");
-                Console.ForegroundColor = defendingArmy.Color;
-                Console.Write(defender.GetDisplayName(defendingArmy.Name));
-                Console.ResetColor();
-                Console.WriteLine();
+                if (_view != null)
+                {
+                    _view.DisplayDeath(attacker, defender, attackingArmy, defendingArmy);
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.ForegroundColor = attackingArmy.Color;
+                    Console.Write(attacker.GetDisplayName(attackingArmy.Name));
+                    Console.ResetColor();
+                    Console.Write(" убивает ");
+                    Console.ForegroundColor = defendingArmy.Color;
+                    Console.Write(defender.GetDisplayName(defendingArmy.Name));
+                    Console.ResetColor();
+                    Console.WriteLine();
+                }
 
-                bool isArmy1Dead = defendingArmy == army1;
+                // Удаляем мёртвого из армии
+                defendingArmy.RemoveDeadFighter(defender);
+
+                // ЗАМЕНЯЕМ В КОЛОННЕ НОВЫМ БОЙЦОМ ИЗ РЕЗЕРВА
                 ReplaceDeadFighterInColumn(column, defendingArmy == army1);
-                defender = isArmy1Dead ? currentFightersArmy1[column] : currentFightersArmy2[column];
+
+                // Получаем нового бойца для продолжения
+                defender = defendingArmy == army1 ? currentFightersArmy1[column] : currentFightersArmy2[column];
 
                 noLethalActions = 0;
                 noHealthChangeCount = 0;
                 needNewRoundHeader = true;
+
+                // Если защитник был заменён, сбрасываем флаг отображения пары
+                _needDisplayPair = true;
             }
             else
             {
@@ -353,6 +427,9 @@ namespace ArmyBattle.Game
             attackTurn = 1 - attackTurn;
         }
 
+        /// <summary>
+        /// Заменить юнит на другого (по всем коллекциям)
+        /// </summary>
         private void ReplaceUnitInArmy(IUnit oldUnit, IUnit newUnit)
         {
             var army = oldUnit.Army;
@@ -370,6 +447,9 @@ namespace ArmyBattle.Game
             if (currentFighter2 == oldUnit) currentFighter2 = newUnit;
         }
 
+        /// <summary>
+        /// Пытаются сбить бафф при мощном ударе
+        /// </summary>
         private bool TryRemoveOneBuffOnStrongHit(IUnit attacker, ref IUnit? defender)
         {
             if (defender == null || !IsStrongFighter(attacker) || !IsStrongFighter(defender))
@@ -387,7 +467,10 @@ namespace ArmyBattle.Game
             return true;
         }
 
-        private void ReplaceDeadFighterInColumn(int column, bool isArmy1Dead)
+        /// <summary>
+        /// Заменить погибшего в колонне на следующего из резерва
+        /// </summary>
+        public void ReplaceDeadFighterInColumn(int column, bool isArmy1Dead)
         {
             if (isArmy1Dead)
             {
@@ -395,8 +478,13 @@ namespace ArmyBattle.Game
                 {
                     currentFightersArmy1[column] = army1BackupQueue[0];
                     army1BackupQueue.RemoveAt(0);
+                    Console.WriteLine($"На место погибшего в колонну {column + 1} встаёт {currentFightersArmy1[column]?.GetDisplayName(army1.Name)}");
                 }
-                else currentFightersArmy1[column] = null;
+                else
+                {
+                    currentFightersArmy1[column] = null;
+                    Console.WriteLine($"Колонна {column + 1} армии {army1.Name} опустела (нет резерва)");
+                }
             }
             else
             {
@@ -404,21 +492,84 @@ namespace ArmyBattle.Game
                 {
                     currentFightersArmy2[column] = army2BackupQueue[0];
                     army2BackupQueue.RemoveAt(0);
+                    Console.WriteLine($"На место погибшего в колонну {column + 1} встаёт {currentFightersArmy2[column]?.GetDisplayName(army2.Name)}");
                 }
-                else currentFightersArmy2[column] = null;
+                else
+                {
+                    currentFightersArmy2[column] = null;
+                    Console.WriteLine($"Колонна {column + 1} армии {army2.Name} опустела (нет резерва)");
+                }
             }
         }
 
+        /// <summary>
+        /// Публичный метод для выполнения одноколонной атаки (обёртка)
+        /// </summary>
         public void PerformOneColumnAttack(IArmy attackingArmy, IArmy defendingArmy,
             ref IUnit attacker, ref IUnit defender)
         {
             PerformAttack(attackingArmy, defendingArmy, ref attacker, ref defender);
         }
 
+        /// <summary>
+        /// Публичный метод для выполнения атаки в колонне (обёртка)
+        /// </summary>
         public void PerformAttackInColumnPublic(IArmy attackingArmy, IArmy defendingArmy,
             ref IUnit? attacker, ref IUnit? defender, int column)
         {
             PerformAttackInColumn(attackingArmy, defendingArmy, ref attacker, ref defender, column);
+        }
+
+        /// <summary>
+        /// Обновляет резервные очереди для трёхколонного боя на основе текущего списка живых бойцов.
+        /// Это гарантирует, что новые бойцы и клоны, добавленные в порядок боя, попадут в резерв.
+        /// </summary>
+        private void RefreshThreeColumnReservesFromAliveOrder()
+        {
+            if (currentFormation != FormationType.ThreeColumns)
+                return;
+
+            var activeArmy1 = currentFightersArmy1.Where(u => u?.IsAlive == true).ToHashSet();
+            var activeArmy2 = currentFightersArmy2.Where(u => u?.IsAlive == true).ToHashSet();
+
+            army1BackupQueue = army1.AliveFightersInBattleOrder
+                .Where(u => u.IsAlive && !activeArmy1.Contains(u))
+                .ToList();
+
+            army2BackupQueue = army2.AliveFightersInBattleOrder
+                .Where(u => u.IsAlive && !activeArmy2.Contains(u))
+                .ToList();
+
+            for (int col = 0; col < 3; col++)
+            {
+                if (currentFightersArmy1[col]?.IsAlive != true)
+                    currentFightersArmy1[col] = null;
+                if (currentFightersArmy2[col]?.IsAlive != true)
+                    currentFightersArmy2[col] = null;
+            }
+        }
+
+        /// <summary>
+        /// Заполняет свободные позиции в трёхколонном бою резервными бойцами.
+        /// </summary>
+        private void FillThreeColumnsFromReserve()
+        {
+            RefreshThreeColumnReservesFromAliveOrder();
+
+            for (int col = 0; col < 3; col++)
+            {
+                if (currentFightersArmy1[col]?.IsAlive != true && army1BackupQueue.Count > 0)
+                {
+                    currentFightersArmy1[col] = army1BackupQueue[0];
+                    army1BackupQueue.RemoveAt(0);
+                }
+
+                if (currentFightersArmy2[col]?.IsAlive != true && army2BackupQueue.Count > 0)
+                {
+                    currentFightersArmy2[col] = army2BackupQueue[0];
+                    army2BackupQueue.RemoveAt(0);
+                }
+            }
         }
     }
 }
