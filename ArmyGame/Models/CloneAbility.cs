@@ -4,31 +4,15 @@ using System.Linq;
 namespace ArmyBattle.Models
 {
     /// <summary>
-    /// основная логика клонирования
-    /// Специальная способность мага: с небольшой вероятностью клонирует случайного союзника (только легкого бойца или лучника).
-    /// Клон вставляется в армию перед магом (в любом месте перед ним).
+    /// Способность клонирования (способность мага).
+    /// SRP: отвечает ТОЛЬКО за логику клонирования.
     /// </summary>
-    public class CloneAbility : ISpecialAbility
+    public class CloneAbility : AbilityBase
     {
         /// <summary>
         /// Генератор случайных чисел для определения шанса и выбора целей
         /// </summary>
         private static readonly Random random = new Random();
-        
-        /// <summary>
-        /// Название способности
-        /// </summary>
-        public string Name { get; set; }
-        
-        /// <summary>
-        /// Радиус действия способности (количество позиций до цели)
-        /// </summary>
-        public int Range { get; set; }
-        
-        /// <summary>
-        /// Сила способности (шанс срабатывания в процентах)
-        /// </summary>
-        public int Power { get; set; }
 
         /// <summary>
         /// Выбранный для клонирования боец (для отображения в логе)
@@ -44,18 +28,16 @@ namespace ArmyBattle.Models
         /// Конструктор способности клонирования
         /// </summary>
         public CloneAbility(string name, int range, int power)
+            : base(name, range, power)
         {
-            Name = name;
-            Range = range;
-            Power = power;
         }
 
         /// <summary>
         /// Выполняет способность клонирования: создаёт копию случайного союзника
         /// </summary>
-        public void Execute(IUnit user, IUnit? target)
+        public override void Execute(IUnit user, IUnit? target)
         {
-            if (user == null || user.Army == null)
+            if (user?.Army == null)
                 return;
 
             // Сбрасываем предыдущий результат перед каждой попыткой

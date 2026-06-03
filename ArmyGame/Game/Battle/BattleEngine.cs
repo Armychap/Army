@@ -24,6 +24,9 @@ namespace ArmyBattle.Game
             _view = view;
         }
 
+        // Сервис отображения информации о битве (SRP: отвечает ТОЛЬКО за отображение)
+        private readonly BattleDisplayService _displayService;
+
         // Две сражающиеся армии
         private readonly IArmy army1;
         private readonly IArmy army2;
@@ -52,6 +55,9 @@ namespace ArmyBattle.Game
             Army2AddedFightersCount = 0;
             Army1BuffsAppliedCount = 0;
             Army2BuffsAppliedCount = 0;
+
+            // Инициализируем сервис отображения
+            _displayService = new BattleDisplayService(this);
         }
 
         /// <summary>
@@ -85,7 +91,7 @@ namespace ArmyBattle.Game
         {
             if (_view != null)
             {
-                string winner = null;
+                string? winner = null;
                 if (stalemateReached && army1.HasAliveUnits() && army2.HasAliveUnits())
                     winner = null;
                 else if (army1.HasAliveUnits())
@@ -98,35 +104,10 @@ namespace ArmyBattle.Game
             }
             else
             {
-                Console.WriteLine();
-                Console.WriteLine("БИТВА ЗАВЕРШЕНА");
-                Console.WriteLine(new string('=', 40));
-
-                bool army1Wins = army1.HasAliveUnits();
-                bool army2Wins = army2.HasAliveUnits();
-
-                if (stalemateReached && army1Wins && army2Wins)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("НИЧЬЯ!");
-                    Console.ResetColor();
-                }
-                else if (army1Wins)
-                {
-                    Console.ForegroundColor = army1.Color;
-                    Console.WriteLine($"ПОБЕДИТЕЛЬ: {army1.Name}!");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.ForegroundColor = army2.Color;
-                    Console.WriteLine($"ПОБЕДИТЕЛЬ: {army2.Name}!");
-                    Console.ResetColor();
-                }
-
-                Console.WriteLine();
-                Console.WriteLine($"Армия {army1.Name}: добавлено бойцов {Army1AddedFightersCount}, баффов надето {Army1BuffsAppliedCount}");
-                Console.WriteLine($"Армия {army2.Name}: добавлено бойцов {Army2AddedFightersCount}, баффов надето {Army2BuffsAppliedCount}");
+                // Используем сервис отображения для вывода информации
+                _displayService.DisplayBattleEnd(stalemateReached, army1, army2, moveCount, 
+                    Army1AddedFightersCount, Army2AddedFightersCount, 
+                    Army1BuffsAppliedCount, Army2BuffsAppliedCount);
             }
         }
     }

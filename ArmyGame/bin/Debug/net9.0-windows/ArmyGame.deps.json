@@ -8,7 +8,8 @@
     ".NETCoreApp,Version=v9.0": {
       "ArmyGame/1.0.0": {
         "dependencies": {
-          "System.Windows.Extensions": "10.0.5"
+          "System.Windows.Extensions": "10.0.5",
+          "MedievalRussia": "1.0.0.0"
         },
         "runtime": {
           "ArmyGame.dll": {}
@@ -29,6 +30,14 @@
             "fileVersion": "10.0.526.15411"
           }
         }
+      },
+      "MedievalRussia/1.0.0.0": {
+        "runtime": {
+          "MedievalRussia.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -44,6 +53,11 @@
       "sha512": "sha512-5hVP2TIgEqqA590MnKmMN5+Fgzl6xBRjR1wbgC3M1znrZZJe63TwBPN+ymaMgwT0vjsiXk95AjMAe8SAhhJSTg==",
       "path": "system.windows.extensions/10.0.5",
       "hashPath": "system.windows.extensions.10.0.5.nupkg.sha512"
+    },
+    "MedievalRussia/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

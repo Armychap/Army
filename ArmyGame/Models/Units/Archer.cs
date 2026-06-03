@@ -18,8 +18,8 @@ namespace ArmyBattle.Models
               )
         {
             FighterNumber = fighterNumber;
-            // использует стрелы
-            SpecialAbility = new SpecialAbility("Выстрел стрелы", 5, 12);
+            // использует стрелы - специальная способность стрельбы
+            SpecialAbility = new ArcherShootAbility("Выстрел стрелы", 5, 12);
         }
     }
 }

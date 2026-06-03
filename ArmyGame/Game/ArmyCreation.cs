@@ -170,11 +170,10 @@ namespace ArmyBattle
                 Console.WriteLine("2 - Добавить лучника (ATK 5, DEF 13, HP 18) - 25");
                 Console.WriteLine("3 - Добавить мага (ATK 7, DEF 4, HP 22) - 30");
                 Console.WriteLine("4 - Добавить сильного бойца (ATK 20, DEF 15, HP 60) - 40");
-                Console.WriteLine("5 - Добавить Гуляй город (ATK 0, DEF 50, HP 70) - 55");
-                Console.WriteLine("6 - Добавить Гуляй город (ATK 0, DEF 50, HP 100) - 55");
-                Console.WriteLine("7 - Добавить лекаря (ATK 3, DEF 2, HP 15) - 20");
-                Console.WriteLine("8 - Удалить последнего бойца");
-                Console.WriteLine("9 - Завершить настройку");
+                Console.WriteLine("5 - Добавить Гуляй город (ATK 0, DEF 50, HP 100) - 55");
+                Console.WriteLine("6 - Добавить лекаря (ATK 3, DEF 2, HP 15) - 20");
+                Console.WriteLine("7 - Удалить последнего бойца");
+                Console.WriteLine("8 - Завершить настройку");
                 Console.Write("Выбор: ");
 
                 // Читаем выбор пользователя
@@ -254,10 +253,10 @@ namespace ArmyBattle
                         break;
 
                     case "5":
-                        // Добавить Гуляй город (стена щитов)
+                        // Добавить Гуляй город из MedievalRussia.dll
                         if (totalCost + 55 <= maxBudget)
                         {
-                            IUnit fighter = new ShieldWall(fighterNumber++);
+                            IUnit fighter = new GulayGorod(fighterNumber++);
                             army.AddUnit(fighter);
                             totalCost += 55;
                             Console.WriteLine("Гуляй город добавлен!");
@@ -267,19 +266,6 @@ namespace ArmyBattle
                         break;
 
                     case "6":
-                        // Добавить Гуляй город адаптер
-                        if (totalCost + 55 <= maxBudget)
-                        {
-                            IUnit fighter = new ShieldWallAdapter(fighterNumber++);
-                            army.AddUnit(fighter);
-                            totalCost += 55;
-                            Console.WriteLine("Гуляй город добавлен!");
-                        }
-                        else
-                            Console.WriteLine("Недостаточно бюджета!");
-                        break;
-
-                    case "7":
                         if (totalCost + 20 <= maxBudget)
                         {
                             IUnit fighter = new Healer(fighterNumber++);
@@ -291,7 +277,7 @@ namespace ArmyBattle
                             Console.WriteLine("Недостаточно бюджета!");
                         break;
 
-                    case "8":
+                    case "7":
                         if (army.Units.Count > 0)
                         {
                             var removed = army.Units[army.Units.Count - 1];
@@ -308,7 +294,7 @@ namespace ArmyBattle
                             Console.WriteLine("Нет бойцов для удаления!");
                         break;
 
-                    case "9":
+                    case "8":
                         Console.WriteLine("Настройка завершена!");
                         Console.WriteLine("Нажмите любую клавишу, чтобы продолжить...");
                         Console.ReadKey(true);

@@ -19,7 +19,7 @@ namespace ArmyBattle.Models
         {
             FighterNumber = fighterNumber;
             // способность лечения
-            SpecialAbility = new SpecialAbility("Лечение", 5, 10);
+            SpecialAbility = new HealerHealAbility("Лечение", 5, 10);
         }
     }
 }

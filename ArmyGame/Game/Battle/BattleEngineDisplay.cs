@@ -9,7 +9,7 @@ namespace ArmyBattle.Game
     public partial class BattleEngine
     {
         /// <summary>
-        /// Отображает заголовок раунда с учетом текущей формации
+        /// Отображает заголовок раунда (делегирует работу сервису отображения)
         /// </summary>
         private void DisplayRoundHeader()
         {
@@ -19,45 +19,13 @@ namespace ArmyBattle.Game
             }
             else
             {
-                if (currentFormation == FormationType.OneColumn)
-                {
-                    Console.WriteLine();
-                    Console.Write($"РАУНД {round}: ");
-                    Console.ForegroundColor = army1.Color;
-                    Console.Write($"{army1.Name} {currentFighter1?.FighterNumber}");
-                    Console.ResetColor();
-                    Console.Write($" ({currentFighter1?.PowerLevel}) vs ");
-                    Console.ForegroundColor = army2.Color;
-                    Console.Write($"{army2.Name} {currentFighter2?.FighterNumber}");
-                    Console.ResetColor();
-                    Console.WriteLine($" ({currentFighter2?.PowerLevel})");
-                }
-                else
-                {
-                    Console.WriteLine($"\nРАУНД {round} (Три колонны)");
-                    for (int col = 0; col < 3; col++)
-                    {
-                        var f1 = currentFightersArmy1[col];
-                        var f2 = currentFightersArmy2[col];
-                        if (f1 != null && f2 != null && f1.IsAlive && f2.IsAlive)
-                        {
-                            Console.ForegroundColor = army1.Color;
-                            Console.Write($"К{col + 1}: {f1.FighterNumber}({f1.PowerLevel.Substring(0, 3)}) ");
-                            Console.ResetColor();
-                            Console.Write(" vs ");
-                            Console.ForegroundColor = army2.Color;
-                            Console.Write($"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})");
-                            Console.ResetColor();
-                            Console.WriteLine();
-                        }
-                    }
-                    Console.WriteLine(new string('═', 40) + "\n");
-                }
+                _displayService.DisplayRoundHeader(round, currentFormation, currentFighter1, currentFighter2,
+                    currentFightersArmy1, currentFightersArmy2, army1, army2);
             }
         }
 
         /// <summary>
-        /// Отображает порядок боя (в каком порядке бойцы встают друг против друга)
+        /// Отображает порядок боя (делегирует работу сервису отображения)
         /// </summary>
         public void DisplayBattleOrder()
         {
@@ -67,116 +35,17 @@ namespace ArmyBattle.Game
             }
             else
             {
-                if (currentFormation == FormationType.OneColumn)
-                {
-                    Console.WriteLine("Порядок боя");
-
-                    string FormatUnit(IUnit unit)
-                    {
-                        string shortType = unit.PowerLevel.ToLowerInvariant() switch
-                        {
-                            "слабый" => "слаб",
-                            "маг" => "маг",
-                            "стена" => "стен",
-                            "гуляй город" => "стен",
-                            "лучник" => "луч",
-                            "лекарь" => "лек",
-                            "сильный" => "сил",
-                            _ => unit.PowerLevel.Length <= 4 ? unit.PowerLevel.ToLowerInvariant() : unit.PowerLevel.Substring(0, 4).ToLowerInvariant()
-                        };
-                        return $"{unit.FighterNumber} ({shortType})";
-                    }
-
-                    var order1 = string.Join(" -> ", army1.AliveFightersInBattleOrder.Select(FormatUnit));
-                    var order2 = string.Join(" -> ", army2.AliveFightersInBattleOrder.Select(FormatUnit));
-
-                    Console.ForegroundColor = army1.Color;
-                    Console.WriteLine($"{army1.Name}: {order1}");
-                    Console.ResetColor();
-                    Console.ForegroundColor = army2.Color;
-                    Console.WriteLine($"{army2.Name}: {order2}");
-                    Console.ResetColor();
-                    Console.WriteLine();
-                }
-                else
-                {
-                    Console.Write("Порядок боя ");
-                    Console.ForegroundColor = army1.Color;
-                    Console.Write($"{army1.Name}");
-                    Console.ResetColor();
-                    Console.Write(" vs ");
-                    Console.ForegroundColor = army2.Color;
-                    Console.Write($"{army2.Name}");
-                    Console.ResetColor();
-                    Console.WriteLine();
-                    for (int col = 0; col < 3; col++)
-                    {
-                        var f1 = currentFightersArmy1[col];
-                        var f2 = currentFightersArmy2[col];
-                        Console.Write($"Колонна {col + 1}: ");
-                        Console.ForegroundColor = army1.Color;
-                        Console.Write(f1 != null ? $"{f1.FighterNumber}({f1.PowerLevel.Substring(0, 3)})" : "Пусто");
-                        Console.ResetColor();
-                        Console.Write("  vs  ");
-                        Console.ForegroundColor = army2.Color;
-                        Console.Write(f2 != null ? $"{f2.FighterNumber}({f2.PowerLevel.Substring(0, 3)})" : "Пусто");
-                        Console.ResetColor();
-                        Console.WriteLine();
-                    }
-                    Console.Write("Резерв ");
-                    Console.ForegroundColor = army1.Color;
-                    Console.Write($"{army1.Name}");
-                    Console.ResetColor();
-                    Console.WriteLine($": {string.Join("->", army1BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
-                    Console.Write("Резерв ");
-                    Console.ForegroundColor = army2.Color;
-                    Console.Write($"{army2.Name}");
-                    Console.ResetColor();
-                    Console.WriteLine($": {string.Join("<-", army2BackupQueue.Select(u => $"{u.FighterNumber}({u.PowerLevel.Substring(0, 3)})"))}");
-                    Console.WriteLine();
-                }
+                _displayService.DisplayBattleOrder(currentFormation, currentFightersArmy1, currentFightersArmy2,
+                    army1BackupQueue, army2BackupQueue, army1, army2);
             }
         }
 
         /// <summary>
-        /// Отображает текущее хеалья обоих бойцов и их баффы
+        /// Отображает текущее здоровье и баффы обоих бойцов (делегирует работу сервису отображения)
         /// </summary>
         private void DisplayHealthInfo()
         {
-            Console.WriteLine($"Здоровье {currentFighter1?.FighterNumber}: {Math.Max(0, currentFighter1?.Health ?? 0)}/{currentFighter1?.MaxHealth ?? 0}");
-            Console.WriteLine($"Здоровье {currentFighter2?.FighterNumber}: {Math.Max(0, currentFighter2?.Health ?? 0)}/{currentFighter2?.MaxHealth ?? 0}");
-            DisplayBuffsOnUnit(currentFighter1, army1);
-            DisplayBuffsOnUnit(currentFighter2, army2);
-            Console.WriteLine();
-        }
-
-        /// <summary>
-        /// Отображает все надетые баффы на юните
-        /// </summary>
-        private void DisplayBuffsOnUnit(IUnit? unit, IArmy army)
-        {
-            if (unit == null || !unit.IsAlive) return;
-
-            var buffNames = new System.Collections.Generic.List<string>();
-            var current = unit;
-            while (current is BuffDecorator decorator)
-            {
-                string buffName = decorator switch
-                {
-                    HorseBuffDecorator => "Конь",
-                    ShieldBuffDecorator => "Щит",
-                    HelmetBuffDecorator => "Шлем",
-                    SpearBuffDecorator => "Копье",
-                    _ => "?"
-                };
-                buffNames.Add(buffName);
-                current = decorator.GetInnerUnit();
-            }
-
-            if (buffNames.Count > 0)
-            {
-                Console.WriteLine($"Бафы {unit.FighterNumber}: {string.Join(", ", buffNames)}");
-            }
+            _displayService.DisplayHealthInfo(currentFighter1, currentFighter2, army1, army2);
         }
     }
 }

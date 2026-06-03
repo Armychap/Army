@@ -6,6 +6,7 @@ C:\Users\Alex\.vscode\Army\ArmyGame\bin\Debug\net9.0-windows\ArmyGame.pdb
 C:\Users\Alex\.vscode\Army\ArmyGame\bin\Debug\net9.0-windows\System.Windows.Extensions.dll
 C:\Users\Alex\.vscode\Army\ArmyGame\bin\Debug\net9.0-windows\runtimes\win\lib\net9.0\System.Windows.Extensions.dll
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\ArmyGame.csproj.AssemblyReference.cache
+C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\BattleResultWindow.baml
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\BattleWindow.baml
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\GameHistoryWindow.baml
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\GameSetupWindow.baml
@@ -13,6 +14,7 @@ C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\LoadGameWin
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\MainWindow.baml
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\ManualArmyWindow.baml
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\SettingsWindow.baml
+C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\BattleResultWindow.g.cs
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\BattleWindow.g.cs
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\GameHistoryWindow.g.cs
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\GameSetupWindow.g.cs
@@ -34,5 +36,4 @@ C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\refint\ArmyGame.dll
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\ArmyGame.pdb
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\ArmyGame.genruntimeconfig.cache
 C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\ref\ArmyGame.dll
-C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\BattleResultWindow.baml
-C:\Users\Alex\.vscode\Army\ArmyGame\obj\Debug\net9.0-windows\Game\UI\BattleResultWindow.g.cs
+C:\Users\Alex\.vscode\Army\ArmyGame\bin\Debug\net9.0-windows\MedievalRussia.dll

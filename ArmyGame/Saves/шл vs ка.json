@@ -1,0 +1,223 @@
+{
+  "Army1Name": "\u0448\u043B",
+  "Army1Prefix": null,
+  "Army1Color": 12,
+  "Army1Units": [
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 13,
+      "Health": 25,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 1,
+      "Health": 60,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Healer",
+      "FighterNumber": 2,
+      "Health": 15,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 9,
+      "Health": 25,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 12,
+      "Health": 25,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 10,
+      "Health": 25,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 11,
+      "Health": 25,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "GulayGorod",
+      "FighterNumber": 3,
+      "Health": 100,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 4,
+      "Health": 60,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": [
+        "SpearBuffDecorator",
+        "HorseBuffDecorator",
+        "ShieldBuffDecorator",
+        "HelmetBuffDecorator"
+      ]
+    },
+    {
+      "Type": "GulayGorod",
+      "FighterNumber": 5,
+      "Health": 100,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "WeakFighter",
+      "FighterNumber": 6,
+      "Health": 25,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "Wizard",
+      "FighterNumber": 7,
+      "Health": 22,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "StrongFighter",
+      "FighterNumber": 8,
+      "Health": 60,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": [
+        "SpearBuffDecorator",
+        "HelmetBuffDecorator",
+        "ShieldBuffDecorator",
+        "HorseBuffDecorator"
+      ]
+    }
+  ],
+  "TotalCost1": 0,
+  "Army2Name": "\u043A\u0430",
+  "Army2Prefix": null,
+  "Army2Color": 9,
+  "Army2Units": [
+    {
+      "Type": "GulayGorod",
+      "FighterNumber": 1,
+      "Health": 70,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "GulayGorod",
+      "FighterNumber": 2,
+      "Health": 100,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "GulayGorod",
+      "FighterNumber": 3,
+      "Health": 100,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "GulayGorod",
+      "FighterNumber": 4,
+      "Health": 100,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    },
+    {
+      "Type": "GulayGorod",
+      "FighterNumber": 5,
+      "Health": 100,
+      "Attack": 0,
+      "Defence": 0,
+      "Cost": 0,
+      "AppliedBuffs": []
+    }
+  ],
+  "TotalCost2": 0,
+  "SaveDate": "0001-01-01T00:00:00",
+  "CurrentRound": 0,
+  "AttackTurn": 0,
+  "Army1CurrentFighterIndex": 1,
+  "Army2CurrentFighterIndex": 1,
+  "FirstAttackerIsArmy1": false,
+  "NeedNewRoundHeader": false,
+  "Army1AliveOrder": [
+    1,
+    2,
+    10,
+    3,
+    4,
+    12,
+    5,
+    9,
+    11,
+    6,
+    13,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "Army2AliveOrder": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "BattleLogName": null,
+  "MoveCount": 30,
+  "CurrentFormation": 0
+}

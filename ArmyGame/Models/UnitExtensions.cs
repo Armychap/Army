@@ -45,7 +45,7 @@ namespace ArmyBattle.Models
             if (type == typeof(Healer)) return "лек";
             if (type == typeof(StrongFighter)) return "сил";
             if (type == typeof(WeakFighter)) return "слаб";
-            if (type == typeof(ShieldWall) || type == typeof(ShieldWallAdapter)) return "стен";
+            if (type == typeof(GulayGorod)) return "стен";
             return "?";
         }
     }

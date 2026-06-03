@@ -217,7 +217,7 @@ namespace ArmyBattle.Game
 
                     if (isHealing)
                     {
-                        if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
+                        if (unit.SpecialAbility is HealerHealAbility sa && sa.LastHealed != null)
                         {
                             Console.ForegroundColor = abilityColor;
                             Console.Write("лекарь ");
@@ -440,7 +440,7 @@ namespace ArmyBattle.Game
                         _view.DisplaySpecialAbility(unit, target, attackingArmy, defendingArmy, abilityName);
                     }
 
-                    if (unit.SpecialAbility is SpecialAbility sa && sa.LastHealed != null)
+                    if (unit.SpecialAbility is HealerHealAbility sa && sa.LastHealed != null)
                     {
                         Console.ForegroundColor = abilityColor;
                         Console.Write("лекарь ");

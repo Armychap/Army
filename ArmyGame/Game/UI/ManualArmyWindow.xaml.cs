@@ -169,7 +169,7 @@ namespace ArmyBattle.UI
         {
             if (_army.TotalCost + 55 <= _budget)
             {
-                _army.AddUnit(new ShieldWall(_army.Units.Count + 1));
+                _army.AddUnit(new GulayGorod(_army.Units.Count + 1));
                 UpdateBudgetText();
             }
             else MessageBox.Show("Недостаточно бюджета", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
