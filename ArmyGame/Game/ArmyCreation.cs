@@ -144,6 +144,8 @@ namespace ArmyBattle
             // Текущее потраченное бюджета на юнитов
             int totalCost = 0;
 
+            var factory = UnitFactoryProvider.Instance;
+
             while (true)
             {
                 // Очищаем экран перед выводом меню настройки
@@ -188,7 +190,7 @@ namespace ArmyBattle
                         if (totalCost + 15 <= maxBudget)
                         {
                             // Создаем нового слабого бойца с текущим номером
-                            IUnit fighter = new WeakFighter(fighterNumber++);
+                            IUnit fighter = factory.Create(n => new WeakFighter(n), fighterNumber++);
 
                             // Добавляем бойца в армию
                             army.AddUnit(fighter);
@@ -210,7 +212,7 @@ namespace ArmyBattle
                         if (totalCost + 25 <= maxBudget)
                         {
                             // Создаем нового лучника с текущим номером
-                            IUnit fighter = new Archer(fighterNumber++);
+                            IUnit fighter = factory.Create(n => new Archer(n), fighterNumber++);
 
                             // Добавляем лучника в армию
                             army.AddUnit(fighter);
@@ -231,7 +233,7 @@ namespace ArmyBattle
                         // Проверяем хватит ли бюджета для добавления мага
                         if (totalCost + 30 <= maxBudget)
                         {
-                            IUnit fighter = new Wizard(fighterNumber++);
+                            IUnit fighter = factory.Create(n => new Wizard(n), fighterNumber++);
                             army.AddUnit(fighter);
                             totalCost += 30;
                             Console.WriteLine("Маг добавлен!");
@@ -243,7 +245,7 @@ namespace ArmyBattle
                     case "4": // Добавить сильного бойца
                         if (totalCost + 40 <= maxBudget)
                         {
-                            IUnit fighter = new StrongFighter(fighterNumber++);
+                            IUnit fighter = factory.Create(n => new StrongFighter(n), fighterNumber++);
                             army.AddUnit(fighter);
                             totalCost += 40;
                             Console.WriteLine("Сильный боец добавлен!");
@@ -256,7 +258,7 @@ namespace ArmyBattle
                         // Добавить Гуляй город из MedievalRussia.dll
                         if (totalCost + 55 <= maxBudget)
                         {
-                            IUnit fighter = new GulayGorod(fighterNumber++);
+                            IUnit fighter = factory.Create(n => new GulayGorod(n), fighterNumber++);
                             army.AddUnit(fighter);
                             totalCost += 55;
                             Console.WriteLine("Гуляй город добавлен!");
@@ -268,7 +270,7 @@ namespace ArmyBattle
                     case "6":
                         if (totalCost + 20 <= maxBudget)
                         {
-                            IUnit fighter = new Healer(fighterNumber++);
+                            IUnit fighter = factory.Create(n => new Healer(n), fighterNumber++);
                             army.AddUnit(fighter);
                             totalCost += 20;
                             Console.WriteLine("Лекарь добавлен!");

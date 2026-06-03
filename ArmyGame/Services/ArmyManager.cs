@@ -242,6 +242,7 @@ namespace ArmyBattle.Services
 
             foreach (var unitData in unitDataList)
             {
+                // используется Абстрактная фабрика
                 var unit = factory.CreateFromType(unitData.Type ?? "", unitData.FighterNumber);
                 unit.Health = unitData.Health;
 
